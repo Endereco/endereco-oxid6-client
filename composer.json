@@ -1,0 +1,29 @@
+{
+    "name": "endereco/endereco-oxid6-client",
+    "type": "oxideshop-module",
+    "license": "GPL-3.0-only",
+    "extra": {
+        "oxideshop": {
+            "target-directory": "endereco/endereco-oxid6-client"
+        }
+    },
+    "authors": [
+        {
+            "name": "Ilja Weber",
+            "email": "ilja@endereco.de"
+        }
+    ],
+    "require": {
+        "php": ">=5.6",
+        "ext-curl": "*",
+        "guzzlehttp/guzzle": "^6.3"
+    },
+    "autoload": {
+        "psr-4": {
+            "Endereco\\Oxid6Client\\": "../../../source/modules/endereco/endereco-oxid6-client"
+        }
+    },
+    "scripts": {
+        "build": "rm -rf dist && mkdir dist && cp -vr module/* dist && cp ../front-agent/dist/oxid6-bundle.js ./dist/out/assets/js/oxid6-bundle.js && cp ./composer.json ./dist/composer.json"
+    }
+}
