@@ -324,7 +324,10 @@
 .endereco-s--locality_correct .btn, .endereco-s--street_name_correct input,
 .endereco-s--street_name_correct select,
 .endereco-s--street_name_correct .form-control,
-.endereco-s--street_name_correct .btn, .endereco-s--building_number_correct input,
+.endereco-s--street_name_correct .btn, .endereco-s--street_full_correct input,
+.endereco-s--street_full_correct select,
+.endereco-s--street_full_correct .form-control,
+.endereco-s--street_full_correct .btn, .endereco-s--building_number_correct input,
 .endereco-s--building_number_correct select,
 .endereco-s--building_number_correct .form-control,
 .endereco-s--building_number_correct .btn, .endereco-s--additional_info_correct input,
@@ -360,7 +363,10 @@
 .endereco-s--locality_needs_correction .btn, .endereco-s--street_name_needs_correction input,
 .endereco-s--street_name_needs_correction select,
 .endereco-s--street_name_needs_correction .form-control,
-.endereco-s--street_name_needs_correction .btn, .endereco-s--building_number_needs_correction input,
+.endereco-s--street_name_needs_correction .btn, .endereco-s--street_full_needs_correction input,
+.endereco-s--street_full_needs_correction select,
+.endereco-s--street_full_needs_correction .form-control,
+.endereco-s--street_full_needs_correction .btn, .endereco-s--building_number_needs_correction input,
 .endereco-s--building_number_needs_correction select,
 .endereco-s--building_number_needs_correction .form-control,
 .endereco-s--building_number_needs_correction .btn, .endereco-s--additional_info_needs_correction input,
@@ -372,7 +378,7 @@
 .endereco-s--country_code_needs_correction .btn {
   border-color: #f0ad4e; }
 
-.endereco-s--salutation_not_correct.radio-inline, .endereco-s--email_not_correct.radio-inline, .endereco-s--address_needs_correction.radio-inline, .endereco-s--address_multiple_variants.radio-inline, .endereco-s--address_not_found.radio-inline, .endereco-s--postal_code_needs_correction.radio-inline, .endereco-s--locality_needs_correction.radio-inline, .endereco-s--street_name_needs_correction.radio-inline, .endereco-s--building_number_needs_correction.radio-inline, .endereco-s--additional_info_needs_correction.radio-inline, .endereco-s--country_code_needs_correction.radio-inline {
+.endereco-s--salutation_not_correct.radio-inline, .endereco-s--email_not_correct.radio-inline, .endereco-s--address_needs_correction.radio-inline, .endereco-s--address_multiple_variants.radio-inline, .endereco-s--address_not_found.radio-inline, .endereco-s--postal_code_needs_correction.radio-inline, .endereco-s--locality_needs_correction.radio-inline, .endereco-s--street_name_needs_correction.radio-inline, .endereco-s--street_full_needs_correction.radio-inline, .endereco-s--building_number_needs_correction.radio-inline, .endereco-s--additional_info_needs_correction.radio-inline, .endereco-s--country_code_needs_correction.radio-inline {
   border-bottom: 2px dotted #f0ad4e; }
 
 .endereco-button {

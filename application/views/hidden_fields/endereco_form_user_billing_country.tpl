@@ -3,44 +3,14 @@
 [{$smarty.block.parent}]
 
 <script>
-    function initInvoiceAMS() {
-        var integratedObject = window.EnderecoIntegrator.initAMS('invadr[oxuser');
-    }
-    if (window.EnderecoIntegrator && window.EnderecoIntegrator.initAMS) {
-        window.EnderecoIntegrator.waitUntilReady().then(initInvoiceAMS).catch();
-    } else if (window.EnderecoIntegrator && !window.EnderecoIntegrator.initAMS && window.EnderecoIntegrator.asyncCallbacks) {
-        window.EnderecoIntegrator.asyncCallbacks.push(function() {
-            window.EnderecoIntegrator.waitUntilReady().then(initInvoiceAMS).catch();
-        });
-    } else {
-        window.EnderecoIntegrator = {
-            asyncCallbacks: []
-        };
-        window.EnderecoIntegrator.asyncCallbacks.push(function() {
-            window.EnderecoIntegrator.waitUntilReady().then(initInvoiceAMS).catch();
-        });
-    }
+    ( function() {
+        var $interval = setInterval( function() {
+            if (window.EnderecoIntegrator && window.EnderecoIntegrator.ready) {
+                window.EnderecoIntegrator.initAMS('invadr[oxuser');
+                window.EnderecoIntegrator.initPersonServices('invadr[oxuser');
+                clearInterval($interval);
+            }
+        }, 100);
+    })();
 </script>
 
-<script>
-    if (window.EnderecoIntegrator && window.EnderecoIntegrator.initPersonServices) {
-        window.EnderecoIntegrator.waitUntilReady().then(function() {
-            window.EnderecoIntegrator.initPersonServices('invadr[oxuser');
-        }).catch();
-    } else if (window.EnderecoIntegrator && !window.EnderecoIntegrator.initPersonServices && window.EnderecoIntegrator.asyncCallbacks) {
-        window.EnderecoIntegrator.asyncCallbacks.push(function() {
-            window.EnderecoIntegrator.waitUntilReady().then(function() {
-                window.EnderecoIntegrator.initPersonServices('invadr[oxuser');
-            }).catch();
-        });
-    } else {
-        window.EnderecoIntegrator = {
-            asyncCallbacks: []
-        };
-        window.EnderecoIntegrator.asyncCallbacks.push(function() {
-            window.EnderecoIntegrator.waitUntilReady().then(function() {
-                window.EnderecoIntegrator.initPersonServices('invadr[oxuser');
-            }).catch();
-        });
-    }
-</script>

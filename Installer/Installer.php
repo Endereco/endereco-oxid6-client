@@ -22,7 +22,7 @@ class Installer
         $aColumns = DatabaseProvider::getDb()->getAll("SHOW COLUMNS FROM `oxaddress` LIKE 'MOJOAMSSTATUS';");
         if (0 === count($aColumns)) {
             $sql = "ALTER TABLE `oxaddress`
-            ADD `MOJOAMSSTATUS` varchar(64) NOT NULL DEFAULT 'never_checked' AFTER `OXADDRESSUSERID`;";
+            ADD `MOJOAMSSTATUS` varchar(64) NOT NULL DEFAULT 'address_not_checked' AFTER `OXADDRESSUSERID`;";
             DatabaseProvider::getDb()->execute($sql);
         }
         unset($aColumns);
@@ -40,7 +40,7 @@ class Installer
         $aColumns = DatabaseProvider::getDb()->getAll("SHOW COLUMNS FROM `oxuser` LIKE 'MOJOAMSSTATUS';");
         if (0 === count($aColumns)) {
             $sql = "ALTER TABLE `oxuser`
-            ADD `MOJOAMSSTATUS` varchar(64) NOT NULL DEFAULT 'never_checked' AFTER `OXPASSSALT`;";
+            ADD `MOJOAMSSTATUS` varchar(64) NOT NULL DEFAULT 'address_not_checked' AFTER `OXPASSSALT`;";
             DatabaseProvider::getDb()->execute($sql);
         }
         unset($aColumns);
@@ -72,7 +72,7 @@ class Installer
             while (false !== ($sFileName = readdir($hDir))) {
                 $sFilePath = $sFolderPath . '/' . $sFileName;
 
-                if (!in_array($sFileName, array('.', '..', '.htaccess')) &&
+                if (!in_array($sFileName, ['.', '..', '.htaccess']) &&
                     is_file($sFilePath)
                 ) {
                     @unlink($sFilePath);

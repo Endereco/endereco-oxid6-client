@@ -26,11 +26,11 @@ class IncludeConfigWidget extends \OxidEsales\Eshop\Application\Component\Widget
         }
 
         // If there is a specific config, return it.
-        $aConfigMapping = array(
+        $aConfigMapping = [
             'flow' => 'enderecoconfig_flow.tpl',
             'wave' => 'enderecoconfig_wave.tpl',
             'azure' => 'enderecoconfig_azure.tpl',
-        );
+        ];
 
         $this->extendConfigMapping($aConfigMapping);
 
@@ -59,7 +59,7 @@ class IncludeConfigWidget extends \OxidEsales\Eshop\Application\Component\Widget
         return $this->_sThisTemplate;
     }
 
-    public function extendConfigMapping($configMapping = array()) {
+    public function extendConfigMapping($configMapping = []) {
         return $configMapping;
     }
 
@@ -77,12 +77,12 @@ class IncludeConfigWidget extends \OxidEsales\Eshop\Application\Component\Widget
         if (!$sOxId) {
             $sOxId = $oConfig->getShopId();
         }
-        $this->_aViewData['enderecoclient'] = array();
+        $this->_aViewData['enderecoclient'] = [];
 
         $sql = "SELECT `OXVARNAME`, DECODE( `OXVARVALUE`, ? ) AS `OXVARVALUE` FROM `oxconfig` WHERE `OXSHOPID` = ? AND `OXMODULE` = 'module:endereco-oxid6-client'";
         $resultSet = \OxidEsales\Eshop\Core\DatabaseProvider::getDb()->getAll(
             $sql,
-            array($oConfig->getConfigParam('sConfigKey'), $sOxId)
+            [$oConfig->getConfigParam('sConfigKey'), $sOxId]
         );
 
         foreach ($resultSet as $result) {

@@ -13,17 +13,17 @@
  * @link      https://www.endereco.de/
  */
 
-$sLangName  = "Deutsch";
+$sLangName  = "Français";
 // -------------------------------
 // RESOURCE IDENTITFIER = STRING
 // -------------------------------
 $aLang = [
     'charset' => 'UTF-8',
-    'ENDERECOOXID6CLIENT_POPUP_HEADLINE' => 'Adresse pr&uuml;fen',
-    'ENDERECOOXID6CLIENT_POPUP_SUBLINE' => 'Die eingegebene Adresse scheint nicht korrekt oder unvollständig zu sein. Bitte eine korrekte Adresse wählen.',
-    'ENDERECOOXID6CLIENT_POPUP_INPUT' => 'Ihre Eingabe:',
-    'ENDERECOOXID6CLIENT_POPUP_EDITINPUT' => '(&auml;ndern)',
-    'ENDERECOOXID6CLIENT_POPUP_SUGGESTIONS' => 'Unsere Vorschl&auml;ge:',
-    'ENDERECOOXID6CLIENT_POPUP_USE' => 'Auswahl &uuml;bernehmen',
+    'ENDERECOOXID6CLIENT_POPUP_HEADLINE' => 'Vérifier l\'adresse',
+    'ENDERECOOXID6CLIENT_POPUP_SUBLINE' => 'L\'adresse que vous avez saisie semble être incorrecte ou incomplète. Veuillez sélectionner une adresse correcte.',
+    'ENDERECOOXID6CLIENT_POPUP_INPUT' => 'Votre entrée:',
+    'ENDERECOOXID6CLIENT_POPUP_EDITINPUT' => '(modification)',
+    'ENDERECOOXID6CLIENT_POPUP_SUGGESTIONS' => 'Nos suggestions:',
+    'ENDERECOOXID6CLIENT_POPUP_USE' => 'Accepter la sélection',
 ];
 

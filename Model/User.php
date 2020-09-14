@@ -39,23 +39,23 @@ class User extends User_parent
                     $sSessionIdName = str_replace('_session_counter', '', $sVarName) . '_session_id';
                     $sSessionId = $_POST[$sSessionIdName];
                     try {
-                        $message = array(
+                        $message = [
                             'jsonrpc' => '2.0',
                             'id' => 1,
                             'method' => 'doAccounting',
-                            'params' => array(
+                            'params' => [
                                 'sessionId' => $sSessionId
-                            )
-                        );
-                        $client = new Client(array('timeout' => 5.0));
+                            ]
+                        ];
+                        $client = new Client(['timeout' => 5.0]);
 
-                        $newHeaders = array(
+                        $newHeaders = [
                             'Content-Type' => 'application/json',
                             'X-Auth-Key' => $sApiKy,
                             'X-Transaction-Id' => $sSessionId,
                             'X-Transaction-Referer' => 'UserComponent.php',
                             'X-Agent' => $sAgentInfo,
-                        );
+                        ];
                         $request = new Request('POST', $sEndpoint, $newHeaders, json_encode($message));
                         $client->send($request);
                         $bAnyDoAccounting = true;
@@ -69,20 +69,20 @@ class User extends User_parent
 
         if ($bAnyDoAccounting) {
             try {
-                $message = array(
+                $message = [
                     'jsonrpc' => '2.0',
                     'id' => 1,
                     'method' => 'doConversion',
-                    'params' => array()
-                );
-                $client = new Client(array('timeout' => 5.0));
-                $newHeaders = array(
+                    'params' => []
+                ];
+                $client = new Client(['timeout' => 5.0]);
+                $newHeaders = [
                     'Content-Type' => 'application/json',
                     'X-Auth-Key' => $sApiKy,
                     'X-Transaction-Id' => 'not_required',
                     'X-Transaction-Referer' => 'UserComponent.php',
                     'X-Agent' => $sAgentInfo,
-                );
+                ];
                 $request = new Request('POST', $sEndpoint, $newHeaders, json_encode($message));
                 $client->send($request);
             } catch(\Exception $e) {

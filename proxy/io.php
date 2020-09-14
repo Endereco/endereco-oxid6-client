@@ -23,13 +23,13 @@ curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
 curl_setopt(
     $ch,
     CURLOPT_HTTPHEADER,
-    array(
+    [
         'Content-Type: application/json',
         'X-Auth-Key: ' . $api_key,
         'X-Transaction-Id: ' . $tid,
         'X-Agent: ' . $agent_info,
         'X-Transaction-Referer: ' . $_SERVER['HTTP_X_TRANSACTION_REFERER'],
-        'Content-Length: ' . strlen($data_string))
+        'Content-Length: ' . strlen($data_string)]
 );
 
 $result = curl_exec($ch);

@@ -1,6 +1,6 @@
 [{assign var="sitepath" value=$oViewConf->getBaseDir()}]
 
-[{if $enderecoclient.sControllerClass|in_array:$enderecoclient.aAllowedControllerClasses }]
+[{if !$enderecoclient.bAllowControllerFilter || $enderecoclient.sControllerClass|in_array:$enderecoclient.aAllowedControllerClasses }]
     <script async defer src="[{$oViewConf->getModuleUrl('endereco-oxid6-client', 'out/assets/js/oxid6-bundle.js')}]"></script>
 
     [{if $enderecoclient.bUseCss }]
@@ -17,11 +17,15 @@
 
     <script>
         var enderecoConfigureIntegrator = function() {
-            window.EnderecoIntegrator.config.apiUrl = "[{$oViewConf->getModuleUrl('endereco-oxid6-client', 'out/io.php')}]";
+            window.EnderecoIntegrator.config.apiUrl = "[{$oViewConf->getModuleUrl('endereco-oxid6-client', 'proxy/io.php')}]";
             window.EnderecoIntegrator.config.apiKey = '[{$enderecoclient.sAPIKEY}]';
+            window.EnderecoIntegrator.defaultCountry = '[{$enderecoclient.sPreselectableCountries}]';
+            window.EnderecoIntegrator.defaultCountrySelect = [{if $enderecoclient.bPreselectCountry }]true[{else}]false[{/if}];
             window.EnderecoIntegrator.config.showDebugInfo = [{if $enderecoclient.bShowDebug }]true[{else}]false[{/if}];
             window.EnderecoIntegrator.config.remoteApiUrl = '[{$enderecoclient.sSERVICEURL}]';
-            window.EnderecoIntegrator.config.trigger.onblur.active = [{if $enderecoclient.sAMSBLURTRIGGER }]true[{else}]false[{/if}];
+            window.EnderecoIntegrator.config.trigger.onblur = [{if $enderecoclient.sAMSBLURTRIGGER }]true[{else}]false[{/if}];
+            window.EnderecoIntegrator.config.trigger.onsubmit = [{if $enderecoclient.sAMSSubmitTrigger }]true[{else}]false[{/if}];
+            window.EnderecoIntegrator.config.ux.resumeSubmit = [{if $enderecoclient.sAMSResumeSubmit }]true[{else}]false[{/if}];
             window.EnderecoIntegrator.config.ux.smartFill = [{if $enderecoclient.sSMARTFILL }]true[{else}]false[{/if}];
             window.EnderecoIntegrator.config.ux.checkExisting = [{if $enderecoclient.sCHECKALL }]true[{else}]false[{/if}];
             window.EnderecoIntegrator.countryMappingUrl = '[{$sitepath}]?cl=enderecocountrycontroller';
@@ -41,11 +45,11 @@
             }
 
             window.EnderecoIntegrator.checkAllCallback = function(EAO) {
-                if ('invoice_address' === EAO.addressType) {
+                if ('billing_address' === EAO.addressType) {
                     if (document.querySelector('#userChangeAddress')) {
                         document.querySelector('#userChangeAddress').click();
                     }
-                } else if ('delivery_address' === EAO.addressType) {
+                } else if ('shipping_address' === EAO.addressType) {
                     if (document.querySelector('.dd-available-addresses .dd-edit-shipping-address')) {
                         document.querySelector('.dd-available-addresses .dd-edit-shipping-address').click();
                     }
@@ -55,16 +59,12 @@
             window.EnderecoIntegrator.ready = true;
         }
 
-        if (window.EnderecoIntegrator && window.EnderecoIntegrator.initAMS) {
-            enderecoConfigureIntegrator()
-        } else if (window.EnderecoIntegrator && !window.EnderecoIntegrator.initAMS && window.EnderecoIntegrator.asyncCallbacks) {
-            window.EnderecoIntegrator.asyncCallbacks.push(enderecoConfigureIntegrator);
-        } else {
-            window.EnderecoIntegrator = {
-                asyncCallbacks: []
-            };
-            window.EnderecoIntegrator.asyncCallbacks.push(enderecoConfigureIntegrator);
-        }
+        var $interval = setInterval( function() {
+            if (window.EnderecoIntegrator && window.EnderecoIntegrator.loaded) {
+                enderecoConfigureIntegrator()
+                clearInterval($interval);
+            }
+        }, 100);
     </script>
     [{oxid_include_widget cl="enderecocolor"}]
 [{/if}]

@@ -25,14 +25,14 @@ class IncludeColorWidget extends \OxidEsales\Eshop\Application\Component\Widget\
         if (!$sOxId) {
             $sOxId = $oConfig->getShopId();
         }
-        $this->_aViewData['enderecoclient'] = array();
+        $this->_aViewData['enderecoclient'] = [];
 
         $sql = "SELECT `OXVARNAME`, DECODE( `OXVARVALUE`, ? ) AS `OXVARVALUE` FROM `oxconfig` WHERE `OXSHOPID` = ? AND `OXMODULE` = 'module:endereco-oxid6-client'";
         $resultSet = \OxidEsales\Eshop\Core\DatabaseProvider::getDb()->getAll(
             $sql,
-            array($oConfig->getConfigParam('sConfigKey'), $sOxId)
+            [$oConfig->getConfigParam('sConfigKey'), $sOxId]
         );
-        $settings = array();
+        $settings = [];
 
         foreach ($resultSet as $result) {
             $settings[$result[0]] = $result[1];
@@ -69,6 +69,6 @@ class IncludeColorWidget extends \OxidEsales\Eshop\Application\Component\Widget\
             $g = hexdec(substr($hex,2,2));
             $b = hexdec(substr($hex,4,2));
         }
-        return array($r, $g, $b);
+        return [$r, $g, $b];
     }
 }

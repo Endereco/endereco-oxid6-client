@@ -31,12 +31,12 @@ class Settings extends \OxidEsales\Eshop\Application\Controller\Admin\AdminContr
 
         $this->_aViewData['oxid'] =  $sOxId;
 
-        $this->_aViewData['cstrs'] = array();
+        $this->_aViewData['cstrs'] = [];
 
         $sql = "SELECT `OXVARNAME`, DECODE( `OXVARVALUE`, ? ) AS `OXVARVALUE` FROM `oxconfig` WHERE `OXSHOPID` = ? AND `OXMODULE` = 'module:endereco-oxid6-client'";
         $resultSet = \OxidEsales\Eshop\Core\DatabaseProvider::getDb()->getAll(
             $sql,
-            array($oConfig->getConfigParam('sConfigKey'), $sOxId)
+            [$oConfig->getConfigParam('sConfigKey'), $sOxId]
         );
 
         foreach ($resultSet as $result) {
@@ -51,20 +51,20 @@ class Settings extends \OxidEsales\Eshop\Application\Controller\Admin\AdminContr
         $sAgentInfo  = "Endereco Oxid6 Client v" . $moduleVersions['endereco-oxid6-client'];
         $bHasConnection = false;
         try {
-            $message = array(
+            $message = [
                 'jsonrpc' => '2.0',
                 'id' => 1,
                 'method' => 'readinessCheck'
-            );
-            $client = new Client(array('timeout' => 5.0));
+            ];
+            $client = new Client(['timeout' => 5.0]);
 
-            $newHeaders = array(
+            $newHeaders = [
                 'Content-Type' => 'application/json',
                 'X-Auth-Key' => $sApiKy,
                 'X-Transaction-Id' => 'not_required',
                 'X-Transaction-Referer' => 'Settings.php',
                 'X-Agent' => $sAgentInfo,
-            );
+            ];
             $request = new Request('POST', $sEndpoint, $newHeaders, json_encode($message));
             $client->send($request);
             $bHasConnection = true;
@@ -87,36 +87,69 @@ class Settings extends \OxidEsales\Eshop\Application\Controller\Admin\AdminContr
     public function save()
     {
         $oConfig = $this->getConfig();
-        $checkboxes = array(
+        $checkboxes = [
             'sUSEAMS',
             'sCHECKALL',
             'sAMSBLURTRIGGER',
             'sSMARTFILL',
             'bUseEmailservice',
             'bUsePersonalService',
+            'bAllowControllerFilter',
+            'bPreselectCountry',
+            'sAMSSubmitTrigger',
+            'sAMSResumeSubmit',
             'bUseCss',
             'bShowDebug'
-        );
+        ];
 
         $sOxId = \OxidEsales\Eshop\Core\Registry::getConfig()->getRequestParameter('oxid');
         $aConfStrs = \OxidEsales\Eshop\Core\Registry::getConfig()->getRequestParameter('cstrs');
 
-        if (is_array($aConfStrs)) {
-            foreach ($aConfStrs as $sVarName => $sVarVal) {
-                if (in_array($sVarName, $checkboxes)) {
-                    $oConfig->saveShopConfVar('bool', $sVarName, true, $sOxId, 'module:endereco-oxid6-client');
-                } else {
-                    $oConfig->saveShopConfVar('str', $sVarName, $sVarVal, $sOxId, 'module:endereco-oxid6-client');
+        if (
+            class_exists(\OxidEsales\EshopCommunity\Internal\Container\ContainerFactory::class)
+        ) {
+            $moduleSettingBridge = \OxidEsales\EshopCommunity\Internal\Container\ContainerFactory::getInstance()
+                ->getContainer()
+                ->get(\OxidEsales\EshopCommunity\Internal\Framework\Module\Configuration\Bridge\ModuleSettingBridgeInterface::class);
+
+            if (is_array($aConfStrs)) {
+                foreach ($aConfStrs as $sVarName => $sVarVal) {
+                    if (in_array($sVarName, $checkboxes)) {
+                        $moduleSettingBridge->save($sVarName, true, 'endereco-oxid6-client');
+                    } else {
+                        $moduleSettingBridge->save($sVarName, $sVarVal, 'endereco-oxid6-client');
+                    }
                 }
+            }
 
+            foreach ($checkboxes as $checkboxname) {
+                if (!isset($aConfStrs[$checkboxname])) {
+                    $moduleSettingBridge->save($checkboxname, false, 'endereco-oxid6-client');
+                }
+            }
+        } else {
+
+            if (is_array($aConfStrs)) {
+                foreach ($aConfStrs as $sVarName => $sVarVal) {
+                    if (in_array($sVarName, $checkboxes)) {
+                        $oConfig->saveShopConfVar('bool', $sVarName, true, $sOxId, 'module:endereco-oxid6-client');
+                    } else {
+                        $oConfig->saveShopConfVar('str', $sVarName, $sVarVal, $sOxId, 'module:endereco-oxid6-client');
+                    }
+
+                }
+            }
+
+            foreach ($checkboxes as $checkboxname) {
+                if (!isset($aConfStrs[$checkboxname])) {
+                    $oConfig->saveShopConfVar('bool', $checkboxname, false, $sOxId, 'module:endereco-oxid6-client');
+                }
             }
         }
 
-        foreach ($checkboxes as $checkboxname) {
-            if (!isset($aConfStrs[$checkboxname])) {
-                $oConfig->saveShopConfVar('bool', $checkboxname, false, $sOxId, 'module:endereco-oxid6-client');
-            }
-        }
+
+
+
 
         return;
     }

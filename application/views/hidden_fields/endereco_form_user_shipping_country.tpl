@@ -3,47 +3,13 @@
 [{$smarty.block.parent}]
 
 <script>
-    if (window.EnderecoIntegrator && window.EnderecoIntegrator.initAMS) {
-        window.EnderecoIntegrator.waitUntilReady().then(function() {
-            window.EnderecoIntegrator.initAMS('deladr[oxaddress');
-        }).catch();
-    } else if (window.EnderecoIntegrator && !window.EnderecoIntegrator.initAMS && window.EnderecoIntegrator.asyncCallbacks) {
-        window.EnderecoIntegrator.asyncCallbacks.push(function() {
-            window.EnderecoIntegrator.waitUntilReady().then(function() {
+    ( function() {
+        var $interval = setInterval( function() {
+            if (window.EnderecoIntegrator && window.EnderecoIntegrator.ready) {
                 window.EnderecoIntegrator.initAMS('deladr[oxaddress');
-            }).catch();
-        });
-    } else {
-        window.EnderecoIntegrator = {
-            asyncCallbacks: []
-        };
-        window.EnderecoIntegrator.asyncCallbacks.push(function() {
-            window.EnderecoIntegrator.waitUntilReady().then(function() {
-                window.EnderecoIntegrator.initAMS('deladr[oxaddress');
-            }).catch();
-        });
-    }
-</script>
-
-<script>
-    if (window.EnderecoIntegrator && window.EnderecoIntegrator.initPersonServices) {
-        window.EnderecoIntegrator.waitUntilReady().then(function() {
-            window.EnderecoIntegrator.initPersonServices('deladr[oxaddress');
-        }).catch();
-    } else if (window.EnderecoIntegrator && !window.EnderecoIntegrator.initPersonServices && window.EnderecoIntegrator.asyncCallbacks) {
-        window.EnderecoIntegrator.asyncCallbacks.push(function() {
-            window.EnderecoIntegrator.waitUntilReady().then(function() {
                 window.EnderecoIntegrator.initPersonServices('deladr[oxaddress');
-            }).catch();
-        });
-    } else {
-        window.EnderecoIntegrator = {
-            asyncCallbacks: []
-        };
-        window.EnderecoIntegrator.asyncCallbacks.push(function() {
-            window.EnderecoIntegrator.waitUntilReady().then(function() {
-                window.EnderecoIntegrator.initPersonServices('deladr[oxaddress');
-            }).catch();
-        });
-    }
+                clearInterval($interval);
+            }
+        }, 100);
+    })();
 </script>
