@@ -3,47 +3,26 @@ namespace Endereco\Oxid6Client\Installer;
 
 use OxidEsales\Eshop\Core\DatabaseProvider;
 use OxidEsales\Eshop\Core\Registry;
+use tm\oxid\SchemaExpander\DesireExpander;
 
 class Installer
 {
 
     public static function onActivate()
     {
-        // Extend oxaddress.
-        $aColumns = DatabaseProvider::getDb()->getAll("SHOW COLUMNS FROM `oxaddress` LIKE 'MOJOAMSTS';");
-        if (0 === count($aColumns)) {
-            $sql = "ALTER TABLE `oxaddress`
-            ADD `MOJOAMSTS` varchar(64) NOT NULL AFTER `OXADDRESSUSERID`;";
-            DatabaseProvider::getDb()->execute($sql);
-        }
-        unset($aColumns);
+        $desireExpander = new DesireExpander();
 
         // Extend oxaddress.
-        $aColumns = DatabaseProvider::getDb()->getAll("SHOW COLUMNS FROM `oxaddress` LIKE 'MOJOAMSSTATUS';");
-        if (0 === count($aColumns)) {
-            $sql = "ALTER TABLE `oxaddress`
-            ADD `MOJOAMSSTATUS` varchar(64) NOT NULL DEFAULT 'address_not_checked' AFTER `OXADDRESSUSERID`;";
-            DatabaseProvider::getDb()->execute($sql);
-        }
-        unset($aColumns);
+        $desireExpander->table('oxaddress')
+            ->addField('MOJOAMSSTATUS', "varchar(64) NOT NULL DEFAULT 'address_not_checked'")->after('OXADDRESSUSERID')
+            ->addField('MOJOAMSTS', 'varchar(64) NOT NULL');
 
         // Extend oxuser.
-        $aColumns = DatabaseProvider::getDb()->getAll("SHOW COLUMNS FROM `oxuser` LIKE 'MOJOAMSTS';");
-        if (0 === count($aColumns)) {
-            $sql = "ALTER TABLE `oxuser`
-            ADD `MOJOAMSTS` varchar(64) NOT NULL AFTER `OXPASSSALT`;";
-            DatabaseProvider::getDb()->execute($sql);
-        }
-        unset($aColumns);
+        $desireExpander->table('oxuser')
+            ->addField('MOJOAMSSTATUS', "varchar(64) NOT NULL DEFAULT 'address_not_checked'")->after('OXPASSSALT')
+            ->addField('MOJOAMSTS', 'varchar(64) NOT NULL');
 
-        // Extend oxuser.
-        $aColumns = DatabaseProvider::getDb()->getAll("SHOW COLUMNS FROM `oxuser` LIKE 'MOJOAMSSTATUS';");
-        if (0 === count($aColumns)) {
-            $sql = "ALTER TABLE `oxuser`
-            ADD `MOJOAMSSTATUS` varchar(64) NOT NULL DEFAULT 'address_not_checked' AFTER `OXPASSSALT`;";
-            DatabaseProvider::getDb()->execute($sql);
-        }
-        unset($aColumns);
+        $desireExpander->execute();
     }
 
     public static function onDeactivate()
