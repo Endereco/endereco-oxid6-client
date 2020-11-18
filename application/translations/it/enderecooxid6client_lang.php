@@ -20,11 +20,9 @@ $sLangName  = "Italiano";
 $aLang = [
     'charset' => 'UTF-8',
     'ENDERECOOXID6CLIENT_POPUP_HEADLINE' => 'Verifica il tuo indirizzo',
-    'ENDERECOOXID6CLIENT_POPUP_SUBLINE' => 'The address you entered seems to have a problem. Please select an address from options under.',
+    'ENDERECOOXID6CLIENT_POPUP_SUBLINE' => 'L\'indirizzo inserito non sembra valido. Scegliere un indirizzo fra le seguenti proposte.',
     'ENDERECOOXID6CLIENT_POPUP_INPUT' => 'L\'indirizzo che avete inserito sembra avere un problema. Selezionate un indirizzo tra le opzioni in basso.',
-    'ENDERECOOXID6CLIENT_POPUP_EDITINPUT' => '(edit)',
+    'ENDERECOOXID6CLIENT_POPUP_EDITINPUT' => '(modifica)',
     'ENDERECOOXID6CLIENT_POPUP_SUGGESTIONS' => 'Le nostre proposte:',
     'ENDERECOOXID6CLIENT_POPUP_USE' => 'Utilizzare l\'indirizzo selezionato',
-
 ];
-
