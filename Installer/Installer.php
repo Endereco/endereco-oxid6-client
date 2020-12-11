@@ -27,6 +27,15 @@ class Installer
         }
         unset($aColumns);
 
+        // Extend oxaddress.
+        $aColumns = DatabaseProvider::getDb()->getAll("SHOW COLUMNS FROM `oxaddress` LIKE 'MOJOAMSPREDICTIONS';");
+        if (0 === count($aColumns)) {
+            $sql = "ALTER TABLE `oxaddress`
+            ADD `MOJOAMSPREDICTIONS` TEXT NOT NULL AFTER `OXADDRESSUSERID`;";
+            DatabaseProvider::getDb()->execute($sql);
+        }
+        unset($aColumns);
+
         // Extend oxuser.
         $aColumns = DatabaseProvider::getDb()->getAll("SHOW COLUMNS FROM `oxuser` LIKE 'MOJOAMSTS';");
         if (0 === count($aColumns)) {
@@ -41,6 +50,15 @@ class Installer
         if (0 === count($aColumns)) {
             $sql = "ALTER TABLE `oxuser`
             ADD `MOJOAMSSTATUS` varchar(64) NOT NULL DEFAULT 'address_not_checked' AFTER `OXPASSSALT`;";
+            DatabaseProvider::getDb()->execute($sql);
+        }
+        unset($aColumns);
+
+        // Extend oxaddress.
+        $aColumns = DatabaseProvider::getDb()->getAll("SHOW COLUMNS FROM `oxaddress` LIKE 'MOJOAMSPREDICTIONS';");
+        if (0 === count($aColumns)) {
+            $sql = "ALTER TABLE `oxuser`
+            ADD `MOJOAMSPREDICTIONS` TEXT NOT NULL AFTER `OXPASSSALT`;";
             DatabaseProvider::getDb()->execute($sql);
         }
         unset($aColumns);

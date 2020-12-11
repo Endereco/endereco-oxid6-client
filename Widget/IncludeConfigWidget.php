@@ -32,7 +32,7 @@ class IncludeConfigWidget extends \OxidEsales\Eshop\Application\Component\Widget
             'azure' => 'enderecoconfig_azure.tpl',
         ];
 
-        $this->extendConfigMapping($aConfigMapping);
+        $aConfigMapping = $this->extendConfigMapping($aConfigMapping);
 
         $oTheme = oxNew('oxtheme');
         $oTheme->load($oTheme->getActiveThemeId());
@@ -73,6 +73,7 @@ class IncludeConfigWidget extends \OxidEsales\Eshop\Application\Component\Widget
         parent::render();
 
         $oConfig = $this->getConfig();
+        $moduleVersions = \OxidEsales\Eshop\Core\Registry::getConfig()->getConfigParam('aModuleVersions');
         $sOxId = \OxidEsales\Eshop\Core\Registry::getConfig()->getRequestParameter('oxid');
         if (!$sOxId) {
             $sOxId = $oConfig->getShopId();
@@ -94,6 +95,7 @@ class IncludeConfigWidget extends \OxidEsales\Eshop\Application\Component\Widget
         }
 
         $this->_aViewData['enderecoclient']['sControllerClass'] = $this->_aViewParams['curClass'];
+        $this->_aViewData['enderecoclient']['sModuleVersion'] = $moduleVersions['endereco-oxid6-client'];
 
         return $this->getThisTemplate();
     }

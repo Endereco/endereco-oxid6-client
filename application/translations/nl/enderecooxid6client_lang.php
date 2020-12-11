@@ -25,6 +25,12 @@ $aLang = [
     'ENDERECOOXID6CLIENT_POPUP_EDITINPUT' => '(aanpassen)',
     'ENDERECOOXID6CLIENT_POPUP_SUGGESTIONS' => 'Onze suggesties:',
     'ENDERECOOXID6CLIENT_POPUP_USE' => 'Selectie toepassen',
-
+    'ENDERECOOXID6CLIENT_POPUP_HEADLINE_GENERAL_ADDRESS' => 'Controleer adres',
+    'ENDERECOOXID6CLIENT_POPUP_HEADLINE_BILLING_ADDRESS' => 'Controleer het factuuradres',
+    'ENDERECOOXID6CLIENT_POPUP_HEADLINE_SHIPPING_ADDRESS' => 'Controleer het afleveradres',
+    'ENDERECOOXID6CLIENT_STATUS_EMAIL_NOT_CORRECT' => 'Het e-mailadres lijkt niet correct te zijn',
+    'ENDERECOOXID6CLIENT_STATUS_EMAIL_CANT_RECEIVE' => 'De e-mailinbox is niet bereikbaar',
+    'ENDERECOOXID6CLIENT_STATUS_EMAIL_SYNTAX_ERROR' => 'Controleer de spelling',
+    'ENDERECOOXID6CLIENT_STATUS_EMAIL_NO_MX' => 'Het e-mailadres bestaat niet. Controleer de spelling.',
 ];
 

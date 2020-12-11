@@ -380,6 +380,16 @@
                     &nbsp;[{ oxinputhelp ident="HELP_SHOP_MODULE_sSMARTFILL" }]
                 </td>
             </tr>
+
+            <tr>
+                <td>
+                    [{oxmultilang ident="SHOP_MODULE_bChangeFieldsOrder"}]
+                </td>
+                <td>
+                    <input type="checkbox" class="editinput" name="cstrs[bChangeFieldsOrder]" value="true" [{if $cstrs.bChangeFieldsOrder == true}]checked="checked"[{/if}]>
+                    &nbsp;[{ oxinputhelp ident="HELP_SHOP_MODULE_bChangeFieldsOrder" }]
+                </td>
+            </tr>
         </table>
     </fieldset>
 
@@ -393,6 +403,15 @@
                 <td>
                     <input type="checkbox" class="editinput" name="cstrs[bUseEmailservice]" value="true" [{if $cstrs.bUseEmailservice == true}]checked="checked"[{/if}]>
                     &nbsp;[{ oxinputhelp ident="HELP_SHOP_MODULE_bUseEmailservice" }]
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    [{oxmultilang ident="SHOP_MODULE_bShowEmailserviceErrors"}]
+                </td>
+                <td>
+                    <input type="checkbox" class="editinput" name="cstrs[bShowEmailserviceErrors]" value="true" [{if $cstrs.bShowEmailserviceErrors == true}]checked="checked"[{/if}]>
+                    &nbsp;[{ oxinputhelp ident="HELP_SHOP_MODULE_bShowEmailserviceErrors" }]
                 </td>
             </tr>
         </table>

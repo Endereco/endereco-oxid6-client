@@ -42,9 +42,11 @@ $aLang = [
     'SHOP_MODULE_sAMSSubmitTrigger' => 'Check address on submit',
     'SHOP_MODULE_sAMSResumeSubmit' => 'Continue submit after the address has been selected',
     'SHOP_MODULE_sSMARTFILL' => 'Fill fields when input is obvious (SmartFill)',
+    'SHOP_MODULE_bChangeFieldsOrder' => 'Optimize address fields order',
 
     'SHOP_MODULE_GROUP_EmailServices' => 'Emailservice',
     'SHOP_MODULE_bUseEmailservice'=> 'Emailcheck is active',
+    'SHOP_MODULE_bShowEmailserviceErrors' => 'Display eMail status messages',
     'SHOP_MODULE_GROUP_PersonalService'=> 'Personservice',
     'SHOP_MODULE_bUsePersonalService'=> 'Check salutation',
     'SHOP_MODULE_GROUP_VISUAL'=> 'Visual',

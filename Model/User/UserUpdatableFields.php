@@ -9,6 +9,7 @@ class UserUpdatableFields extends UserUpdatableFields_parent
         $aReturn = parent::getUpdatableFields();
         $aReturn[] = 'MOJOAMSTS';
         $aReturn[] = 'MOJOAMSSTATUS';
+        $aReturn[] = 'MOJOAMSPREDICTIONS';
 
         return $aReturn;
     }

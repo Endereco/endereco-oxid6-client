@@ -99,7 +99,9 @@ class Settings extends \OxidEsales\Eshop\Application\Controller\Admin\AdminContr
             'sAMSSubmitTrigger',
             'sAMSResumeSubmit',
             'bUseCss',
-            'bShowDebug'
+            'bShowDebug',
+            'bShowEmailserviceErrors',
+            'bChangeFieldsOrder'
         ];
 
         $sOxId = \OxidEsales\Eshop\Core\Registry::getConfig()->getRequestParameter('oxid');

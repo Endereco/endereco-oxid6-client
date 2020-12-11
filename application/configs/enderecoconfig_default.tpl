@@ -1,11 +1,11 @@
 [{assign var="sitepath" value=$oViewConf->getBaseDir()}]
 
-[{if !$enderecoclient.bAllowControllerFilter || $enderecoclient.sControllerClass|in_array:$enderecoclient.aAllowedControllerClasses }]
-    <script async defer src="[{$oViewConf->getModuleUrl('endereco-oxid6-client', 'out/assets/js/oxid6-bundle.js')}]"></script>
-
-    [{if $enderecoclient.bUseCss }]
-        <link rel="stylesheet" href="[{$oViewConf->getModuleUrl('endereco-oxid6-client', 'out/assets/css/oxid-default.css')}]">
-    [{/if}]
+[{if
+    !$enderecoclient.bAllowControllerFilter ||
+    $enderecoclient.sControllerClass|in_array:$enderecoclient.aAllowedControllerClasses ||
+    ('order' == $enderecoclient.sControllerClass && $enderecoclient.sCHECKALL)
+}]
+    <script async defer src="[{$oViewConf->getModuleUrl('endereco-oxid6-client', 'out/assets/js/endereco.min.js')}]?ver=[{$enderecoclient.sModuleVersion}]"></script>
 
     [{assign var="popUpHeadline" value="ENDERECOOXID6CLIENT_POPUP_HEADLINE"|oxmultilangassign}]
     [{assign var="popUpSubline" value="ENDERECOOXID6CLIENT_POPUP_SUBLINE"|oxmultilangassign}]
@@ -14,6 +14,13 @@
     [{assign var="ourSuggestions" value="ENDERECOOXID6CLIENT_POPUP_SUGGESTIONS"|oxmultilangassign}]
     [{assign var="useSelected" value="ENDERECOOXID6CLIENT_POPUP_USE"|oxmultilangassign}]
 
+    [{assign var="generalAddress" value="ENDERECOOXID6CLIENT_POPUP_HEADLINE_GENERAL_ADDRESS"|oxmultilangassign}]
+    [{assign var="billingAddress" value="ENDERECOOXID6CLIENT_POPUP_HEADLINE_BILLING_ADDRESS"|oxmultilangassign}]
+    [{assign var="shippingAddress" value="ENDERECOOXID6CLIENT_POPUP_HEADLINE_SHIPPING_ADDRESS"|oxmultilangassign}]
+    [{assign var="emailNotCorrect" value="ENDERECOOXID6CLIENT_STATUS_EMAIL_NOT_CORRECT"|oxmultilangassign}]
+    [{assign var="emailVantReceive" value="ENDERECOOXID6CLIENT_STATUS_EMAIL_CANT_RECEIVE"|oxmultilangassign}]
+    [{assign var="emailSyntaxError" value="ENDERECOOXID6CLIENT_STATUS_EMAIL_SYNTAX"|oxmultilangassign}]
+    [{assign var="emailNoMx" value="ENDERECOOXID6CLIENT_STATUS_EMAIL_NO_MX"|oxmultilangassign}]
 
     <script>
         var enderecoConfigureIntegrator = function() {
@@ -28,6 +35,9 @@
             window.EnderecoIntegrator.config.ux.resumeSubmit = [{if $enderecoclient.sAMSResumeSubmit }]true[{else}]false[{/if}];
             window.EnderecoIntegrator.config.ux.smartFill = [{if $enderecoclient.sSMARTFILL }]true[{else}]false[{/if}];
             window.EnderecoIntegrator.config.ux.checkExisting = [{if $enderecoclient.sCHECKALL }]true[{else}]false[{/if}];
+            window.EnderecoIntegrator.config.ux.changeFieldsOrder = [{if $enderecoclient.bChangeFieldsOrder }]true[{else}]false[{/if}];;
+            window.EnderecoIntegrator.config.ux.showEmailStatus = [{if $enderecoclient.bShowEmailserviceErrors }]true[{else}]false[{/if}];
+            window.EnderecoIntegrator.config.ux.useStandardCss = [{if $enderecoclient.bUseCss }]true[{else}]false[{/if}];
             window.EnderecoIntegrator.countryMappingUrl = '[{$sitepath}]?cl=enderecocountrycontroller';
             window.EnderecoIntegrator.config.templates.button = '<button class="btn btn-primary" type="button" endereco-use-selection>[{$useSelected|escape:quotes}]</button>';
             window.EnderecoIntegrator.config.texts = {
@@ -36,7 +46,18 @@
                 yourInput: '[{$yourInput|escape:quotes}]',
                 editYourInput: '[{$editYourInput|escape:quotes}]',
                 ourSuggestions: '[{$ourSuggestions|escape:quotes}]',
-                useSelected: '[{$useSelected|escape:quotes}]'
+                useSelected: '[{$useSelected|escape:quotes}]',
+                popupHeadlines: {
+                    general_address: '[{$generalAddress|escape:quotes}]',
+                    billing_address: '[{$billingAddress|escape:quotes}]',
+                    shipping_address: '[{$shippingAddress|escape:quotes}]'
+                },
+                statuses: {
+                    'email_not_correct': '[{$emailNotCorrect|escape:quotes}]',
+                    'email_cant_receive': '[{$emailVantReceive|escape:quotes}]',
+                    'email_syntax_error': '[{$emailSyntaxError|escape:quotes}]',
+                    'email_no_mx': '[{$emailNoMx|escape:quotes}]'
+                }
             };
             window.EnderecoIntegrator.activeServices = {
                 ams: [{if $enderecoclient.sUSEAMS }]true[{else}]false[{/if}],

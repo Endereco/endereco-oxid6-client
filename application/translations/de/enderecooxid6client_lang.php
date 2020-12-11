@@ -25,5 +25,12 @@ $aLang = [
     'ENDERECOOXID6CLIENT_POPUP_EDITINPUT' => '(&auml;ndern)',
     'ENDERECOOXID6CLIENT_POPUP_SUGGESTIONS' => 'Unsere Vorschl&auml;ge:',
     'ENDERECOOXID6CLIENT_POPUP_USE' => 'Auswahl &uuml;bernehmen',
+    'ENDERECOOXID6CLIENT_POPUP_HEADLINE_GENERAL_ADDRESS' => 'Adresse pr&uuml;fen',
+    'ENDERECOOXID6CLIENT_POPUP_HEADLINE_BILLING_ADDRESS' => 'Rechnungsadresse pr&uuml;fen',
+    'ENDERECOOXID6CLIENT_POPUP_HEADLINE_SHIPPING_ADDRESS' => 'Lieferadresse pr&uuml;fen',
+    'ENDERECOOXID6CLIENT_STATUS_EMAIL_NOT_CORRECT' => 'Die E-Mail Adresse scheint nicht korrekt zu sein',
+    'ENDERECOOXID6CLIENT_STATUS_EMAIL_CANT_RECEIVE' => 'Das E-Mail Postfach ist nicht erreichbar',
+    'ENDERECOOXID6CLIENT_STATUS_EMAIL_SYNTAX_ERROR' => 'Prüfen Sie die Schreibweise',
+    'ENDERECOOXID6CLIENT_STATUS_EMAIL_NO_MX' => 'Die E-Mail Adresse existiert nicht. Prüfen Sie die Schreibweise.',
 ];
 

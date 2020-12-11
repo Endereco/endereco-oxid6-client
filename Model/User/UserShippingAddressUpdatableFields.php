@@ -10,6 +10,7 @@ class UserShippingAddressUpdatableFields extends UserShippingAddressUpdatableFie
         $aReturn = parent::getUpdatableFields();
         $aReturn[] = 'MOJOAMSTS';
         $aReturn[] = 'MOJOAMSSTATUS';
+        $aReturn[] = 'MOJOAMSPREDICTIONS';
 
         return $aReturn;
     }
