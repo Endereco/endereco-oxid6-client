@@ -10,13 +10,13 @@ class CountryController extends \OxidEsales\Eshop\Application\Controller\Fronten
         $countryId = $oConfig->getRequestParameter('countryId', true);
         $countryCode = $oConfig->getRequestParameter('countryCode', true);
 
-        if ($countryId) {
+        if (!empty($countryId)) {
             $oCountry = oxNew('oxCountry');
             $oCountry->load($countryId);
             die(strtolower($oCountry->oxcountry__oxisoalpha2->value));
         }
 
-        if ($countryCode) {
+        if (!empty($countryCode)) {
             $oCountry = oxNew('oxCountry');
             die($oCountry->getIdByCode($countryCode));
         }

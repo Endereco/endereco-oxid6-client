@@ -17,7 +17,7 @@
 
                 EAO.waitForAllExtension().then( function(EAO) {
                     EAO.onAfterModalRendered.push(function(EAO) {
-                        if (!document.querySelector('[name="deladr[oxaddress__oxcountryid]"]').offsetParent) {
+                        if (!document.querySelector('[name="deladr[oxaddress__oxzip]"]').offsetParent) {
                             if ('billing_address' === EAO.addressType) {
                                 if (document.querySelector('#userChangeAddress')) {
                                     document.querySelector('#userChangeAddress').click();
@@ -31,7 +31,12 @@
                     })
                 }).catch();
 
-                window.EnderecoIntegrator.initPersonServices('deladr[oxaddress__');
+                window.EnderecoIntegrator.initPersonServices(
+                    'deladr[oxaddress__',
+                    {
+                        name: 'shipping'
+                    }
+                );
                 clearInterval($interval);
             }
         }, 100);
