@@ -105,9 +105,21 @@ EnderecoIntegrator.resolvers.salutationRead = function (value) {
     });
 }
 
+EnderecoIntegrator.resolvers.salutationSetValue = function (subscriber, value) {
+    if (
+        !!$ &&
+        subscriber.object &&
+        subscriber.object.classList.contains('selectpicker') &&
+        !!$(subscriber.object).selectpicker
+    ) {
+        $(subscriber.object).selectpicker('val', value);
+    } else {
+        subscriber.object.value = value;
+    }
+}
+
 EnderecoIntegrator.afterAMSActivation.push( function(EAO) {
     //
-
 });
 
 if (window.EnderecoIntegrator) {
