@@ -54,7 +54,7 @@ class User extends User_parent
                             'Content-Type' => 'application/json',
                             'X-Auth-Key' => $sApiKy,
                             'X-Transaction-Id' => $sSessionId,
-                            'X-Transaction-Referer' => 'UserComponent.php',
+                            'X-Transaction-Referer' => $_SERVER['HTTP_REFERER']?$_SERVER['HTTP_REFERER']:__FILE__,
                             'X-Agent' => $sAgentInfo,
                         ];
                         $request = new Request('POST', $sEndpoint, $newHeaders, json_encode($message));
@@ -81,7 +81,7 @@ class User extends User_parent
                     'Content-Type' => 'application/json',
                     'X-Auth-Key' => $sApiKy,
                     'X-Transaction-Id' => 'not_required',
-                    'X-Transaction-Referer' => 'UserComponent.php',
+                    'X-Transaction-Referer' => $_SERVER['HTTP_REFERER']?$_SERVER['HTTP_REFERER']:__FILE__,
                     'X-Agent' => $sAgentInfo,
                 ];
                 $request = new Request('POST', $sEndpoint, $newHeaders, json_encode($message));
@@ -104,7 +104,7 @@ class User extends User_parent
     {
         $sOxId = \OxidEsales\Eshop\Core\Registry::getConfig()->getShopId();
         $bCheckExisting = \OxidEsales\Eshop\Core\Registry::getConfig()->getShopConfVar('sCHECKALL', $sOxId, 'module:endereco-oxid6-client');
-        if (1 === intval($bCheckExisting)) {
+        if (1 === intval($bCheckExisting) && !$this->isAdmin()) {
             $enderecoService = new EnderecoService();
 
             $oLang = \OxidEsales\Eshop\Core\Registry::getLang();

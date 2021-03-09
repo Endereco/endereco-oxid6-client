@@ -46,11 +46,12 @@ class EnderecoService
                 ]
             ];
             $client = new Client(['timeout' => 6.0]);
+            $sSessionId = $this->generateSessionId();
             $newHeaders = [
                 'Content-Type' => 'application/json',
                 'X-Auth-Key' => $this->_apiKey,
-                'X-Transaction-Id' => $this->generateSessionId(),
-                'X-Transaction-Referer' => $_SERVER['HTTP_REFERER'],
+                'X-Transaction-Id' => $sSessionId,
+                'X-Transaction-Referer' => $_SERVER['HTTP_REFERER']?$_SERVER['HTTP_REFERER']:__FILE__,
                 'X-Agent' => $this->_moduleVer,
             ];
 
@@ -89,6 +90,56 @@ class EnderecoService
             }
         } catch(\Exception $e) {
             // Do nothing.
+        }
+
+        // If checked, send doAccounting.
+        $bAnyDoAccounting = false;
+        try {
+            $message = [
+                'jsonrpc' => '2.0',
+                'id' => 1,
+                'method' => 'doAccounting',
+                'params' => [
+                    'sessionId' => $sSessionId
+                ]
+            ];
+            $client = new Client(['timeout' => 5.0]);
+
+            $newHeaders = [
+                'Content-Type' => 'application/json',
+                'X-Auth-Key' => $this->_apiKey,
+                'X-Transaction-Id' => $sSessionId,
+                'X-Transaction-Referer' => $_SERVER['HTTP_REFERER']?$_SERVER['HTTP_REFERER']:__FILE__,
+                'X-Agent' => $this->_moduleVer,
+            ];
+            $request = new Request('POST', $this->_endpoint, $newHeaders, json_encode($message));
+            $client->send($request);
+            $bAnyDoAccounting = true;
+        } catch(\Exception $e) {
+            // Do nothing.
+        }
+
+        if ($bAnyDoAccounting) {
+            try {
+                $message = [
+                    'jsonrpc' => '2.0',
+                    'id' => 1,
+                    'method' => 'doConversion',
+                    'params' => []
+                ];
+                $client = new Client(['timeout' => 5.0]);
+                $newHeaders = [
+                    'Content-Type' => 'application/json',
+                    'X-Auth-Key' => $this->_apiKey,
+                    'X-Transaction-Id' => 'not_required',
+                    'X-Transaction-Referer' => $_SERVER['HTTP_REFERER']?$_SERVER['HTTP_REFERER']:__FILE__,
+                    'X-Agent' => $this->_moduleVer,
+                ];
+                $request = new Request('POST', $this->_endpoint, $newHeaders, json_encode($message));
+                $client->send($request);
+            } catch(\Exception $e) {
+                // Do nothing.
+            }
         }
 
         return $address;
@@ -157,15 +208,13 @@ class EnderecoService
     }
 
     public function shouldBeChecked($statusCodes) {
-        if (empty($statusCodes)) {
-            $statusCodes[] = 'address_not_checked';
-        }
-
-        return !in_array('address_selected_by_customer', $statusCodes) &&
-        (
-            in_array('address_not_checked', $statusCodes) ||
+        return !(
+            in_array('address_not_found', $statusCodes) ||
             in_array('address_needs_correction', $statusCodes) ||
-            in_array('address_multiple_variants', $statusCodes)
+            in_array('address_correct', $statusCodes) ||
+            in_array('address_multiple_variants', $statusCodes) ||
+            in_array('address_of_not_supported_type', $statusCodes) ||
+            in_array('address_selected_by_customer', $statusCodes)
         );
     }
 }
