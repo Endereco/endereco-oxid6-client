@@ -19,7 +19,7 @@
     [{assign var="shippingAddress" value="ENDERECOOXID6CLIENT_POPUP_HEADLINE_SHIPPING_ADDRESS"|oxmultilangassign}]
     [{assign var="emailNotCorrect" value="ENDERECOOXID6CLIENT_STATUS_EMAIL_NOT_CORRECT"|oxmultilangassign}]
     [{assign var="emailVantReceive" value="ENDERECOOXID6CLIENT_STATUS_EMAIL_CANT_RECEIVE"|oxmultilangassign}]
-    [{assign var="emailSyntaxError" value="ENDERECOOXID6CLIENT_STATUS_EMAIL_SYNTAX"|oxmultilangassign}]
+    [{assign var="emailSyntaxError" value="ENDERECOOXID6CLIENT_STATUS_EMAIL_SYNTAX_ERROR"|oxmultilangassign}]
     [{assign var="emailNoMx" value="ENDERECOOXID6CLIENT_STATUS_EMAIL_NO_MX"|oxmultilangassign}]
 
     <script>

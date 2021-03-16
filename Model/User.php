@@ -104,7 +104,7 @@ class User extends User_parent
     {
         $sOxId = \OxidEsales\Eshop\Core\Registry::getConfig()->getShopId();
         $bCheckExisting = \OxidEsales\Eshop\Core\Registry::getConfig()->getShopConfVar('sCHECKALL', $sOxId, 'module:endereco-oxid6-client');
-        if (1 === intval($bCheckExisting) && !$this->isAdmin()) {
+        if (1 === intval($bCheckExisting) && !$this->isAdmin() && !empty($this->oxuser__oxid->value)) {
             $enderecoService = new EnderecoService();
 
             $oLang = \OxidEsales\Eshop\Core\Registry::getLang();

@@ -15,21 +15,23 @@
                     }
                 );
 
-                EAO.waitForAllExtension().then( function(EAO) {
-                    EAO.onAfterModalRendered.push(function(EAO) {
-                        if (!document.querySelector('[name="invadr[oxuser__oxzip]"]').offsetParent) {
-                            if ('billing_address' === EAO.addressType) {
-                                if (document.querySelector('#userChangeAddress')) {
-                                    document.querySelector('#userChangeAddress').click();
-                                }
-                            } else if ('shipping_address' === EAO.addressType) {
-                                if (document.querySelector('.dd-available-addresses .dd-edit-shipping-address')) {
-                                    document.querySelector('.dd-available-addresses .dd-edit-shipping-address').click();
+                if (EAO) {
+                    EAO.waitForAllExtension().then( function(EAO) {
+                        EAO.onAfterModalRendered.push(function(EAO) {
+                            if (!document.querySelector('[name="invadr[oxuser__oxzip]"]').offsetParent) {
+                                if ('billing_address' === EAO.addressType) {
+                                    if (document.querySelector('#userChangeAddress')) {
+                                        document.querySelector('#userChangeAddress').click();
+                                    }
+                                } else if ('shipping_address' === EAO.addressType) {
+                                    if (document.querySelector('.dd-available-addresses .dd-edit-shipping-address')) {
+                                        document.querySelector('.dd-available-addresses .dd-edit-shipping-address').click();
+                                    }
                                 }
                             }
-                        }
-                    })
-                }).catch();
+                        })
+                    }).catch();
+                }
 
                 window.EnderecoIntegrator.initPersonServices(
                     'invadr[oxuser__',

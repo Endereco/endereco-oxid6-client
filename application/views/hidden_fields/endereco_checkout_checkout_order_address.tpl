@@ -69,49 +69,51 @@
                                 }
                             }
                         );
-                        billingAMS.waitForAllExtension().then( function(EAO) {
+                        if (billingAMS) {
+                            billingAMS.waitForAllExtension().then( function(EAO) {
 
-                            EAO.onEditAddress.push( function() {
-                                document.querySelectorAll('#orderAddress form')[0].submit();
-                            })
+                                EAO.onEditAddress.push( function() {
+                                    document.querySelectorAll('#orderAddress form')[0].submit();
+                                })
 
-                            EAO.onAfterAddressCheckSelected.push( function(EAO) {
-                                EAO.waitForAllPopupsToClose().then(function() {
-                                    EAO.waitUntilReady().then( function() {
-                                        if (window.EnderecoIntegrator && window.EnderecoIntegrator.globalSpace.reloadPage) {
-                                            window.EnderecoIntegrator.globalSpace.reloadPage();
-                                            window.EnderecoIntegrator.globalSpace.reloadPage = undefined;
-                                        }
-                                    }).catch()
-                                }).catch();
-                                EAO._awaits++;
-                                EAO.util.axios({
-                                    method: 'post',
-                                    url: '[{$sitepath}]?cl=enderecosaveaddress',
-                                    data: {
-                                        method: 'editBillingAddress',
-                                        params: {
-                                            addressId: '[{$oxcmp_user->oxuser__oxid->value}]',
-                                            address: EAO.address,
-                                            enderecometa: {
-                                                ts: EAO.addressTimestamp,
-                                                status: EAO.addressStatus,
-                                                predictions: EAO.addressPredictions,
+                                EAO.onAfterAddressCheckSelected.push( function(EAO) {
+                                    EAO.waitForAllPopupsToClose().then(function() {
+                                        EAO.waitUntilReady().then( function() {
+                                            if (window.EnderecoIntegrator && window.EnderecoIntegrator.globalSpace.reloadPage) {
+                                                window.EnderecoIntegrator.globalSpace.reloadPage();
+                                                window.EnderecoIntegrator.globalSpace.reloadPage = undefined;
+                                            }
+                                        }).catch()
+                                    }).catch();
+                                    EAO._awaits++;
+                                    EAO.util.axios({
+                                        method: 'post',
+                                        url: '[{$sitepath}]?cl=enderecosaveaddress',
+                                        data: {
+                                            method: 'editBillingAddress',
+                                            params: {
+                                                addressId: '[{$oxcmp_user->oxuser__oxid->value}]',
+                                                address: EAO.address,
+                                                enderecometa: {
+                                                    ts: EAO.addressTimestamp,
+                                                    status: EAO.addressStatus,
+                                                    predictions: EAO.addressPredictions,
+                                                }
                                             }
                                         }
-                                    }
-                                }).then( function(response) {
-                                    window.EnderecoIntegrator.globalSpace.reloadPage = function() {
-                                        location.reload();
-                                    }
-                                }).catch( function(error) {
-                                    console.log('Something went wrong.')
-                                }).finally( function() {
-                                    EAO._awaits--;
+                                    }).then( function(response) {
+                                        window.EnderecoIntegrator.globalSpace.reloadPage = function() {
+                                            location.reload();
+                                        }
+                                    }).catch( function(error) {
+                                        console.log('Something went wrong.')
+                                    }).finally( function() {
+                                        EAO._awaits--;
+                                    });
                                 });
-                            });
 
-                        }).catch();
+                            }).catch();
+                        }
                         clearInterval($interval);
                     }
                 }, 100);

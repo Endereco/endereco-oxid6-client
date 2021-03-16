@@ -47,5 +47,6 @@ class AddressController extends \OxidEsales\Eshop\Application\Controller\Fronten
                 $oAddress->save();
             }
         }
+        exit;
     }
 }
