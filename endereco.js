@@ -133,7 +133,6 @@ window.EnderecoIntegrator.asyncCallbacks.forEach(function (cb) {
 });
 window.EnderecoIntegrator.asyncCallbacks = [];
 
-
 window.EnderecoIntegrator.waitUntilReady().then(function () {
     //
 });
