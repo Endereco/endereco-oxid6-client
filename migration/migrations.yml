@@ -1,0 +1,5 @@
+---
+name: "endereco-oxid6-client module migration (endereco-oxid6-client)"
+migrations_namespace: Endereco\Oxid6Client\migration\data
+table_name: oxmigrations_endereco_oxid6_client
+migrations_directory: data
