@@ -99,4 +99,10 @@ class UserComponent extends UserComponent_parent
         $this->findAndCloseEnderecoSessions();
         return parent::changeUser();
     }
+
+    public function createUser()
+    {
+        $this->findAndCloseEnderecoSessions();
+        return parent::createUser();
+    }
 }
