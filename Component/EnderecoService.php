@@ -36,7 +36,7 @@ class EnderecoService
      * This should happen before any validation
      * @see https://github.com/Endereco/endereco-oxid6-client/issues/9
      */
-    private function findAndCloseEnderecoSessions()
+    public function findAndCloseEnderecoSessions()
     {
         $sOxId = \OxidEsales\Eshop\Core\Registry::getConfig()->getShopId();
         $sApiKy = \OxidEsales\Eshop\Core\Registry::getConfig()->getShopConfVar('sAPIKEY', $sOxId, 'module:endereco-oxid6-client');
