@@ -88,12 +88,6 @@ class UserComponent extends UserComponent_parent
         return parent::changeuser_testvalues();
     }
 
-    public function registerUser()
-    {
-        $this->findAndCloseEnderecoSessions();
-        return parent::registerUser();
-    }
-
     public function changeUser()
     {
         $this->findAndCloseEnderecoSessions();
