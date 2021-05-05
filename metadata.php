@@ -5,7 +5,7 @@ $aModule = [
     'title'         => 'Endereco Adress-Services für Oxid',
     'description'   => 'Kundenstammdaten-Validierung und Korrekturvorschläge.',
     'thumbnail'     => 'endereco.png',
-    'version'       => '4.2.1',
+    'version'       => '4.2.2',
     'author'        => 'Endereco UG (Haftungsbeschränkt) - Gesellschaft für Master Data Quality Management',
     'email'         => 'info@endereco.de',
     'url'           => 'https://www.endereco.de',
@@ -52,6 +52,7 @@ $aModule = [
         \OxidEsales\Eshop\Application\Model\User::class =>  \Endereco\Oxid6Client\Model\User::class,
         \OxidEsales\Eshop\Application\Model\User\UserUpdatableFields::class => \Endereco\Oxid6Client\Model\User\UserUpdatableFields::class,
         \OxidEsales\Eshop\Application\Model\User\UserShippingAddressUpdatableFields::class => \Endereco\Oxid6Client\Model\User\UserShippingAddressUpdatableFields::class,
+        \OxidEsales\Eshop\Application\Component\UserComponent::class => \Endereco\Oxid6Client\Controller\UserComponent::class,
     ],
     'templates' => [
         'enderecocolor.tpl' => 'endereco/endereco-oxid6-client/application/views/enderecocolor.tpl',
