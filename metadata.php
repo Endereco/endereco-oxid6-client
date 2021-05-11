@@ -64,7 +64,6 @@ $aModule = [
     ],
     'events'       => [
         'onActivate'   => '\Endereco\Oxid6Client\Installer\Installer::onActivate',
-        'onDeactivate' => '\Endereco\Oxid6Client\Installer\Installer::onDeactivate',
     ],
     'settings' => [
         ['group' => 'ACCESS', 'name' => 'sAPIKEY', 'type' => 'str', 'value' => ''],
