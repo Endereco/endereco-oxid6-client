@@ -3,12 +3,24 @@ namespace Endereco\Oxid6Client\Installer;
 
 use OxidEsales\Eshop\Core\DatabaseProvider;
 use OxidEsales\Eshop\Core\Registry;
+use OxidEsales\Facts\Config\ConfigFile;
 
 class Installer
 {
+    private static $configReader;
 
     public static function onActivate()
     {
+        if (is_null(self::$configReader)) {
+            self::$configReader = new ConfigFile();
+        }
+
+        if (!empty(self::$configReader->bEnderecoUseMigrations) && self::$configReader->bEnderecoUseMigrations) {
+            return;
+        }
+
+        // Underneath is a fallback in case your system can't use migrations.
+
         // Extend oxaddress.
         $aColumns = DatabaseProvider::getDb()->getAll("SHOW COLUMNS FROM `oxaddress` LIKE 'MOJOAMSTS';");
         if (0 === count($aColumns)) {
