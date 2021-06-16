@@ -32,5 +32,18 @@ $aLang = [
     'ENDERECOOXID6CLIENT_STATUS_EMAIL_CANT_RECEIVE' => 'The email inbox cannot be reached',
     'ENDERECOOXID6CLIENT_STATUS_EMAIL_SYNTAX_ERROR' => 'Check the spelling',
     'ENDERECOOXID6CLIENT_STATUS_EMAIL_NO_MX' => 'The email address does not exist. Check the spelling.',
+
+    'ENDERECOOXID6CLIENT_mistakeNoPredictionSubline' => 'Your address could not be verified. Please check your entry and change or confirm it.',
+    'ENDERECOOXID6CLIENT_notFoundSubline' => 'Your address could not be verified. Please check your entry and change or confirm it.',
+    'ENDERECOOXID6CLIENT_confirmMyAddressCheckbox' => 'I confirm that my address is correct and deliverable.',
+    'ENDERECOOXID6CLIENT_confirmAddress' => 'Confirm address',
+    'ENDERECOOXID6CLIENT_editAddress' => 'Edit address',
+    'ENDERECOOXID6CLIENT_warningText' => 'Incorrect addresses can lead to problems in delivery and cause further costs.',
+    'ENDERECOOXID6CLIENT_STATUS_buildingNumberIsMissing' => 'No house number included.',
+    'ENDERECOOXID6CLIENT_STATUS_buildingNumberNotFound' => 'This house number was not found.',
+    'ENDERECOOXID6CLIENT_STATUS_streetNameNeedsCorrection' => 'The spelling of the street is incorrect.',
+    'ENDERECOOXID6CLIENT_STATUS_localityNeedsCorrection' => 'The spelling of the locality is incorrect.',
+    'ENDERECOOXID6CLIENT_STATUS_postalCodeNeedsCorrection' => 'The postal code is invalid.',
+    'ENDERECOOXID6CLIENT_STATUS_countryCodeNeedsCorrection' => 'The entered address was found in another country.',
 ];
 

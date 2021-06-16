@@ -44,6 +44,9 @@ $aLang = [
     'SHOP_MODULE_sSMARTFILL' => 'Fill fields when input is obvious (SmartFill)',
     'SHOP_MODULE_bChangeFieldsOrder' => 'Optimize address fields order',
 
+    'SHOP_MODULE_bAllowCloseModal' => 'Allow customer to close address selection modal',
+    'SHOP_MODULE_bConfirmWithCheckbox' => 'Customer has to confirm a faulty address with a checkbox',
+
     'SHOP_MODULE_GROUP_EmailServices' => 'Emailservice',
     'SHOP_MODULE_bUseEmailservice'=> 'Emailcheck is active',
     'SHOP_MODULE_bShowEmailserviceErrors' => 'Display eMail status messages',

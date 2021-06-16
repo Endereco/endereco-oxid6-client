@@ -32,5 +32,18 @@ $aLang = [
     'ENDERECOOXID6CLIENT_STATUS_EMAIL_CANT_RECEIVE' => 'Das E-Mail Postfach ist nicht erreichbar',
     'ENDERECOOXID6CLIENT_STATUS_EMAIL_SYNTAX_ERROR' => 'Prüfen Sie die Schreibweise',
     'ENDERECOOXID6CLIENT_STATUS_EMAIL_NO_MX' => 'Die E-Mail Adresse existiert nicht. Prüfen Sie die Schreibweise.',
+
+    'ENDERECOOXID6CLIENT_mistakeNoPredictionSubline' => 'Ihre Adresse konnte nicht verifiziert werden. Bitte prüfen Sie Ihre Eingabe und ändern oder bestätigen sie.',
+    'ENDERECOOXID6CLIENT_notFoundSubline' => 'Ihre Adresse konnte nicht verifiziert werden. Bitte prüfen Sie Ihre Eingabe und ändern oder bestätigen sie.',
+    'ENDERECOOXID6CLIENT_confirmMyAddressCheckbox' => 'Ich bestätige, dass meine Adresse korrekt und zustellbar ist.',
+    'ENDERECOOXID6CLIENT_confirmAddress' => 'Adresse bestätigen',
+    'ENDERECOOXID6CLIENT_editAddress' => 'Adresse bearbeiten',
+    'ENDERECOOXID6CLIENT_warningText' => 'Falsche Adressen können zu Problemen in der Zustellung führen und weitere Kosten verursachen.',
+    'ENDERECOOXID6CLIENT_STATUS_buildingNumberIsMissing' => 'Keine Hausnummer enthalten.',
+    'ENDERECOOXID6CLIENT_STATUS_buildingNumberNotFound' => 'Diese Hausnummer wurde nicht gefunden.',
+    'ENDERECOOXID6CLIENT_STATUS_streetNameNeedsCorrection' => 'Die Schreibweise der Straße ist fehlerhaft.',
+    'ENDERECOOXID6CLIENT_STATUS_localityNeedsCorrection' => 'Die Schreibweise des Ortes ist fehlerhaft.',
+    'ENDERECOOXID6CLIENT_STATUS_postalCodeNeedsCorrection' => 'Die PLZ ist ungültig.',
+    'ENDERECOOXID6CLIENT_STATUS_countryCodeNeedsCorrection' => 'Die eingegebene Adresse wurde in einem anderen Land gefunden.',
 ];
 

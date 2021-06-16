@@ -47,10 +47,12 @@ class User extends User_parent
                 $checkedBillingAddress = $enderecoService->checkAddress($billingAddress);
 
                 // Save.
-                $this->oxuser__mojoamsstatus->value = $checkedBillingAddress['__status'];
-                $this->oxuser__mojoamsts->rawValue = $checkedBillingAddress['__timestamp'];
-                $this->oxuser__mojoamspredictions->rawValue = $checkedBillingAddress['__predictions'];
-                $this->save();
+                if (!empty($checkedBillingAddress['__status'])) {
+                    $this->oxuser__mojoamsstatus->value = $checkedBillingAddress['__status'];
+                    $this->oxuser__mojoamsts->rawValue = $checkedBillingAddress['__timestamp'];
+                    $this->oxuser__mojoamspredictions->rawValue = $checkedBillingAddress['__predictions'];
+                    $this->save();
+                }
             }
 
             // check delivery addresses.
@@ -82,10 +84,12 @@ class User extends User_parent
                     $checkedShippingAddress = $enderecoService->checkAddress($shippingAddress);
 
                     // Save.
-                    $oAddress->oxaddress__mojoamsstatus->value = $checkedShippingAddress['__status'];
-                    $oAddress->oxaddress__mojoamsts->rawValue = $checkedShippingAddress['__timestamp'];
-                    $oAddress->oxaddress__mojoamspredictions->rawValue = $checkedShippingAddress['__predictions'];
-                    $oAddress->save();
+                    if (!empty($checkedShippingAddress['__status'])) {
+                        $oAddress->oxaddress__mojoamsstatus->value = $checkedShippingAddress['__status'];
+                        $oAddress->oxaddress__mojoamsts->rawValue = $checkedShippingAddress['__timestamp'];
+                        $oAddress->oxaddress__mojoamspredictions->rawValue = $checkedShippingAddress['__predictions'];
+                        $oAddress->save();
+                    }
                 }
             }
         }

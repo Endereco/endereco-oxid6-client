@@ -47,6 +47,9 @@ $aLang = [
     'SHOP_MODULE_sSMARTFILL' => 'Felder bei nur einem verbleibenden Adressvorschlag automatisch ausfüllen (SmartAutocomplete) <i>beta</i>',
     'SHOP_MODULE_bChangeFieldsOrder' => 'Felderreihenfolge optimieren',
 
+    'SHOP_MODULE_bAllowCloseModal' => 'Das Schließen des Modals erlauben',
+    'SHOP_MODULE_bConfirmWithCheckbox' => 'Kunde muss eine fehlerhafte Adresse mit einer Checkbox bestätigen',
+
     'SHOP_MODULE_GROUP_EmailServices' => 'E-Mail Service',
     'SHOP_MODULE_bShowEmailserviceErrors' => 'E-Mail Statusmeldungen anzeigen',
     'SHOP_MODULE_bUseEmailservice'=> 'E-Mail Adressprüfung aktivieren',

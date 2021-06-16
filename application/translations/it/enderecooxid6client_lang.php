@@ -32,4 +32,17 @@ $aLang = [
     'ENDERECOOXID6CLIENT_STATUS_EMAIL_CANT_RECEIVE' => 'Impossibile raggiungere la casella di posta in arrivo',
     'ENDERECOOXID6CLIENT_STATUS_EMAIL_SYNTAX_ERROR' => 'Controlla l\'ortografia',
     'ENDERECOOXID6CLIENT_STATUS_EMAIL_NO_MX' => 'L\'indirizzo e-mail non esiste. Controlla l\'ortografia.',
+
+    'ENDERECOOXID6CLIENT_mistakeNoPredictionSubline' => 'Il tuo indirizzo non può essere verificato. Per favore, controllate la vostra iscrizione e cambiatela o confermatela.',
+    'ENDERECOOXID6CLIENT_notFoundSubline' => 'Il tuo indirizzo non può essere verificato. Per favore, controllate la vostra iscrizione e cambiatela o confermatela.',
+    'ENDERECOOXID6CLIENT_confirmMyAddressCheckbox' => 'Confermo che il mio indirizzo è corretto e consegnabile.',
+    'ENDERECOOXID6CLIENT_confirmAddress' => 'Confermare l\'indirizzo',
+    'ENDERECOOXID6CLIENT_editAddress' => 'Modifica indirizzo',
+    'ENDERECOOXID6CLIENT_warningText' => 'Gli indirizzi errati possono portare a problemi nella consegna e causare ulteriori costi.',
+    'ENDERECOOXID6CLIENT_STATUS_buildingNumberIsMissing' => 'Nessun numero civico incluso.',
+    'ENDERECOOXID6CLIENT_STATUS_buildingNumberNotFound' => 'Questo numero civico non è stato trovato.',
+    'ENDERECOOXID6CLIENT_STATUS_streetNameNeedsCorrection' => 'L\'ortografia della strada non è corretta.',
+    'ENDERECOOXID6CLIENT_STATUS_localityNeedsCorrection' => 'L\'ortografia del luogo non è corretta.',
+    'ENDERECOOXID6CLIENT_STATUS_postalCodeNeedsCorrection' => 'Il codice postale non è valido.',
+    'ENDERECOOXID6CLIENT_STATUS_countryCodeNeedsCorrection' => 'L\'indirizzo inserito è stato trovato in un altro paese.',
 ];

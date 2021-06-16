@@ -32,5 +32,18 @@ $aLang = [
     'ENDERECOOXID6CLIENT_STATUS_EMAIL_CANT_RECEIVE' => 'La boîte de réception e-mail n\'est pas accessible',
     'ENDERECOOXID6CLIENT_STATUS_EMAIL_SYNTAX_ERROR' => 'Vérifier l\'orthographe',
     'ENDERECOOXID6CLIENT_STATUS_EMAIL_NO_MX' => 'L\'adresse e-mail n\'existe pas. Vérifier l\'orthographe.',
+
+    'ENDERECOOXID6CLIENT_mistakeNoPredictionSubline' => 'Votre adresse n\'a pas pu être vérifiée. Veuillez vérifier votre inscription et la modifier ou la confirmer.',
+    'ENDERECOOXID6CLIENT_notFoundSubline' => 'Votre adresse n\'a pas pu être vérifiée. Veuillez vérifier votre inscription et la modifier ou la confirmer.',
+    'ENDERECOOXID6CLIENT_confirmMyAddressCheckbox' => 'Je confirme que mon adresse est correcte et livrable.',
+    'ENDERECOOXID6CLIENT_confirmAddress' => 'Confirmer l\'adresse',
+    'ENDERECOOXID6CLIENT_editAddress' => 'Modifier l\'adresse',
+    'ENDERECOOXID6CLIENT_warningText' => 'Les adresses incorrectes peuvent entraîner des problèmes de livraison et des coûts supplémentaires.',
+    'ENDERECOOXID6CLIENT_STATUS_buildingNumberIsMissing' => 'Pas de numéro de maison inclus.',
+    'ENDERECOOXID6CLIENT_STATUS_buildingNumberNotFound' => 'Ce numéro de maison n\'a pas été trouvé.',
+    'ENDERECOOXID6CLIENT_STATUS_streetNameNeedsCorrection' => 'L\'orthographe de la rue est incorrecte.',
+    'ENDERECOOXID6CLIENT_STATUS_localityNeedsCorrection' => 'L\'orthographe du lieu est incorrecte.',
+    'ENDERECOOXID6CLIENT_STATUS_postalCodeNeedsCorrection' => 'Le code postal n\'est pas valide.',
+    'ENDERECOOXID6CLIENT_STATUS_countryCodeNeedsCorrection' => 'L\'adresse saisie a été trouvée dans un autre pays.',
 ];
 
