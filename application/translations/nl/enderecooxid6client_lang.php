@@ -32,5 +32,18 @@ $aLang = [
     'ENDERECOOXID6CLIENT_STATUS_EMAIL_CANT_RECEIVE' => 'De e-mailinbox is niet bereikbaar',
     'ENDERECOOXID6CLIENT_STATUS_EMAIL_SYNTAX_ERROR' => 'Controleer de spelling',
     'ENDERECOOXID6CLIENT_STATUS_EMAIL_NO_MX' => 'Het e-mailadres bestaat niet. Controleer de spelling.',
+
+    'ENDERECOOXID6CLIENT_mistakeNoPredictionSubline' => 'Uw adres kon niet worden geverifieerd. Controleer uw invoer en wijzig of bevestig deze.',
+    'ENDERECOOXID6CLIENT_notFoundSubline' => 'Uw adres kon niet worden geverifieerd. Controleer uw invoer en wijzig of bevestig deze.',
+    'ENDERECOOXID6CLIENT_confirmMyAddressCheckbox' => 'Ik bevestig dat mijn adres correct en leverbaar is.',
+    'ENDERECOOXID6CLIENT_confirmAddress' => 'Bevestig adres',
+    'ENDERECOOXID6CLIENT_editAddress' => 'Verander adres',
+    'ENDERECOOXID6CLIENT_warningText' => 'Onjuiste adressen kunnen leiden tot problemen met de levering en extra kosten veroorzaken.',
+    'ENDERECOOXID6CLIENT_STATUS_buildingNumberIsMissing' => 'Geen huisnummer inbegrepen.',
+    'ENDERECOOXID6CLIENT_STATUS_buildingNumberNotFound' => 'Dit huisnummer is niet gevonden.',
+    'ENDERECOOXID6CLIENT_STATUS_streetNameNeedsCorrection' => 'De spelling van de straat is onjuist.',
+    'ENDERECOOXID6CLIENT_STATUS_localityNeedsCorrection' => 'De spelling van de plaats is onjuist.',
+    'ENDERECOOXID6CLIENT_STATUS_postalCodeNeedsCorrection' => 'De postcode is ongeldig.',
+    'ENDERECOOXID6CLIENT_STATUS_countryCodeNeedsCorrection' => 'Het door u ingevulde adres is gevonden in een ander land.',
 ];
 
