@@ -47,6 +47,7 @@ class AddressController extends \OxidEsales\Eshop\Application\Controller\Fronten
                 $oAddress->save();
             }
         }
-        exit;
+
+        \OxidEsales\Eshop\Core\Registry::getUtils()->showMessageAndExit();
     }
 }

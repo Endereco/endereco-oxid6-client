@@ -98,7 +98,7 @@
                 personService: [{if $enderecoclient.bUsePersonalService }]true[{else}]false[{/if}]
             }
 
-            window.EnderecoIntegrator.countryCodeToNameMapping = JSON.parse('[{$enderecoclient.sCountries}]');
+            window.EnderecoIntegrator.countryCodeToNameMapping = JSON.parse('[{$enderecoclient.sCountries|escape:quotes}]');
 
             window.EnderecoIntegrator.checkAllCallback = function(EAO) {
                 if ('billing_address' === EAO.addressType) {

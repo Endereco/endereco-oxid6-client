@@ -14,14 +14,11 @@ class CountryController extends \OxidEsales\Eshop\Application\Controller\Fronten
             $oCountry = oxNew('oxCountry');
             $oCountry->load($countryId);
             $returnValue = strtolower($oCountry->oxcountry__oxisoalpha2->value);
-        }
-
-        if (!empty($countryCode)) {
+        } elseif (!empty($countryCode)) {
             $oCountry = oxNew('oxCountry');
             $returnValue = $oCountry->getIdByCode($countryCode);
         }
 
-        echo $returnValue;
-        exit;
+        \OxidEsales\Eshop\Core\Registry::getUtils()->showMessageAndExit($returnValue);
     }
 }
