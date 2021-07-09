@@ -48,6 +48,6 @@ class AddressController extends \OxidEsales\Eshop\Application\Controller\Fronten
             }
         }
 
-        \OxidEsales\Eshop\Core\Registry::getUtils()->showMessageAndExit();
+        \OxidEsales\Eshop\Core\Registry::getUtils()->showMessageAndExit('');
     }
 }
