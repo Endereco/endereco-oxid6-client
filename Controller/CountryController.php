@@ -6,6 +6,11 @@ use OxidEsales\Eshop\Core\Registry;
 
 class CountryController extends \OxidEsales\Eshop\Application\Controller\FrontendController
 {
+    /**
+     * Disable components which needs to be initialized/rendered
+     * @var bool
+     */
+    protected $_blLoadComponents = false;
 
     /**
      * @return void
