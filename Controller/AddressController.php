@@ -7,10 +7,18 @@ use \OxidEsales\Eshop\Application\Model\Address;
 
 class AddressController extends \OxidEsales\Eshop\Application\Controller\FrontendController
 {
+    /**
+     * Disable components which needs to be initialized/rendered
+     * @var bool
+     */
+    protected $_blLoadComponents = false;
+
+    /**
+     * @return void|null
+     * @throws \Exception
+     */
     public function render()
     {
-        $oConfig = $this->getConfig();
-        $sOxId = \OxidEsales\Eshop\Core\Registry::getConfig()->getRequestParameter('oxid');
         $data = json_decode(file_get_contents('php://input'), true);
         if ('editBillingAddress' == $data['method']) {
             // Save billing address.

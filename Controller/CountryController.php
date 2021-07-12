@@ -2,13 +2,24 @@
 
 namespace Endereco\Oxid6Client\Controller;
 
+use OxidEsales\Eshop\Core\Registry;
+
 class CountryController extends \OxidEsales\Eshop\Application\Controller\FrontendController
 {
+    /**
+     * Disable components which needs to be initialized/rendered
+     * @var bool
+     */
+    protected $_blLoadComponents = false;
+
+    /**
+     * @return void
+     */
     public function render()
     {
-        $oConfig = $this->getConfig();
-        $countryId = $oConfig->getRequestParameter('countryId', true);
-        $countryCode = $oConfig->getRequestParameter('countryCode', true);
+        $countryId = Registry::getRequest()->getRequestEscapedParameter('countryId');
+        $countryCode = Registry::getRequest()->getRequestEscapedParameter('countryCode');
+
         $returnValue = '';
         if (!empty($countryId)) {
             $oCountry = oxNew('oxCountry');
