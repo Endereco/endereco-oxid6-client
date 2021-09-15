@@ -4,7 +4,15 @@
     ( function() {
         var $interval = setInterval( function() {
             if (window.EnderecoIntegrator && window.EnderecoIntegrator.ready) {
-                window.EnderecoIntegrator.initEmailServices('');
+                window.EnderecoIntegrator.initEmailServices(
+                    '',
+                    {
+                        "name": "default",
+                        "postfixCollection": {
+                            "email": "#content [name=\"lgn_usr\"]"
+                        }
+                    }
+                );
                 clearInterval($interval);
             }
         }, 100);

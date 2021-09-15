@@ -1,7 +1,7 @@
 import Promise from 'promise-polyfill';
 import merge from 'lodash.merge';
 import axios from 'axios';
-import EnderecoIntegrator from '../js-sdk/modules/integrator'; // JS-SDK, Version 1.1.0-rc.5
+import EnderecoIntegrator from '../js-sdk/modules/integrator'; // JS-SDK, Version 1.1.0-rc.6
 import css from '../js-sdk/themes/oxid6-theme.scss'
 import 'polyfill-array-includes';
 
@@ -119,7 +119,18 @@ EnderecoIntegrator.resolvers.salutationSetValue = function (subscriber, value) {
 }
 
 EnderecoIntegrator.afterAMSActivation.push( function(EAO) {
-    //
+    if (!!document.querySelector('[type="checkbox"][name="blshowshipaddress"]')) {
+        if (document.querySelector('[type="checkbox"][name="blshowshipaddress"]').checked) {
+            if ('shipping_address' === EAO.addressType) {
+                EAO.active = false;
+            }
+        }
+        document.querySelector('[type="checkbox"][name="blshowshipaddress"]').addEventListener('change', function(e) {
+            if ('shipping_address' === EAO.addressType) {
+                EAO.active = !document.querySelector('[type="checkbox"][name="blshowshipaddress"]').checked;
+            }
+        });
+    }
 });
 
 if (window.EnderecoIntegrator) {
