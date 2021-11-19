@@ -21,7 +21,7 @@ class IncludeColorWidget extends \OxidEsales\Eshop\Application\Component\Widget\
         parent::render();
 
         $oConfig = $this->getConfig();
-        $sOxId = \OxidEsales\Eshop\Core\Registry::getConfig()->getRequestParameter('oxid');
+        $sOxId = \OxidEsales\Eshop\Core\Registry::getConfig()->getRequestEscapedParameter('oxid');
         if (!$sOxId) {
             $sOxId = $oConfig->getShopId();
         }

@@ -1,7 +1,7 @@
 import Promise from 'promise-polyfill';
 import merge from 'lodash.merge';
 import axios from 'axios';
-import EnderecoIntegrator from '../js-sdk/modules/integrator'; // JS-SDK, Version 1.1.0-rc.6
+import EnderecoIntegrator from '../js-sdk/modules/integrator'; // JS-SDK, Version 1.1.1
 import css from '../js-sdk/themes/oxid6-theme.scss'
 import 'polyfill-array-includes';
 
@@ -43,33 +43,12 @@ EnderecoIntegrator.postfix = {
 EnderecoIntegrator.css = css[0][1];
 EnderecoIntegrator.resolvers.countryCodeWrite = function (value) {
     return new Promise(function (resolve, reject) {
-
-        var countyCodeEndpoint = EnderecoIntegrator.countryMappingUrl + '&countryCode=' + value;
-        new axios.get(countyCodeEndpoint, {
-            timeout: 3000
-        })
-            .then(function (response) {
-                resolve(response.data);
-            })
-            .catch(function (e) {
-                resolve(value);
-            }).finally(function () {
-        });
+        resolve(window.EnderecoIntegrator.countryMapping[value.toLowerCase()]);
     });
 }
 EnderecoIntegrator.resolvers.countryCodeRead = function (value) {
     return new Promise(function (resolve, reject) {
-        var countyEndpoint = EnderecoIntegrator.countryMappingUrl + '&countryId=' + value;
-        new axios.get(countyEndpoint, {
-            timeout: 3000
-        })
-            .then(function (response) {
-                resolve(response.data);
-            })
-            .catch(function (e) {
-                resolve(value);
-            }).finally(function () {
-        });
+        resolve(window.EnderecoIntegrator.countryMappingReverse[value.toLowerCase()]);
     });
 }
 

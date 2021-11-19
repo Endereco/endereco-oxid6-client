@@ -10,7 +10,7 @@ class AddressController extends \OxidEsales\Eshop\Application\Controller\Fronten
     public function render()
     {
         $oConfig = $this->getConfig();
-        $sOxId = \OxidEsales\Eshop\Core\Registry::getConfig()->getRequestParameter('oxid');
+        $sOxId = \OxidEsales\Eshop\Core\Registry::getConfig()->getRequestEscapedParameter('oxid');
         $data = json_decode(file_get_contents('php://input'), true);
         if ('editBillingAddress' == $data['method']) {
             // Save billing address.

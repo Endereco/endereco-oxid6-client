@@ -390,6 +390,26 @@
                     &nbsp;[{ oxinputhelp ident="HELP_SHOP_MODULE_bChangeFieldsOrder" }]
                 </td>
             </tr>
+
+            <tr>
+                <td>
+                    [{oxmultilang ident="SHOP_MODULE_bAllowCloseModal"}]
+                </td>
+                <td>
+                    <input type="checkbox" class="editinput" name="cstrs[bAllowCloseModal]" value="true" [{if $cstrs.bAllowCloseModal == true}]checked="checked"[{/if}]>
+                    &nbsp;[{ oxinputhelp ident="HELP_SHOP_MODULE_bAllowCloseModal" }]
+                </td>
+            </tr>
+
+            <tr>
+                <td>
+                    [{oxmultilang ident="SHOP_MODULE_bConfirmWithCheckbox"}]
+                </td>
+                <td>
+                    <input type="checkbox" class="editinput" name="cstrs[bConfirmWithCheckbox]" value="true" [{if $cstrs.bConfirmWithCheckbox == true}]checked="checked"[{/if}]>
+                    &nbsp;[{ oxinputhelp ident="HELP_SHOP_MODULE_bConfirmWithCheckbox" }]
+                </td>
+            </tr>
         </table>
     </fieldset>
 
@@ -449,7 +469,7 @@
                     [{oxmultilang ident="SHOP_MODULE_sMainColor"}]
                 </td>
                 <td>
-                    <input type="color" class="editinput" size="60" maxlength="255" name="cstrs[sMainColor]" value="[{$cstrs.sMainColor}]">
+                    <input type="text" class="editinput" size="60" maxlength="255" name="cstrs[sMainColor]" value="[{$cstrs.sMainColor}]">
                     &nbsp;[{ oxinputhelp ident="HELP_SHOP_MODULE_sMainColor" }]
                 </td>
             </tr>
@@ -458,7 +478,7 @@
                     [{oxmultilang ident="SHOP_MODULE_sErrorColor"}]
                 </td>
                 <td>
-                    <input type="color" class="editinput" size="60" maxlength="255" name="cstrs[sErrorColor]" value="[{$cstrs.sErrorColor}]">
+                    <input type="text" class="editinput" size="60" maxlength="255" name="cstrs[sErrorColor]" value="[{$cstrs.sErrorColor}]">
                     &nbsp;[{ oxinputhelp ident="HELP_SHOP_MODULE_sErrorColor" }]
                 </td>
             </tr>
@@ -467,7 +487,7 @@
                     [{oxmultilang ident="SHOP_MODULE_sSelectionColor"}]
                 </td>
                 <td>
-                    <input type="color" class="editinput" size="60" maxlength="255" name="cstrs[sSelectionColor]" value="[{$cstrs.sSelectionColor}]">
+                    <input type="text" class="editinput" size="60" maxlength="255" name="cstrs[sSelectionColor]" value="[{$cstrs.sSelectionColor}]">
                     &nbsp;[{ oxinputhelp ident="HELP_SHOP_MODULE_sSelectionColor" }]
                 </td>
             </tr>

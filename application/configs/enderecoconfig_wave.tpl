@@ -58,7 +58,6 @@
             window.EnderecoIntegrator.config.ux.useStandardCss = [{if $enderecoclient.bUseCss }]true[{else}]false[{/if}];
             window.EnderecoIntegrator.config.ux.allowCloseModal = [{if $enderecoclient.bAllowCloseModal }]true[{else}]false[{/if}];
             window.EnderecoIntegrator.config.ux.confirmWithCheckbox = [{if $enderecoclient.bConfirmWithCheckbox }]true[{else}]false[{/if}];
-            window.EnderecoIntegrator.countryMappingUrl = '[{$sitepath}]?cl=enderecocountrycontroller';
             window.EnderecoIntegrator.config.templates.primaryButtonClasses = 'btn btn-primary';
             window.EnderecoIntegrator.config.templates.secondaryButtonClasses = 'btn btn-secondary';
             window.EnderecoIntegrator.config.texts = {
@@ -99,6 +98,8 @@
             }
 
             window.EnderecoIntegrator.countryCodeToNameMapping = JSON.parse('[{$enderecoclient.sCountries|escape:quotes}]');
+            window.EnderecoIntegrator.countryMapping = JSON.parse('[{$enderecoclient.oCountryMapping|escape:quotes}]');
+            window.EnderecoIntegrator.countryMappingReverse = JSON.parse('[{$enderecoclient.oCountryMappingReverse|escape:quotes}]');
 
             window.EnderecoIntegrator.checkAllCallback = function(EAO) {
                 if ('billing_address' === EAO.addressType) {

@@ -76,7 +76,7 @@ class IncludeConfigWidget extends \OxidEsales\Eshop\Application\Component\Widget
 
         $oConfig = $this->getConfig();
         $moduleVersions = \OxidEsales\Eshop\Core\Registry::getConfig()->getConfigParam('aModuleVersions');
-        $sOxId = \OxidEsales\Eshop\Core\Registry::getConfig()->getRequestParameter('oxid');
+        $sOxId = \OxidEsales\Eshop\Core\Registry::getConfig()->getRequestEscapedParameter('oxid');
         if (!$sOxId) {
             $sOxId = $oConfig->getShopId();
         }
@@ -111,16 +111,23 @@ class IncludeConfigWidget extends \OxidEsales\Eshop\Application\Component\Widget
         $viewNameGenerator = \OxidEsales\Eshop\Core\Registry::get(\OxidEsales\Eshop\Core\TableViewNameGenerator::class);
 
         $sCountryTable = $viewNameGenerator->getViewName('oxcountry', $languageId, $sOxId);
-        $sql = "SELECT `OXISOALPHA2`, `OXTITLE` FROM {$sCountryTable} WHERE `OXISOALPHA2` <> ''";
+        $sql = "SELECT `OXISOALPHA2`, `OXTITLE`, `OXID` FROM {$sCountryTable} WHERE `OXISOALPHA2` <> ''";
         $resultSet = \OxidEsales\Eshop\Core\DatabaseProvider::getDb()->getAll(
             $sql,
             [$oConfig->getConfigParam('sConfigKey'), $sOxId]
         );
         $aCountries = [];
+        $aCountryMapping = [];
+        $aCountryMappingReverse = [];
+
         foreach ($resultSet as $result) {
             $aCountries[$result[0]] = $result[1];
+            $aCountryMapping[strtolower($result[0])] = $result[2];
+            $aCountryMappingReverse[$result[2]] = strtolower($result[0]);
         }
         $this->_aViewData['enderecoclient']['sCountries'] = json_encode($aCountries);
+        $this->_aViewData['enderecoclient']['oCountryMapping'] = json_encode($aCountryMapping);
+        $this->_aViewData['enderecoclient']['oCountryMappingReverse'] = json_encode($aCountryMappingReverse);
 
         return $this->getThisTemplate();
     }

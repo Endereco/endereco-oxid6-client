@@ -24,7 +24,7 @@ class Settings extends \OxidEsales\Eshop\Application\Controller\Admin\AdminContr
         $oConfig = $this->getConfig();
         parent::render();
 
-        $sOxId = \OxidEsales\Eshop\Core\Registry::getConfig()->getRequestParameter('oxid');
+        $sOxId = \OxidEsales\Eshop\Core\Registry::getConfig()->getRequestEscapedParameter('oxid');
         if (!$sOxId) {
             $sOxId = $oConfig->getShopId();
         }
@@ -101,11 +101,13 @@ class Settings extends \OxidEsales\Eshop\Application\Controller\Admin\AdminContr
             'bUseCss',
             'bShowDebug',
             'bShowEmailserviceErrors',
-            'bChangeFieldsOrder'
+            'bChangeFieldsOrder',
+            'bAllowCloseModal',
+            'bConfirmWithCheckbox',
         ];
 
-        $sOxId = \OxidEsales\Eshop\Core\Registry::getConfig()->getRequestParameter('oxid');
-        $aConfStrs = \OxidEsales\Eshop\Core\Registry::getConfig()->getRequestParameter('cstrs');
+        $sOxId = \OxidEsales\Eshop\Core\Registry::getConfig()->getRequestEscapedParameter('oxid');
+        $aConfStrs = \OxidEsales\Eshop\Core\Registry::getConfig()->getRequestEscapedParameter('cstrs');
 
         if (
             class_exists(\OxidEsales\EshopCommunity\Internal\Container\ContainerFactory::class)
@@ -138,7 +140,6 @@ class Settings extends \OxidEsales\Eshop\Application\Controller\Admin\AdminContr
                     } else {
                         $oConfig->saveShopConfVar('str', $sVarName, $sVarVal, $sOxId, 'module:endereco-oxid6-client');
                     }
-
                 }
             }
 
@@ -148,10 +149,6 @@ class Settings extends \OxidEsales\Eshop\Application\Controller\Admin\AdminContr
                 }
             }
         }
-
-
-
-
 
         return;
     }

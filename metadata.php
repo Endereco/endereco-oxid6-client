@@ -5,7 +5,7 @@ $aModule = [
     'title'         => 'Endereco Adress-Services für Oxid',
     'description'   => 'Kundenstammdaten-Validierung und Korrekturvorschläge.',
     'thumbnail'     => 'endereco.png',
-    'version'       => '4.3.1',
+    'version'       => '4.3.2',
     'author'        => 'Endereco UG (Haftungsbeschränkt) - Gesellschaft für Master Data Quality Management',
     'email'         => 'info@endereco.de',
     'url'           => 'https://www.endereco.de',
@@ -40,12 +40,16 @@ $aModule = [
             'block' => 'checkout_order_address',
             'file' => '/application/views/hidden_fields/endereco_checkout_checkout_order_address.tpl',
         ],
+        [
+            'template' => 'layout/base.tpl',
+            'block' => 'head_meta_robots',
+            'file' => '/application/views/globalfilters.tpl',
+        ],
     ],
     'controllers'  => [
         'enderecoconfig' => \Endereco\Oxid6Client\Widget\IncludeConfigWidget::class,
         'enderecocolor' => \Endereco\Oxid6Client\Widget\IncludeColorWidget::class,
         'enderecosettings' => \Endereco\Oxid6Client\Controller\Admin\Settings::class,
-        'enderecocountrycontroller' => \Endereco\Oxid6Client\Controller\CountryController::class,
         'enderecosaveaddress' => \Endereco\Oxid6Client\Controller\AddressController::class,
     ],
     'extend' => [
