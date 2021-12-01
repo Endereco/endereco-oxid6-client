@@ -62,7 +62,7 @@ final class Version20210614111035 extends AbstractMigration
         // Check if the type of MOJOAMSSTATUS is not "text" and change it to "text" if needed.
         if (
             $schema->getTable('oxuser')->hasColumn('MOJOAMSSTATUS') &&
-            ('text' !== strtolower($schema->getTable('oxuser')->getColumn('MOJOAMSSTATUS')->getType()))
+            ('text' !== strtolower($schema->getTable('oxuser')->getColumn('MOJOAMSSTATUS')->getType()->getName()))
         ) {
             $this->addSql(
                 "ALTER TABLE `oxuser` CHANGE `MOJOAMSSTATUS` `MOJOAMSSTATUS` text NOT NULL;"
@@ -71,7 +71,7 @@ final class Version20210614111035 extends AbstractMigration
 
         if (
             $schema->getTable('oxaddress')->hasColumn('MOJOAMSSTATUS') &&
-            ('text' !== strtolower($schema->getTable('oxaddress')->getColumn('MOJOAMSSTATUS')->getType()))
+            ('text' !== strtolower($schema->getTable('oxaddress')->getColumn('MOJOAMSSTATUS')->getType()->getName()))
         ) {
             $this->addSql(
                 "ALTER TABLE `oxaddress` CHANGE `MOJOAMSSTATUS` `MOJOAMSSTATUS` text NOT NULL;"
