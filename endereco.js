@@ -22,6 +22,7 @@ EnderecoIntegrator.postfix = {
     ams: {
         countryCode: 'oxcountryid]',
         postalCode: 'oxzip]',
+        subdivisionCode: 'oxstateid]',
         locality: 'oxcity]',
         streetFull: '',
         streetName: 'oxstreet]',
@@ -33,7 +34,9 @@ EnderecoIntegrator.postfix = {
     },
     personServices: {
         salutation: 'oxsal]',
-        firstName: 'oxfname]'
+        firstName: 'oxfname]',
+        lastName: 'oxlname]',
+        nameScore: 'mojonamescore]'
     },
     emailServices: {
         email: '#userLoginName'
@@ -52,6 +55,27 @@ EnderecoIntegrator.resolvers.countryCodeRead = function (value) {
     });
 }
 
+EnderecoIntegrator.resolvers.subdivisionCodeWrite = function (value) {
+    return new Promise(function (resolve, reject) {
+        var key = window.EnderecoIntegrator.subdivisionMapping[value.toUpperCase()];
+        if (key !== undefined) {
+            resolve(window.EnderecoIntegrator.subdivisionMapping[value.toUpperCase()]);
+        } else {
+            resolve('');
+        }
+    });
+}
+EnderecoIntegrator.resolvers.subdivisionCodeRead = function (value) {
+    return new Promise(function (resolve, reject) {
+        var key = window.EnderecoIntegrator.subdivisionMappingReverse[value.toUpperCase()];
+        if (key !== undefined) {
+            resolve(window.EnderecoIntegrator.subdivisionMappingReverse[value.toUpperCase()]);
+        } else {
+            resolve('');
+        }
+    });
+}
+
 EnderecoIntegrator.resolvers.countryCodeSetValue = function (subscriber, value) {
     if (
         !!$ &&
@@ -65,10 +89,23 @@ EnderecoIntegrator.resolvers.countryCodeSetValue = function (subscriber, value) 
     }
 }
 
+EnderecoIntegrator.resolvers.subdivisionCodeSetValue = function (subscriber, value) {
+    if (
+      !!$ &&
+      subscriber.object &&
+      subscriber.object.classList.contains('selectpicker') &&
+      !!$(subscriber.object).selectpicker
+    ) {
+        $(subscriber.object).selectpicker('val', value);
+    } else {
+        subscriber.object.value = value;
+    }
+}
+
 EnderecoIntegrator.resolvers.salutationWrite = function (value) {
     var mapping = {
-        'F': 'MRS',
-        'M': 'MR'
+        'f': 'MRS',
+        'm': 'MR'
     };
     return new Promise(function (resolve, reject) {
         resolve(mapping[value]);
@@ -76,8 +113,8 @@ EnderecoIntegrator.resolvers.salutationWrite = function (value) {
 }
 EnderecoIntegrator.resolvers.salutationRead = function (value) {
     var mapping = {
-        'MRS': 'F',
-        'MR': 'M'
+        'MRS': 'f',
+        'MR': 'm'
     };
     return new Promise(function (resolve, reject) {
         resolve(mapping[value]);

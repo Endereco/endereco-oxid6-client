@@ -10,6 +10,7 @@ class UserUpdatableFields extends UserUpdatableFields_parent
         $aReturn[] = 'MOJOAMSTS';
         $aReturn[] = 'MOJOAMSSTATUS';
         $aReturn[] = 'MOJOAMSPREDICTIONS';
+        $aReturn[] = 'MOJONAMESCORE';
 
         return $aReturn;
     }

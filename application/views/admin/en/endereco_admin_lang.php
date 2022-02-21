@@ -37,6 +37,7 @@ $aLang = [
     'SHOP_MODULE_GROUP_AMS' => 'AMS',
     'SHOP_MODULE_sUSEAMS' => 'Adresscheck and InputAssistant is active',
     'SHOP_MODULE_sCHECKALL' => 'Check existing customers with unchecked address',
+    'SHOP_MODULE_sCHECKPAYPAL' => 'Check PayPal Express Checkout customers (BETA)',
     'HELP_SHOP_MODULE_sCHECKALL' => 'Existing customers with incorrect unchecked address will receive address check predictions automatically',
     'SHOP_MODULE_sAMSBLURTRIGGER' => 'Trigger AddressCheck immediately after entering or changing the address',
     'SHOP_MODULE_sAMSSubmitTrigger' => 'Check address on submit',
@@ -313,6 +314,6 @@ $aLang = [
     'SHOP_MODULE_sPreselectableCountries_ye' => 'Yemen',
     'SHOP_MODULE_sPreselectableCountries_zm' => 'Zambia',
     'SHOP_MODULE_sPreselectableCountries_zw' => 'Zimbabwe',
-
+    'SHOP_MODULE_bCorrectTranspositionedNames' => 'Correct transpositioned first- and lastname (BETA)',
 ];
 

@@ -449,6 +449,15 @@
                     &nbsp;[{ oxinputhelp ident="HELP_SHOP_MODULE_bUsePersonalService" }]
                 </td>
             </tr>
+            <tr>
+                <td>
+                    [{oxmultilang ident="SHOP_MODULE_bCorrectTranspositionedNames"}]
+                </td>
+                <td>
+                    <input type="checkbox" class="editinput" name="cstrs[bCorrectTranspositionedNames]" value="true" [{if $cstrs.bCorrectTranspositionedNames == true}]checked="checked"[{/if}]>
+                    &nbsp;[{ oxinputhelp ident="HELP_SHOP_MODULE_bCorrectTranspositionedNames" }]
+                </td>
+            </tr>
         </table>
     </fieldset>
 

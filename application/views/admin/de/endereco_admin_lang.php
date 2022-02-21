@@ -38,8 +38,9 @@ $aLang = [
 
     'SHOP_MODULE_GROUP_AMS' => 'Adress-Services Konfiguration',
     'SHOP_MODULE_sUSEAMS' => 'Adressprüfung und Eingabe-Assistent aktivieren',
-    'SHOP_MODULE_sCHECKALL' => 'Auch Bestandskunden einmalig prüfen',
-    'HELP_SHOP_MODULE_sCHECKALL' => 'Bestandskunden, die noch nicht geprüft wurden, werden bei einem Login und Aufruf einer Adressformular-Seite automatisch geprüft.',
+    'SHOP_MODULE_sCHECKALL' => 'Bestandskunden einmalig prüfen',
+    'SHOP_MODULE_sCHECKPAYPAL' => 'PayPal Express Checkout Kunden prüfen (BETA)',
+    'HELP_SHOP_MODULE_sCHECKALL' => 'Bestandskunden, die noch nicht geprüft wurden, werden beim Betretten der Prüfen und Bestellen Seite automatisch geprüft.',
     'SHOP_MODULE_sAMSBLURTRIGGER' => 'Adressprüfung sofort nach verlassen des Hausnummern Feldes auslösen',
     'SHOP_MODULE_sAMSSubmitTrigger' => 'Adressprüfung beim Absenden des Formulars auslösen',
     'SHOP_MODULE_sAMSResumeSubmit' => 'Das Absenden des Formulars nach der Adressauswahl fortsetzen',
@@ -316,5 +317,5 @@ $aLang = [
     'SHOP_MODULE_sPreselectableCountries_ye' => 'Jemen',
     'SHOP_MODULE_sPreselectableCountries_zm' => 'Sambia',
     'SHOP_MODULE_sPreselectableCountries_zw' => 'Simbabwe',
-
+    'SHOP_MODULE_bCorrectTranspositionedNames' => 'Vertauschten Vor- und Nachnamen korrigieren (BETA)',
 ];

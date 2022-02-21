@@ -280,6 +280,8 @@ class EnderecoService
             }
         }
 
+        $statusCodes = array_unique(array_values($statusCodes));
+
         return $statusCodes;
     }
 

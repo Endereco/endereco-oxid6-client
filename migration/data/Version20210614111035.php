@@ -9,7 +9,7 @@ use Doctrine\Migrations\AbstractMigration;
  */
 final class Version20210614111035 extends AbstractMigration
 {
-    public function preUp(Schema $schema)
+    public function preUp(Schema $schema): void
     {
         $this->connection->getDatabasePlatform()->registerDoctrineTypeMapping('enum', 'string');
     }
@@ -17,7 +17,7 @@ final class Version20210614111035 extends AbstractMigration
     /**
      * @param Schema $schema
      */
-    public function up(Schema $schema)
+    public function up(Schema $schema): void
     {
         // Create columns in oxuser.
         if (!$schema->getTable('oxuser')->hasColumn('MOJOAMSTS')) {
@@ -82,7 +82,7 @@ final class Version20210614111035 extends AbstractMigration
     /**
      * @param Schema $schema
      */
-    public function down(Schema $schema)
+    public function down(Schema $schema): void
     {
         $this->addSql('ALTER TABLE `oxaddress` DROP `MOJOAMSTS`;');
         $this->addSql('ALTER TABLE `oxaddress` DROP `MOJOAMSSTATUS`;');
