@@ -354,6 +354,15 @@
             </tr>
             <tr>
                 <td>
+                    [{oxmultilang ident="SHOP_MODULE_sCHECKPAYPAL"}]
+                </td>
+                <td>
+                    <input type="checkbox" class="editinput" name="cstrs[sCHECKPAYPAL]" value="true" [{if $cstrs.sCHECKPAYPAL == true}]checked="checked"[{/if}]>
+                    &nbsp;[{ oxinputhelp ident="HELP_SHOP_MODULE_sCHECKPAYPAL" }]
+                </td>
+            </tr>
+            <tr>
+                <td>
                     [{oxmultilang ident="SHOP_MODULE_sAMSBLURTRIGGER"}]
                 </td>
                 <td>

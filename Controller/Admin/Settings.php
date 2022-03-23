@@ -90,6 +90,7 @@ class Settings extends \OxidEsales\Eshop\Application\Controller\Admin\AdminContr
         $checkboxes = [
             'sUSEAMS',
             'sCHECKALL',
+            'sCHECKPAYPAL',
             'sAMSBLURTRIGGER',
             'sSMARTFILL',
             'bUseEmailservice',

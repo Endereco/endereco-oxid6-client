@@ -55,7 +55,7 @@ EnderecoIntegrator.resolvers.countryCodeRead = function (value) {
     });
 }
 
-EnderecoIntegrator.resolvers.subdivisionCodeWrite = function (value) {
+EnderecoIntegrator.resolvers.subdivisionCodeWrite = function (value, EAO) {
     return new Promise(function (resolve, reject) {
         var key = window.EnderecoIntegrator.subdivisionMapping[value.toUpperCase()];
         if (key !== undefined) {
@@ -65,11 +65,11 @@ EnderecoIntegrator.resolvers.subdivisionCodeWrite = function (value) {
         }
     });
 }
-EnderecoIntegrator.resolvers.subdivisionCodeRead = function (value) {
+EnderecoIntegrator.resolvers.subdivisionCodeRead = function (value, EAO) {
     return new Promise(function (resolve, reject) {
-        var key = window.EnderecoIntegrator.subdivisionMappingReverse[value.toUpperCase()];
+        var key = window.EnderecoIntegrator.subdivisionMappingReverse[EAO.countryCode.toUpperCase() + '-' + value.toUpperCase()];
         if (key !== undefined) {
-            resolve(window.EnderecoIntegrator.subdivisionMappingReverse[value.toUpperCase()]);
+            resolve(window.EnderecoIntegrator.subdivisionMappingReverse[EAO.countryCode.toUpperCase() + '-' + value.toUpperCase()]);
         } else {
             resolve('');
         }
@@ -87,6 +87,10 @@ EnderecoIntegrator.resolvers.countryCodeSetValue = function (subscriber, value) 
     } else {
         subscriber.object.value = value;
     }
+
+    if (!!$) {
+        $(subscriber.object).trigger('change');
+    }
 }
 
 EnderecoIntegrator.resolvers.subdivisionCodeSetValue = function (subscriber, value) {
@@ -99,6 +103,10 @@ EnderecoIntegrator.resolvers.subdivisionCodeSetValue = function (subscriber, val
         $(subscriber.object).selectpicker('val', value);
     } else {
         subscriber.object.value = value;
+    }
+
+    if (!!$) {
+        $(subscriber.object).trigger('change');
     }
 }
 

@@ -130,7 +130,7 @@ class IncludeConfigWidget extends \OxidEsales\Eshop\Application\Component\Widget
         $this->_aViewData['enderecoclient']['oCountryMappingReverse'] = json_encode($aCountryMappingReverse);
 
         $sStatesTable = $viewNameGenerator->getViewName('oxstates', $languageId, $sOxId);
-        $sql = "SELECT `MOJOISO31662`, `OXTITLE`, `OXID` FROM {$sStatesTable} WHERE `MOJOISO31662` <> '' AND `MOJOISO31662` IS NOT NULL";
+        $sql = "SELECT `MOJOISO31662`, `OXTITLE`, `OXID`, `OXISOALPHA2` FROM {$sStatesTable} WHERE `MOJOISO31662` <> '' AND `MOJOISO31662` IS NOT NULL";
         $resultSet = \OxidEsales\Eshop\Core\DatabaseProvider::getDb()->getAll(
             $sql,
             []
@@ -142,7 +142,7 @@ class IncludeConfigWidget extends \OxidEsales\Eshop\Application\Component\Widget
         foreach ($resultSet as $result) {
             $aStates[$result[0]] = $result[1];
             $aStatesMapping[strtoupper($result[0])] = $result[2];
-            $aStatesMappingReverse[$result[2]] = strtoupper($result[0]);
+            $aStatesMappingReverse[$result[3] . '-' . $result[2]] = strtoupper($result[0]);
         }
 
         $this->_aViewData['enderecoclient']['oSubdivisions'] = json_encode($aStates);
