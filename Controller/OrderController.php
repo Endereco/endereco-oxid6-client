@@ -24,7 +24,8 @@ class OrderController extends OrderController_parent
             $shouldCheck = false;
             // Check if its a paypal express checkout user
             if (('0000-00-00 00:00:00' === $oUser->oxuser__oxregister->rawValue)
-                && ('oxidpaypal' === $this->getPayment()->getId())
+                && ($payment = $this->getPayment())
+                && ('oxidpaypal' === $payment->getId())
                 && $bCheckExistingPayPalExpress
             ) {
                 // Reset user status, bacause paypal express checkout reuses the same user entry in db.
