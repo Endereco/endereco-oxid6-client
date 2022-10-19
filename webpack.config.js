@@ -14,7 +14,6 @@ module.exports = {
   optimization: {
     minimize: true,
     minimizer: [new TerserPlugin({
-      sourceMap: false,
       terserOptions: {
         output: {
           comments: false,
@@ -46,7 +45,6 @@ module.exports = {
       },
       {
         test: /\.html$/,
-        exclude: /node_modules/,
         use: {loader: 'html-loader'}
       },
       {
@@ -56,8 +54,11 @@ module.exports = {
           options: {
             presets: ['@babel/preset-env']
           }
-        },
-        exclude: /node_modules/
+        }
+      },
+      {
+        test: /\.svg$/,
+        use: {loader: 'html-loader'}
       },
       {
         test: /\.(png|jpg|gif)$/,
@@ -76,7 +77,7 @@ module.exports = {
   performance: {
     hints: false
   },
-  devtool: '(none)',
+  devtool: false,
   plugins: [
   ]
 };
