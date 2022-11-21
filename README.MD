@@ -11,7 +11,7 @@ Die Installation erfolgt in folgenden Schritten:
 Der Befehl lädt die neuste Version herunter. Um eine spezielle Version zu installieren, zum Beispiel *4.2.2*, kann 
 der Befehl folgenderweise angepasst werden.
 
-`composer require endereco/endereco-oxid6-client:4.2.2`
+`composer require endereco/endereco-oxid6-client:4.4.1`
 
 2. Migrationen ausführen (optional)
 
