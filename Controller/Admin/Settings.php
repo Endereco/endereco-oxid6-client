@@ -24,7 +24,7 @@ class Settings extends \OxidEsales\Eshop\Application\Controller\Admin\AdminContr
         $oConfig = $this->getConfig();
         parent::render();
 
-        $sOxId = \OxidEsales\Eshop\Core\Registry::getConfig()->getRequestEscapedParameter('oxid');
+        $sOxId = (string) \OxidEsales\Eshop\Core\Registry::getConfig()->getRequestEscapedParameter('oxid');
         if (!$sOxId) {
             $sOxId = $oConfig->getShopId();
         }
@@ -44,7 +44,7 @@ class Settings extends \OxidEsales\Eshop\Application\Controller\Admin\AdminContr
         }
 
         // Check connection to remote server.
-        $sOxId = \OxidEsales\Eshop\Core\Registry::getConfig()->getShopId();
+        $sOxId = (string) \OxidEsales\Eshop\Core\Registry::getConfig()->getShopId();
         $sApiKy = \OxidEsales\Eshop\Core\Registry::getConfig()->getShopConfVar('sAPIKEY', $sOxId, 'module:endereco-oxid6-client');
         $sEndpoint = \OxidEsales\Eshop\Core\Registry::getConfig()->getShopConfVar('sSERVICEURL', $sOxId, 'module:endereco-oxid6-client');
         $moduleVersions = \OxidEsales\Eshop\Core\Registry::getConfig()->getConfigParam('aModuleVersions');
@@ -152,16 +152,5 @@ class Settings extends \OxidEsales\Eshop\Application\Controller\Admin\AdminContr
         }
 
         return;
-    }
-
-
-    /**
-     * Checks if endereco service is available and if the api key is correct.
-     *
-     * @return int
-     */
-    public function checkConnection()
-    {
-
     }
 }

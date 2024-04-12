@@ -1,4 +1,5 @@
 <?php
+
 namespace Endereco\Oxid6Client\Installer;
 
 use OxidEsales\Eshop\Core\DatabaseProvider;
@@ -15,7 +16,7 @@ class Installer
             self::$configReader = new ConfigFile();
         }
 
-        if (!empty(self::$configReader->bEnderecoUseMigrations) && self::$configReader->bEnderecoUseMigrations) {
+        if (!isset(self::$configReader->bEnderecoUseMigrations) && self::$configReader->bEnderecoUseMigrations) {
             return;
         }
 
@@ -123,7 +124,10 @@ class Installer
         $aColumns = DatabaseProvider::getDb()->getAll("SHOW COLUMNS FROM `oxstates` LIKE 'MOJOISO31662';");
         if (0 !== count($aColumns)) {
             $sql = "INSERT INTO `oxstates` (`OXID`, `OXCOUNTRYID`, `MOJOISO31662`)
-                    SELECT * FROM ( SELECT `oxstates`.`OXID`, `oxstates`.`OXCOUNTRYID`, CONCAT(`oxcountry`.`OXISOALPHA2`, '-', `oxstates`.`OXISOALPHA2`) AS 'MOJOISO31662'
+                    SELECT * FROM ( 
+                        SELECT 
+                            `oxstates`.`OXID`, `oxstates`.`OXCOUNTRYID`, 
+                            CONCAT(`oxcountry`.`OXISOALPHA2`, '-', `oxstates`.`OXISOALPHA2`) AS 'MOJOISO31662'
                     FROM `oxstates`
                     JOIN `oxcountry` ON `oxcountry`.`OXID` = `oxstates`.`OXCOUNTRYID`
                     WHERE `MOJOISO31662` IS NULL) AS `t`

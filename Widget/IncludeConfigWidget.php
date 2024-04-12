@@ -2,15 +2,15 @@
 
 namespace Endereco\Oxid6Client\Widget;
 
-
 use OxidEsales\Eshop\Core\Registry;
+use OxidEsales\Eshop\Core\Theme;
 
 class IncludeConfigWidget extends \OxidEsales\Eshop\Application\Component\Widget\WidgetController
 {
     /**
      * @var string Widget template
      */
-    protected $_sThisTemplate = 'enderecoconfig_default.tpl';
+    protected $sThisTemplate = 'enderecoconfig_default.tpl';
 
 
     /**
@@ -36,7 +36,7 @@ class IncludeConfigWidget extends \OxidEsales\Eshop\Application\Component\Widget
 
         $aConfigMapping = $this->extendConfigMapping($aConfigMapping);
 
-        $oTheme = oxNew('oxtheme');
+        $oTheme = oxNew(Theme::class);
         $oTheme->load($oTheme->getActiveThemeId());
 
         $counter = 0;
@@ -58,10 +58,11 @@ class IncludeConfigWidget extends \OxidEsales\Eshop\Application\Component\Widget
         }
 
         // If none of the above hits, return default config.
-        return $this->_sThisTemplate;
+        return $this->sThisTemplate;
     }
 
-    public function extendConfigMapping($configMapping = []) {
+    public function extendConfigMapping($configMapping = [])
+    {
         return $configMapping;
     }
 
@@ -81,25 +82,31 @@ class IncludeConfigWidget extends \OxidEsales\Eshop\Application\Component\Widget
             $sOxId = $oConfig->getShopId();
         }
 
-        $languageId = Registry::getLang()->getBaseLanguage();
+        $languageId = (int) Registry::getLang()->getBaseLanguage();
 
         $this->_aViewData['enderecoclient'] = [];
 
-        $sql = "SELECT `OXVARNAME`, DECODE( `OXVARVALUE`, ? ) AS `OXVARVALUE` FROM `oxconfig` WHERE `OXSHOPID` = ? AND `OXMODULE` = 'module:endereco-oxid6-client'";
+        $sql =
+            "SELECT `OXVARNAME`, DECODE( `OXVARVALUE`, ? ) AS `OXVARVALUE` 
+             FROM `oxconfig` WHERE `OXSHOPID` = ? AND `OXMODULE` = 'module:endereco-oxid6-client'";
         $resultSet = \OxidEsales\Eshop\Core\DatabaseProvider::getDb()->getAll(
             $sql,
             [$oConfig->getConfigParam('sConfigKey'), $sOxId]
         );
 
         foreach ($resultSet as $result) {
-
             $this->_aViewData['enderecoclient'][$result[0]] = $result[1];
             if ('sAllowedControllerClasses' === $result[0]) {
                 $this->_aViewData['enderecoclient']['aAllowedControllerClasses'] = explode(',', $result[1]);
             }
         }
 
-        $this->_aViewData['enderecoclient']['sControllerClass'] = $this->_aViewParams['curClass'];
+        if (property_exists($this, '_aViewParams')) {
+            $this->_aViewData['enderecoclient']['sControllerClass'] = $this->_aViewParams['curClass'];
+        } else {
+            $this->_aViewData['enderecoclient']['sControllerClass'] = '';
+        }
+
         $this->_aViewData['enderecoclient']['sModuleVersion'] = $moduleVersions['endereco-oxid6-client'];
 
         $oTheme = oxNew('oxtheme');
@@ -130,7 +137,9 @@ class IncludeConfigWidget extends \OxidEsales\Eshop\Application\Component\Widget
         $this->_aViewData['enderecoclient']['oCountryMappingReverse'] = json_encode($aCountryMappingReverse);
 
         $sStatesTable = $viewNameGenerator->getViewName('oxstates', $languageId, $sOxId);
-        $sql = "SELECT `MOJOISO31662`, `OXTITLE`, `OXID`, `OXISOALPHA2` FROM {$sStatesTable} WHERE `MOJOISO31662` <> '' AND `MOJOISO31662` IS NOT NULL";
+        $sql =
+            "SELECT `MOJOISO31662`, `OXTITLE`, `OXID`, `OXISOALPHA2` 
+            FROM {$sStatesTable} WHERE `MOJOISO31662` <> '' AND `MOJOISO31662` IS NOT NULL";
         $resultSet = \OxidEsales\Eshop\Core\DatabaseProvider::getDb()->getAll(
             $sql,
             []

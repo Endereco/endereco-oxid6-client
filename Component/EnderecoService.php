@@ -2,31 +2,23 @@
 
 namespace Endereco\Oxid6Client\Component;
 
-use \GuzzleHttp\Client;
-use \GuzzleHttp\Psr7\Request;
+use GuzzleHttp\Client;
+use GuzzleHttp\Psr7\Request;
+use OxidEsales\Eshop\Core\Registry;
 
 class EnderecoService
 {
-    private $_apiKey;
-    private $_endpoint;
-    private $_moduleVer;
+    private $apiKey;
+    private $endpoint;
+    private $moduleVer;
 
-    public function __construct() {
-        $sOxId = \OxidEsales\Eshop\Core\Registry::getConfig()->getShopId();
-        $this->_apiKey = \OxidEsales\Eshop\Core\Registry::getConfig()->getShopConfVar('sAPIKEY', $sOxId, 'module:endereco-oxid6-client');
-        $this->_endpoint = \OxidEsales\Eshop\Core\Registry::getConfig()->getShopConfVar('sSERVICEURL', $sOxId, 'module:endereco-oxid6-client');
-        $moduleVersions = \OxidEsales\Eshop\Core\Registry::getConfig()->getConfigParam('aModuleVersions');
-        $this->_moduleVer  = "Endereco Oxid6 Client v" . $moduleVersions['endereco-oxid6-client'];
-    }
-
-    public function closeSession($sessionId)
+    public function __construct()
     {
-
-    }
-
-    public function closeConversion($sessionId)
-    {
-
+        $sOxId = (string) Registry::getConfig()->getShopId();
+        $this->apiKey = Registry::getConfig()->getShopConfVar('sAPIKEY', $sOxId, 'module:endereco-oxid6-client');
+        $this->endpoint = Registry::getConfig()->getShopConfVar('sSERVICEURL', $sOxId, 'module:endereco-oxid6-client');
+        $moduleVersions = Registry::getConfig()->getConfigParam('aModuleVersions');
+        $this->moduleVer  = "Endereco Oxid6 Client v" . $moduleVersions['endereco-oxid6-client'];
     }
 
     /**
@@ -38,17 +30,16 @@ class EnderecoService
      */
     public function findAndCloseEnderecoSessions()
     {
-        $sOxId = \OxidEsales\Eshop\Core\Registry::getConfig()->getShopId();
-        $sApiKy = \OxidEsales\Eshop\Core\Registry::getConfig()->getShopConfVar('sAPIKEY', $sOxId, 'module:endereco-oxid6-client');
-        $sEndpoint = \OxidEsales\Eshop\Core\Registry::getConfig()->getShopConfVar('sSERVICEURL', $sOxId, 'module:endereco-oxid6-client');
-        $moduleVersions = \OxidEsales\Eshop\Core\Registry::getConfig()->getConfigParam('aModuleVersions');
+        $sOxId = (string) Registry::getConfig()->getShopId();
+        $sApiKy = Registry::getConfig()->getShopConfVar('sAPIKEY', $sOxId, 'module:endereco-oxid6-client');
+        $sEndpoint = Registry::getConfig()->getShopConfVar('sSERVICEURL', $sOxId, 'module:endereco-oxid6-client');
+        $moduleVersions = Registry::getConfig()->getConfigParam('aModuleVersions');
         $sAgentInfo  = "Endereco Oxid6 Client v" . $moduleVersions['endereco-oxid6-client'];
 
         $bAnyDoAccounting = false;
 
         if ($_POST) {
             foreach ($_POST as $sVarName => $sVarValue) {
-
                 if ((strpos($sVarName, '_session_counter') !== false) && 0 < intval($sVarValue)) {
                     $sSessionIdName = str_replace('_session_counter', '', $sVarName) . '_session_id';
                     $sSessionId = $_POST[$sSessionIdName];
@@ -67,14 +58,13 @@ class EnderecoService
                             'Content-Type' => 'application/json',
                             'X-Auth-Key' => $sApiKy,
                             'X-Transaction-Id' => $sSessionId,
-                            'X-Transaction-Referer' => $_SERVER['HTTP_REFERER']?$_SERVER['HTTP_REFERER']:__FILE__,
+                            'X-Transaction-Referer' => $_SERVER['HTTP_REFERER'] ? $_SERVER['HTTP_REFERER'] : __FILE__,
                             'X-Agent' => $sAgentInfo,
                         ];
                         $request = new Request('POST', $sEndpoint, $newHeaders, json_encode($message));
                         $client->send($request);
                         $bAnyDoAccounting = true;
-
-                    } catch(\Exception $e) {
+                    } catch (\Exception $e) {
                         // Do nothing.
                     }
                 }
@@ -94,12 +84,12 @@ class EnderecoService
                     'Content-Type' => 'application/json',
                     'X-Auth-Key' => $sApiKy,
                     'X-Transaction-Id' => 'not_required',
-                    'X-Transaction-Referer' => $_SERVER['HTTP_REFERER']?$_SERVER['HTTP_REFERER']:__FILE__,
+                    'X-Transaction-Referer' => $_SERVER['HTTP_REFERER'] ? $_SERVER['HTTP_REFERER'] : __FILE__,
                     'X-Agent' => $sAgentInfo,
                 ];
                 $request = new Request('POST', $sEndpoint, $newHeaders, json_encode($message));
                 $client->send($request);
-            } catch(\Exception $e) {
+            } catch (\Exception $e) {
                 // Do nothing.
             }
         }
@@ -125,13 +115,13 @@ class EnderecoService
             $sSessionId = $this->generateSessionId();
             $newHeaders = [
                 'Content-Type' => 'application/json',
-                'X-Auth-Key' => $this->_apiKey,
+                'X-Auth-Key' => $this->apiKey,
                 'X-Transaction-Id' => $sSessionId,
-                'X-Transaction-Referer' => $_SERVER['HTTP_REFERER']?$_SERVER['HTTP_REFERER']:__FILE__,
-                'X-Agent' => $this->_moduleVer,
+                'X-Transaction-Referer' => $_SERVER['HTTP_REFERER'] ? $_SERVER['HTTP_REFERER'] : __FILE__,
+                'X-Agent' => $this->moduleVer,
             ];
 
-            $request = new Request('POST', $this->_endpoint, $newHeaders, json_encode($message));
+            $request = new Request('POST', $this->endpoint, $newHeaders, json_encode($message));
             $response = $client->send($request);
             $responseJson = $response->getBody()->getContents();
             $reponseArray = json_decode($responseJson, true);
@@ -143,7 +133,9 @@ class EnderecoService
                 $counter = 0;
                 foreach ($result['predictions'] as $prediction) {
                     $tempAddress = array(
-                        'countryCode' => $prediction['countryCode']?$prediction['countryCode']:$address['countryCode'],
+                        'countryCode' => $prediction['countryCode']
+                            ? $prediction['countryCode']
+                            : $address['countryCode'],
                         'postalCode' => $prediction['postCode'],
                         'locality' => $prediction['cityName'],
                         'streetName' => $prediction['street'],
@@ -164,7 +156,7 @@ class EnderecoService
                 $address['__timestamp'] = time();
                 $address['__status'] = implode(',', $this->normalizeStatusCodes($result['status']));
             }
-        } catch(\Exception $e) {
+        } catch (\Exception $e) {
             // Do nothing.
         }
 
@@ -183,15 +175,15 @@ class EnderecoService
 
             $newHeaders = [
                 'Content-Type' => 'application/json',
-                'X-Auth-Key' => $this->_apiKey,
+                'X-Auth-Key' => $this->apiKey,
                 'X-Transaction-Id' => $sSessionId,
-                'X-Transaction-Referer' => $_SERVER['HTTP_REFERER']?$_SERVER['HTTP_REFERER']:__FILE__,
-                'X-Agent' => $this->_moduleVer,
+                'X-Transaction-Referer' => $_SERVER['HTTP_REFERER'] ? $_SERVER['HTTP_REFERER'] : __FILE__,
+                'X-Agent' => $this->moduleVer,
             ];
-            $request = new Request('POST', $this->_endpoint, $newHeaders, json_encode($message));
+            $request = new Request('POST', $this->endpoint, $newHeaders, json_encode($message));
             $client->send($request);
             $bAnyDoAccounting = true;
-        } catch(\Exception $e) {
+        } catch (\Exception $e) {
             // Do nothing.
         }
 
@@ -206,14 +198,14 @@ class EnderecoService
                 $client = new Client(['timeout' => 5.0]);
                 $newHeaders = [
                     'Content-Type' => 'application/json',
-                    'X-Auth-Key' => $this->_apiKey,
+                    'X-Auth-Key' => $this->apiKey,
                     'X-Transaction-Id' => 'not_required',
-                    'X-Transaction-Referer' => $_SERVER['HTTP_REFERER']?$_SERVER['HTTP_REFERER']:__FILE__,
-                    'X-Agent' => $this->_moduleVer,
+                    'X-Transaction-Referer' => $_SERVER['HTTP_REFERER'] ? $_SERVER['HTTP_REFERER'] : __FILE__,
+                    'X-Agent' => $this->moduleVer,
                 ];
-                $request = new Request('POST', $this->_endpoint, $newHeaders, json_encode($message));
+                $request = new Request('POST', $this->endpoint, $newHeaders, json_encode($message));
                 $client->send($request);
-            } catch(\Exception $e) {
+            } catch (\Exception $e) {
                 // Do nothing.
             }
         }
@@ -223,16 +215,21 @@ class EnderecoService
 
     public function generateSessionId()
     {
-        return sprintf('%04x%04x-%04x-%04x-%04x-%04x%04x%04x',
-            mt_rand(0, 0xffff), mt_rand(0, 0xffff),
+        return sprintf(
+            '%04x%04x-%04x-%04x-%04x-%04x%04x%04x',
+            mt_rand(0, 0xffff),
+            mt_rand(0, 0xffff),
             mt_rand(0, 0xffff),
             mt_rand(0, 0x0fff) | 0x4000,
             mt_rand(0, 0x3fff) | 0x8000,
-            mt_rand(0, 0xffff), mt_rand(0, 0xffff), mt_rand(0, 0xffff)
+            mt_rand(0, 0xffff),
+            mt_rand(0, 0xffff),
+            mt_rand(0, 0xffff)
         );
     }
 
-    public function normalizeStatusCodes($statusCodes) {
+    public function normalizeStatusCodes($statusCodes)
+    {
         // Create an array of statuses.
         if (
             in_array('A1000', $statusCodes) &&
@@ -285,7 +282,8 @@ class EnderecoService
         return $statusCodes;
     }
 
-    public function shouldBeChecked($statusCodes) {
+    public function shouldBeChecked($statusCodes)
+    {
         return !(
             in_array('address_not_found', $statusCodes) ||
             in_array('address_needs_correction', $statusCodes) ||

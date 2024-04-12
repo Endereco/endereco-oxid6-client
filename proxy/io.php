@@ -5,7 +5,8 @@ if ('GET' === $_SERVER['REQUEST_METHOD']) {
 }
 
 include("../metadata.php");
-$agent_info  = "Endereco Oxid6 Client v" . $aModule['version'];
+$pluginVersion = $aModule['version'] ?? '0.0.0';
+$agent_info  = "Endereco Oxid6 Client v" . $pluginVersion;
 $post_data   = json_decode(file_get_contents('php://input'), true);
 $api_key     = trim($_SERVER['HTTP_X_AUTH_KEY']);
 $data_string = json_encode($post_data);
@@ -37,4 +38,3 @@ $result = curl_exec($ch);
 header('Content-Type: application/json');
 echo $result;
 die();
-

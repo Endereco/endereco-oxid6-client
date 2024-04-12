@@ -1,19 +1,30 @@
 <?php
+
 namespace Endereco\Oxid6Client\Controller;
 
-use \OxidEsales\Eshop\Application\Model\User;
-use \OxidEsales\Eshop\Application\Model\Address;
-use \Endereco\Oxid6Client\Component\EnderecoService;
-use \OxidEsales\Eshop\Core\Registry;
+use OxidEsales\Eshop\Application\Model\User;
+use OxidEsales\Eshop\Application\Model\Address;
+use OxidEsales\Eshop\Application\Model\Country;
+use Endereco\Oxid6Client\Component\EnderecoService;
+use OxidEsales\Eshop\Core\Registry;
 
 class OrderController extends OrderController_parent
 {
     public function render()
     {
-        $sOxId = Registry::getConfig()->getShopId();
+        $sOxId = (string) Registry::getConfig()->getShopId();
 
-        $bCheckExisting = Registry::getConfig()->getShopConfVar('sCHECKALL', $sOxId, 'module:endereco-oxid6-client');
-        $bCheckExistingPayPalExpress = Registry::getConfig()->getShopConfVar('sCHECKPAYPAL', $sOxId, 'module:endereco-oxid6-client');
+        $bCheckExisting = (bool) Registry::getConfig()->getShopConfVar(
+            'sCHECKALL',
+            $sOxId,
+            'module:endereco-oxid6-client'
+        );
+
+        $bCheckExistingPayPalExpress = (bool) Registry::getConfig()->getShopConfVar(
+            'sCHECKPAYPAL',
+            $sOxId,
+            'module:endereco-oxid6-client'
+        );
 
         if ($this->getIsOrderStep()) {
             // Do we need to check delivery address?
@@ -22,16 +33,19 @@ class OrderController extends OrderController_parent
             $oDeliveryAddress = $this->getDelAddress();
 
             $shouldCheck = false;
+            $payment = $this->getPayment();
+
             // Check if its a paypal express checkout user
-            if (('0000-00-00 00:00:00' === $oUser->oxuser__oxregister->rawValue)
-                && ($payment = $this->getPayment())
+            if (
+                ('0000-00-00 00:00:00' === $oUser->oxuser__oxregister->rawValue)
                 && ('oxidpaypal' === $payment->getId())
                 && $bCheckExistingPayPalExpress
             ) {
                 // Reset user status, bacause paypal express checkout reuses the same user entry in db.
                 $oUser->oxuser__mojoamsstatus->rawValue = '';
                 $shouldCheck = true;
-            } else if (('0000-00-00 00:00:00' !== $oUser->oxuser__oxregister->rawValue)
+            } elseif (
+                ('0000-00-00 00:00:00' !== $oUser->oxuser__oxregister->rawValue)
                 && $bCheckExisting
             ) {
                 $shouldCheck = true;
@@ -43,9 +57,8 @@ class OrderController extends OrderController_parent
                 $localLanguage = $oLang->getLanguageAbbr();
 
                 // Check invoice address.
-                if ($oUser && empty($oUser->oxuser__mojoamsstatus->rawValue)) {
-
-                    $oCountry = oxNew('oxCountry');
+                if (empty($oUser->oxuser__mojoamsstatus->rawValue)) {
+                    $oCountry = oxNew(Country::class);
                     $oCountry->load($oUser->oxuser__oxcountryid->rawValue);
                     $countryCode = strtolower($oCountry->oxcountry__oxisoalpha2->rawValue);
 
@@ -57,7 +70,11 @@ class OrderController extends OrderController_parent
                         'locality' => $oUser->oxuser__oxcity->rawValue,
                         'streetName' => $oUser->oxuser__oxstreet->rawValue,
                         'buildingNumber' => $oUser->oxuser__oxstreetnr->rawValue,
-                        '__status' => (('' !== $oUser->oxuser__mojoamsstatus->rawValue) ? $oUser->oxuser__mojoamsstatus->rawValue : ''),
+                        '__status' => (
+                            ('' !== $oUser->oxuser__mojoamsstatus->rawValue)
+                                ? $oUser->oxuser__mojoamsstatus->rawValue
+                                : ''
+                            ),
                         '__predictions' => '',
                         '__timestamp' => '',
                     );
@@ -92,7 +109,11 @@ class OrderController extends OrderController_parent
                         'locality' => $oDeliveryAddress->oxaddress__oxcity->rawValue,
                         'streetName' => $oDeliveryAddress->oxaddress__oxstreet->rawValue,
                         'buildingNumber' => $oDeliveryAddress->oxaddress__oxstreetnr->rawValue,
-                        '__status' => (('' !== $oDeliveryAddress->oxaddress__mojoamsstatus->rawValue) ? $oDeliveryAddress->oxaddress__mojoamsstatus->rawValue : ''),
+                        '__status' => (
+                            ('' !== $oDeliveryAddress->oxaddress__mojoamsstatus->rawValue)
+                                ? $oDeliveryAddress->oxaddress__mojoamsstatus->rawValue
+                                : ''
+                        ),
                         '__predictions' => '',
                         '__timestamp' => '',
                     );
@@ -105,9 +126,12 @@ class OrderController extends OrderController_parent
 
                         // Save.
                         if (!empty($checkedShippingAddress['__status'])) {
-                            $oDeliveryAddress->oxaddress__mojoamsstatus->rawValue = $checkedShippingAddress['__status'];
-                            $oDeliveryAddress->oxaddress__mojoamsts->rawValue = $checkedShippingAddress['__timestamp'];
-                            $oDeliveryAddress->oxaddress__mojoamspredictions->rawValue = $checkedShippingAddress['__predictions'];
+                            $oDeliveryAddress->oxaddress__mojoamsstatus->rawValue
+                                = $checkedShippingAddress['__status'];
+                            $oDeliveryAddress->oxaddress__mojoamsts->rawValue
+                                = $checkedShippingAddress['__timestamp'];
+                            $oDeliveryAddress->oxaddress__mojoamspredictions->rawValue
+                                = $checkedShippingAddress['__predictions'];
                             $oDeliveryAddress->save();
                         }
                     }

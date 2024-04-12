@@ -1,0 +1,16 @@
+parameters:
+    level: 5
+    paths:
+        - ./
+    excludePaths:
+        - ./shops
+        - ./vendor
+        - ./node_modules
+        - ./Controller/Admin/Settings.php
+        - ./migration
+    bootstrapFiles:
+        - ./phpstanBootstrap-6.1.php
+    treatPhpDocTypesAsCertain: false
+    ignoreErrors:
+        - message: "#^Return type \\(string\\) of method .+::render\\(\\) should be compatible with return type \\(null\\) of method .+::render\\(\\)$#"
+        - message: "#^Access to an undefined property OxidEsales\\\\Eshop\\\\Application\\\\Model\\\\User::\\$#"

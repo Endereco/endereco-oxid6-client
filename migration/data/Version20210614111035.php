@@ -9,6 +9,9 @@ use Doctrine\Migrations\AbstractMigration;
  */
 final class Version20210614111035 extends AbstractMigration
 {
+    /**
+     * @SuppressWarnings(PHPMD.UnusedFormalParameter)
+     **/
     public function preUp(Schema $schema): void
     {
         $this->connection->getDatabasePlatform()->registerDoctrineTypeMapping('enum', 'string');
@@ -16,6 +19,8 @@ final class Version20210614111035 extends AbstractMigration
 
     /**
      * @param Schema $schema
+     * 
+     * @SuppressWarnings(PHPMD.UnusedFormalParameter)
      */
     public function up(Schema $schema): void
     {
@@ -81,6 +86,8 @@ final class Version20210614111035 extends AbstractMigration
 
     /**
      * @param Schema $schema
+     * 
+     * @SuppressWarnings(PHPMD.UnusedFormalParameter)
      */
     public function down(Schema $schema): void
     {
