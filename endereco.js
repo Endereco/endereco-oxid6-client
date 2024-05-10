@@ -43,32 +43,35 @@ EnderecoIntegrator.postfix = {
 };
 
 EnderecoIntegrator.css = css[0][1];
-EnderecoIntegrator.resolvers.countryCodeWrite = function (value) {
+EnderecoIntegrator.resolvers.countryCodeWrite = function (value, subscriber) {
     return new Promise(function (resolve, reject) {
-        resolve(window.EnderecoIntegrator.countryMapping[value.toLowerCase()]);
+        resolve(window.EnderecoIntegrator.countryMapping[value.toUpperCase()]);
     });
 }
-EnderecoIntegrator.resolvers.countryCodeRead = function (value) {
+EnderecoIntegrator.resolvers.countryCodeRead = function (value, subscriber) {
     return new Promise(function (resolve, reject) {
-        resolve(window.EnderecoIntegrator.countryMappingReverse[value.toLowerCase()]);
+        resolve(window.EnderecoIntegrator.countryMappingReverse[value.toUpperCase()]);
     });
 }
 
-EnderecoIntegrator.resolvers.subdivisionCodeWrite = function (value, EAO) {
+EnderecoIntegrator.resolvers.subdivisionCodeWrite = function (value, subscriber) {
     return new Promise(function (resolve, reject) {
         var key = window.EnderecoIntegrator.subdivisionMapping[value.toUpperCase()];
         if (key !== undefined) {
-            resolve(window.EnderecoIntegrator.subdivisionMapping[value.toUpperCase()]);
+            resolve(key);
         } else {
             resolve('');
         }
     });
 }
-EnderecoIntegrator.resolvers.subdivisionCodeRead = function (value, EAO) {
+
+EnderecoIntegrator.resolvers.subdivisionCodeRead = function (value, subscriber) {
+    const countryCode = subscriber._subject.countryCode.toUpperCase();
+    const mappingKey = countryCode + '-' + value.toUpperCase();
+
     return new Promise(function (resolve, reject) {
-        var key = window.EnderecoIntegrator.subdivisionMappingReverse[EAO.countryCode.toUpperCase() + '-' + value.toUpperCase()];
-        if (key !== undefined) {
-            resolve(window.EnderecoIntegrator.subdivisionMappingReverse[EAO.countryCode.toUpperCase() + '-' + value.toUpperCase()]);
+        if ("" !== value.toUpperCase()) {
+            resolve(mappingKey);
         } else {
             resolve('');
         }
@@ -109,7 +112,7 @@ EnderecoIntegrator.resolvers.subdivisionCodeSetValue = function (subscriber, val
     }
 }
 
-EnderecoIntegrator.resolvers.salutationWrite = function (value) {
+EnderecoIntegrator.resolvers.salutationWrite = function (value, subscriber) {
     var mapping = {
         'f': 'MRS',
         'm': 'MR'
@@ -118,7 +121,7 @@ EnderecoIntegrator.resolvers.salutationWrite = function (value) {
         resolve(mapping[value]);
     });
 }
-EnderecoIntegrator.resolvers.salutationRead = function (value) {
+EnderecoIntegrator.resolvers.salutationRead = function (value, subscriber) {
     var mapping = {
         'MRS': 'f',
         'MR': 'm'

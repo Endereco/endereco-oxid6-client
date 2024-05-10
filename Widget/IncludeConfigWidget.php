@@ -129,8 +129,8 @@ class IncludeConfigWidget extends \OxidEsales\Eshop\Application\Component\Widget
 
         foreach ($resultSet as $result) {
             $aCountries[$result[0]] = $result[1];
-            $aCountryMapping[strtolower($result[0])] = $result[2];
-            $aCountryMappingReverse[$result[2]] = strtolower($result[0]);
+            $aCountryMapping[strtoupper($result[0])] = $result[2];
+            $aCountryMappingReverse[$result[2]] = strtoupper($result[0]);
         }
         $this->_aViewData['enderecoclient']['sCountries'] = json_encode($aCountries);
         $this->_aViewData['enderecoclient']['oCountryMapping'] = json_encode($aCountryMapping);
