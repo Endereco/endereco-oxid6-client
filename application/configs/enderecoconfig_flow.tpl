@@ -5,8 +5,7 @@
     $enderecoclient.sControllerClass|in_array:$enderecoclient.aAllowedControllerClasses ||
     ('order' == $enderecoclient.sControllerClass && $enderecoclient.sCHECKALL)
 }]
-    <script async defer src="[{$oViewConf->getModuleUrl('endereco-oxid6-client', 'out/assets/js/endereco.min.js')}]?ver=[{$enderecoclient.sModuleVersion}]"></script>
-
+    
     [{assign var="popUpHeadline" value="ENDERECOOXID6CLIENT_POPUP_HEADLINE"|oxmultilangassign}]
     [{assign var="popUpSubline" value="ENDERECOOXID6CLIENT_POPUP_SUBLINE"|oxmultilangassign}]
 
@@ -39,7 +38,7 @@
     [{assign var="countryCodeNeedsCorrection" value="ENDERECOOXID6CLIENT_STATUS_countryCodeNeedsCorrection"|oxmultilangassign}]
 
     <script>
-        var enderecoConfigureIntegrator = function() {
+        function enderecoLoadAMSConfig() {
             window.EnderecoIntegrator.config.apiUrl = "[{$oViewConf->getModuleUrl('endereco-oxid6-client', 'proxy/io.php')}]";
             window.EnderecoIntegrator.config.apiKey = '[{$enderecoclient.sAPIKEY}]';
             window.EnderecoIntegrator.config.remoteApiUrl = '[{$enderecoclient.sSERVICEURL}]';
@@ -73,12 +72,12 @@
                 'confirmAddress': '[{$confirmAddress|escape:quotes}]',
                 'editAddress': '[{$editAddress|escape:quotes}]',
                 'warningText': '[{$warningText|escape:quotes}]',
-                popupHeadlines: {
+                'popupHeadlines': {
                     'general_address': '[{$generalAddress|escape:quotes}]',
                     'billing_address': '[{$billingAddress|escape:quotes}]',
                     'shipping_address': '[{$shippingAddress|escape:quotes}]'
                 },
-                statuses: {
+                'statuses': {
                     'email_not_correct': '[{$emailNotCorrect|escape:quotes}]',
                     'email_cant_receive': '[{$emailVantReceive|escape:quotes}]',
                     'email_syntax_error': '[{$emailSyntaxError|escape:quotes}]',
@@ -101,9 +100,9 @@
             window.EnderecoIntegrator.countryMapping = JSON.parse('[{$enderecoclient.oCountryMapping|escape:quotes}]');
             window.EnderecoIntegrator.countryMappingReverse = JSON.parse('[{$enderecoclient.oCountryMappingReverse|escape:quotes}]');
 
-          window.EnderecoIntegrator.subdivisionCodeToNameMapping = JSON.parse('[{$enderecoclient.oSubdivisions|escape:quotes}]');
-          window.EnderecoIntegrator.subdivisionMapping = JSON.parse('[{$enderecoclient.oSubdivisionMapping|escape:quotes}]');
-          window.EnderecoIntegrator.subdivisionMappingReverse = JSON.parse('[{$enderecoclient.oSubdivisionMappingReverse|escape:quotes}]');
+            window.EnderecoIntegrator.subdivisionCodeToNameMapping = JSON.parse('[{$enderecoclient.oSubdivisions|escape:quotes}]');
+            window.EnderecoIntegrator.subdivisionMapping = JSON.parse('[{$enderecoclient.oSubdivisionMapping|escape:quotes}]');
+            window.EnderecoIntegrator.subdivisionMappingReverse = JSON.parse('[{$enderecoclient.oSubdivisionMappingReverse|escape:quotes}]');
 
             window.EnderecoIntegrator.checkAllCallback = function(EAO) {
                 if ('billing_address' === EAO.addressType) {
@@ -117,16 +116,15 @@
                 }
             }
 
+            window.EnderecoIntegrator.onLoad.forEach(function (callback) {
+                callback();
+            });
+
             window.EnderecoIntegrator.ready = true;
         }
-
-        var $interval = setInterval( function() {
-            if (window.EnderecoIntegrator && window.EnderecoIntegrator.loaded) {
-                enderecoConfigureIntegrator()
-                clearInterval($interval);
-            }
-        }, 100);
     </script>
+
+    <script async defer src="[{$oViewConf->getModuleUrl('endereco-oxid6-client', 'out/assets/js/endereco.min.js')}]?ver=[{$enderecoclient.sModuleVersion}]"></script>
     [{oxid_include_widget cl="enderecocolor"}]
 [{/if}]
 

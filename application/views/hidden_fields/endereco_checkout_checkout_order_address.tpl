@@ -48,76 +48,68 @@
                 value="[{if $oxcmp_user->oxuser__mojoamspredictions->value}][{$oxcmp_user->oxuser__mojoamspredictions->value}][{/if}]"
         >
         <script>
-            ( function() {
-                var $interval = setInterval( function() {
-                    if (window.EnderecoIntegrator && window.EnderecoIntegrator.ready) {
-                        var billingAMS = window.EnderecoIntegrator.initAMS(
-                            '',
-                            {
-                                name: 'billing',
-                                addressType: 'billing_address',
-                                postfixCollection: {
-                                    countryCode: '#endereco-billing-country-code',
-                                    postalCode: '#endereco-billing-postal-code',
-                                    locality: '#endereco-billing-locality',
-                                    streetName: '#endereco-billing-street-name',
-                                    buildingNumber: '#endereco-billing-building-number',
-                                    addressStatus: '#endereco-billing-status',
-                                    addressTimestamp: '#endereco-billing-timestamp',
-                                    addressPredictions: '#endereco-billing-predictions',
-                                    additionalInfo: '#endereco-billing-additional-info',
-                                }
-                            }
-                        );
-                        if (billingAMS) {
-                            billingAMS.waitForAllExtension().then( function(EAO) {
+            enderecoInitAMS(
+                {
+                    countryCode: '#endereco-billing-country-code',
+                    postalCode: '#endereco-billing-postal-code',
+                    locality: '#endereco-billing-locality',
+                    streetName: '#endereco-billing-street-name',
+                    buildingNumber: '#endereco-billing-building-number',
+                    addressStatus: '#endereco-billing-status',
+                    addressTimestamp: '#endereco-billing-timestamp',
+                    addressPredictions: '#endereco-billing-predictions',
+                    additionalInfo: '#endereco-billing-additional-info',
+                },
+                {
+                    name: 'billing',
+                    addressType: 'billing_address'
+                },
+                function(EAO) {
+                    EAO.waitForAllExtension().then( function(EAO) {
 
-                                EAO.onEditAddress.push( function() {
-                                    document.querySelectorAll('#orderAddress form')[0].submit();
-                                })
+                        EAO.onEditAddress.push( function() {
+                            document.querySelectorAll('#orderAddress form')[0].submit();
+                        })
 
-                                EAO.onAfterAddressCheckSelected.push( function(EAO) {
-                                    EAO.waitForAllPopupsToClose().then(function() {
-                                        EAO.waitUntilReady().then( function() {
-                                            if (window.EnderecoIntegrator && window.EnderecoIntegrator.globalSpace.reloadPage) {
-                                                window.EnderecoIntegrator.globalSpace.reloadPage();
-                                                window.EnderecoIntegrator.globalSpace.reloadPage = undefined;
-                                            }
-                                        }).catch()
-                                    }).catch();
-                                    EAO._awaits++;
-                                    EAO.util.axios({
-                                        method: 'post',
-                                        url: '[{$sitepath}]?cl=enderecosaveaddress',
-                                        data: {
-                                            method: 'editBillingAddress',
-                                            params: {
-                                                addressId: '[{$oxcmp_user->oxuser__oxid->value}]',
-                                                address: EAO.address,
-                                                enderecometa: {
-                                                    ts: EAO.addressTimestamp,
-                                                    status: EAO.addressStatus,
-                                                    predictions: EAO.addressPredictions,
-                                                }
-                                            }
-                                        }
-                                    }).then( function(response) {
-                                        window.EnderecoIntegrator.globalSpace.reloadPage = function() {
-                                            location.reload();
-                                        }
-                                    }).catch( function(error) {
-                                        console.log('Something went wrong.')
-                                    }).finally( function() {
-                                        EAO._awaits--;
-                                    });
-                                });
-
+                        EAO.onAfterAddressCheckSelected.push( function(EAO) {
+                            EAO.waitForAllPopupsToClose().then(function() {
+                                EAO.waitUntilReady().then( function() {
+                                    if (window.EnderecoIntegrator && window.EnderecoIntegrator.globalSpace.reloadPage) {
+                                        window.EnderecoIntegrator.globalSpace.reloadPage();
+                                        window.EnderecoIntegrator.globalSpace.reloadPage = undefined;
+                                    }
+                                }).catch()
                             }).catch();
-                        }
-                        clearInterval($interval);
-                    }
-                }, 100);
-            })();
+                            EAO._awaits++;
+                            EAO.util.axios({
+                                method: 'post',
+                                url: '[{$sitepath}]?cl=enderecosaveaddress',
+                                data: {
+                                    method: 'editBillingAddress',
+                                    params: {
+                                        addressId: '[{$oxcmp_user->oxuser__oxid->value}]',
+                                        address: EAO.address,
+                                        enderecometa: {
+                                            ts: EAO.addressTimestamp,
+                                            status: EAO.addressStatus,
+                                            predictions: EAO.addressPredictions,
+                                        }
+                                    }
+                                }
+                            }).then( function(response) {
+                                window.EnderecoIntegrator.globalSpace.reloadPage = function() {
+                                    location.reload();
+                                }
+                            }).catch( function(error) {
+                                console.log('Something went wrong.')
+                            }).finally( function() {
+                                EAO._awaits--;
+                            });
+                        });
+
+                    }).catch();
+                }
+            )
         </script>
     </div>
     <div>
@@ -170,76 +162,69 @@
                     value="[{if $oDelAdress->oxaddress__mojoamspredictions->value}][{$oDelAdress->oxaddress__mojoamspredictions->value}][{/if}]"
             >
             <script>
-                ( function() {
-                    var $interval = setInterval( function() {
-                        if (window.EnderecoIntegrator && window.EnderecoIntegrator.ready) {
-                            var shippingAMS = window.EnderecoIntegrator.initAMS(
-                                '',
-                                {
-                                    name: 'shipping',
-                                    addressType: 'shipping_address',
-                                    postfixCollection: {
-                                        countryCode: '#endereco-shipping-country-code',
-                                        postalCode: '#endereco-shipping-postal-code',
-                                        locality: '#endereco-shipping-locality',
-                                        streetName: '#endereco-shipping-street-name',
-                                        buildingNumber: '#endereco-shipping-building-number',
-                                        addressStatus: '#endereco-shipping-status',
-                                        addressTimestamp: '#endereco-shipping-timestamp',
-                                        addressPredictions: '#endereco-shipping-predictions',
-                                        additionalInfo: '#endereco-shipping-additional-info',
-                                    }
-                                }
-                            );
-                            if (shippingAMS) {
-                                shippingAMS.waitForAllExtension().then( function(EAO) {
+                enderecoInitAMS(
+                    {
+                        countryCode: '#endereco-shipping-country-code',
+                        postalCode: '#endereco-shipping-postal-code',
+                        locality: '#endereco-shipping-locality',
+                        streetName: '#endereco-shipping-street-name',
+                        buildingNumber: '#endereco-shipping-building-number',
+                        addressStatus: '#endereco-shipping-status',
+                        addressTimestamp: '#endereco-shipping-timestamp',
+                        addressPredictions: '#endereco-shipping-predictions',
+                        additionalInfo: '#endereco-shipping-additional-info',
+                    },
+                    {
+                        name: 'shipping',
+                        addressType: 'shipping_address'
+                    },
+                    function(EAO) {
+                        EAO.waitForAllExtension().then( function(EAO) {
 
-                                    EAO.onEditAddress.push( function() {
-                                        document.querySelectorAll('#orderAddress form')[1].submit();
-                                    })
+                            EAO.onEditAddress.push( function() {
+                                document.querySelectorAll('#orderAddress form')[1].submit();
+                            })
 
-                                    EAO.onAfterAddressCheckSelected.push( function(EAO) {
-                                        EAO.waitForAllPopupsToClose().then(function() {
-                                            EAO.waitUntilReady().then( function() {
-                                                if (window.EnderecoIntegrator && window.EnderecoIntegrator.globalSpace.reloadPage) {
-                                                    window.EnderecoIntegrator.globalSpace.reloadPage();
-                                                    window.EnderecoIntegrator.globalSpace.reloadPage = undefined;
-                                                }
-                                            }).catch()
-                                        }).catch();
-                                        EAO._awaits++;
-                                        EAO.util.axios({
-                                            method: 'post',
-                                            url: '[{$sitepath}]?cl=enderecosaveaddress',
-                                            data: {
-                                                method: 'editShippingAddress',
-                                                params: {
-                                                    addressId: '[{$oDelAdress->oxaddress__oxid->value}]',
-                                                    address: EAO.address,
-                                                    enderecometa: {
-                                                        ts: EAO.addressTimestamp,
-                                                        status: EAO.addressStatus,
-                                                        predictions: EAO.addressPredictions,
-                                                    }
-                                                }
-                                            }
-                                        }).then( function(response) {
-                                            window.EnderecoIntegrator.globalSpace.reloadPage = function() {
-                                                location.reload();
-                                            }
-                                        }).catch( function(error) {
-                                            console.log('Something went wrong.')
-                                        }).finally( function() {
-                                            EAO._awaits--;
-                                        });
-                                    });
-
+                            EAO.onAfterAddressCheckSelected.push( function(EAO) {
+                                EAO.waitForAllPopupsToClose().then(function() {
+                                    EAO.waitUntilReady().then( function() {
+                                        if (window.EnderecoIntegrator && window.EnderecoIntegrator.globalSpace.reloadPage) {
+                                            window.EnderecoIntegrator.globalSpace.reloadPage();
+                                            window.EnderecoIntegrator.globalSpace.reloadPage = undefined;
+                                        }
+                                    }).catch()
                                 }).catch();
-                            }
-                            clearInterval($interval);
-                        }
-                    }, 100);
-                })();
+                                EAO._awaits++;
+                                EAO.util.axios({
+                                    method: 'post',
+                                    url: '[{$sitepath}]?cl=enderecosaveaddress',
+                                    data: {
+                                        method: 'editShippingAddress',
+                                        params: {
+                                            addressId: '[{$oDelAdress->oxaddress__oxid->value}]',
+                                            address: EAO.address,
+                                            enderecometa: {
+                                                ts: EAO.addressTimestamp,
+                                                status: EAO.addressStatus,
+                                                predictions: EAO.addressPredictions,
+                                            }
+                                        }
+                                    }
+                                }).then( function(response) {
+                                    window.EnderecoIntegrator.globalSpace.reloadPage = function() {
+                                        location.reload();
+                                    }
+                                }).catch( function(error) {
+                                    console.log('Something went wrong.')
+                                }).finally( function() {
+                                    EAO._awaits--;
+                                });
+                            });
+
+                        }).catch();
+                    },
+                    true
+                );
             </script>
         </div>
         [{/if}]

@@ -171,3 +171,14 @@ window.EnderecoIntegrator.waitUntilReady().then(function () {
     //
 });
 
+const waitForConfig = setInterval(function () {
+    if (typeof enderecoLoadAMSConfig === 'function') {
+        try {
+            enderecoLoadAMSConfig();
+            clearInterval(waitForConfig);
+        } catch (error) {
+            console.error('Failed to execute enderecoLoadAMSConfig:', error);
+            clearInterval(waitForConfig);
+        }
+    }
+}, 100);

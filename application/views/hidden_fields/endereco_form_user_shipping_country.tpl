@@ -6,35 +6,47 @@
 [{$smarty.block.parent}]
 
 <script>
+    enderecoInitAMS(
+        {
+            countryCode: '[name="deladr[oxaddress__oxcountryid]"]',
+            postalCode: '[name="deladr[oxaddress__oxzip]"]',
+            locality: '[name="deladr[oxaddress__oxcity]"]',
+            streetName: '[name="deladr[oxaddress__oxstreet]"]',
+            buildingNumber: '[name="deladr[oxaddress__oxstreetnr]"]',
+            additionalInfo: '[name="deladr[oxaddress__oxaddinfo]"]',
+            addressStatus: '[name="deladr[oxaddress__mojoamsstatus]"]',
+            addressTimestamp: '[name="deladr[oxaddress__mojoamsts]"]',
+            addressPredictions: '[name="deladr[oxaddress__mojoamspredictions]"]'
+            
+        }, 
+        {
+            name: 'shipping',
+            addressType: 'shipping_address'
+        }, 
+        function(EAO) {
+            EAO.waitForAllExtension().then( function(EAO) {
+                EAO.onAfterModalRendered.push(function(EAO) {
+                    if (!document.querySelector('[name="deladr[oxaddress__oxzip]"]').offsetParent) {
+                        if ('billing_address' === EAO.addressType) {
+                            if (document.querySelector('#userChangeAddress')) {
+                                document.querySelector('#userChangeAddress').click();
+                            }
+                        } else if ('shipping_address' === EAO.addressType) {
+                            if (document.querySelector('.dd-available-addresses .dd-edit-shipping-address')) {
+                                document.querySelector('.dd-available-addresses .dd-edit-shipping-address').click();
+                            }
+                        }
+                    }
+                })
+            }).catch();
+        }, 
+        true
+    );
+</script>
+<script>
     ( function() {
         var $interval = setInterval( function() {
             if (window.EnderecoIntegrator && window.EnderecoIntegrator.ready) {
-                var EAO = window.EnderecoIntegrator.initAMS(
-                    'deladr[oxaddress__',
-                    {
-                        name: 'shipping',
-                        addressType: 'shipping_address'
-                    }
-                );
-
-                if (EAO) {
-                    EAO.waitForAllExtension().then( function(EAO) {
-                        EAO.onAfterModalRendered.push(function(EAO) {
-                            if (!document.querySelector('[name="deladr[oxaddress__oxzip]"]').offsetParent) {
-                                if ('billing_address' === EAO.addressType) {
-                                    if (document.querySelector('#userChangeAddress')) {
-                                        document.querySelector('#userChangeAddress').click();
-                                    }
-                                } else if ('shipping_address' === EAO.addressType) {
-                                    if (document.querySelector('.dd-available-addresses .dd-edit-shipping-address')) {
-                                        document.querySelector('.dd-available-addresses .dd-edit-shipping-address').click();
-                                    }
-                                }
-                            }
-                        })
-                    }).catch();
-                }
-
                 window.EnderecoIntegrator.initPersonServices(
                     'deladr[oxaddress__',
                     {
