@@ -50,7 +50,7 @@ EnderecoIntegrator.resolvers.countryCodeWrite = function (value, subscriber) {
 }
 EnderecoIntegrator.resolvers.countryCodeRead = function (value, subscriber) {
     return new Promise(function (resolve, reject) {
-        resolve(window.EnderecoIntegrator.countryMappingReverse[value.toUpperCase()]);
+        resolve(window.EnderecoIntegrator.countryMappingReverse[value]);
     });
 }
 
