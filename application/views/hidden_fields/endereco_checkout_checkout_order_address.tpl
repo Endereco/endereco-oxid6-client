@@ -48,68 +48,78 @@
                 value="[{if $oxcmp_user->oxuser__mojoamspredictions->value}][{$oxcmp_user->oxuser__mojoamspredictions->value}][{/if}]"
         >
         <script>
-            enderecoInitAMS(
-                {
-                    countryCode: '#endereco-billing-country-code',
-                    postalCode: '#endereco-billing-postal-code',
-                    locality: '#endereco-billing-locality',
-                    streetName: '#endereco-billing-street-name',
-                    buildingNumber: '#endereco-billing-building-number',
-                    addressStatus: '#endereco-billing-status',
-                    addressTimestamp: '#endereco-billing-timestamp',
-                    addressPredictions: '#endereco-billing-predictions',
-                    additionalInfo: '#endereco-billing-additional-info',
-                },
-                {
-                    name: 'billing',
-                    addressType: 'billing_address'
-                },
-                function(EAO) {
-                    EAO.waitForAllExtension().then( function(EAO) {
+            (function() {
+                function afterCreateHandler(EAO) {
+                    if (!EAO) {
+                        return;
+                    }
 
-                        EAO.onEditAddress.push( function() {
-                            document.querySelectorAll('#orderAddress form')[0].submit();
-                        })
-
-                        EAO.onAfterAddressCheckSelected.push( function(EAO) {
-                            EAO.waitForAllPopupsToClose().then(function() {
-                                EAO.waitUntilReady().then( function() {
-                                    if (window.EnderecoIntegrator && window.EnderecoIntegrator.globalSpace.reloadPage) {
-                                        window.EnderecoIntegrator.globalSpace.reloadPage();
-                                        window.EnderecoIntegrator.globalSpace.reloadPage = undefined;
-                                    }
-                                }).catch()
+                    const handleAddressConfirmation = function(EAO) {
+                        EAO.waitForAllPopupsToClose().then(function() {
+                            EAO.waitUntilReady().then(function() {
+                                if (window.EnderecoIntegrator && window.EnderecoIntegrator.globalSpace.reloadPage) {
+                                    window.EnderecoIntegrator.globalSpace.reloadPage();
+                                    window.EnderecoIntegrator.globalSpace.reloadPage = undefined;
+                                }
                             }).catch();
-                            EAO._awaits++;
-                            EAO.util.axios({
-                                method: 'post',
-                                url: '[{$sitepath}]?cl=enderecosaveaddress',
-                                data: {
-                                    method: 'editBillingAddress',
-                                    params: {
-                                        addressId: '[{$oxcmp_user->oxuser__oxid->value}]',
-                                        address: EAO.address,
-                                        enderecometa: {
-                                            ts: EAO.addressTimestamp,
-                                            status: EAO.addressStatus,
-                                            predictions: EAO.addressPredictions,
-                                        }
+                        }).catch();
+
+                        EAO._awaits++;
+                        EAO.util.axios({
+                            method: 'post',
+                            url: '[{$sitepath}]?cl=enderecosaveaddress',
+                            data: {
+                                method: 'editBillingAddress',
+                                params: {
+                                    addressId: '[{$oxcmp_user->oxuser__oxid->value}]',
+                                    address: EAO.address,
+                                    enderecometa: {
+                                        ts: EAO.addressTimestamp,
+                                        status: EAO.addressStatus,
+                                        predictions: EAO.addressPredictions,
                                     }
                                 }
-                            }).then( function(response) {
-                                window.EnderecoIntegrator.globalSpace.reloadPage = function() {
-                                    location.reload();
-                                }
-                            }).catch( function(error) {
-                                console.log('Something went wrong.')
-                            }).finally( function() {
-                                EAO._awaits--;
-                            });
+                            }
+                        }).then(function(response) {
+                            window.EnderecoIntegrator.globalSpace.reloadPage = function() {
+                                location.reload();
+                            }
+                        }).catch(function(error) {
+                            console.log('Something went wrong.');
+                        }).finally(function() {
+                            EAO._awaits--;
+                        });
+                    };
+
+                    EAO.waitForAllExtension().then(function() {
+                        EAO.onEditAddress.push(function() {
+                            document.querySelectorAll('#orderAddress form')[0].submit();
                         });
 
+                        EAO.onAfterAddressCheckSelected.push(handleAddressConfirmation);
+                        EAO.onConfirmAddress.push(handleAddressConfirmation);
                     }).catch();
                 }
-            )
+
+                enderecoInitAMS(
+                    {
+                        countryCode: '#endereco-billing-country-code',
+                        postalCode: '#endereco-billing-postal-code',
+                        locality: '#endereco-billing-locality',
+                        streetName: '#endereco-billing-street-name',
+                        buildingNumber: '#endereco-billing-building-number',
+                        additionalInfo: '#endereco-billing-additional-info',
+                        addressStatus: '#endereco-billing-status',
+                        addressTimestamp: '#endereco-billing-timestamp',
+                        addressPredictions: '#endereco-billing-predictions'
+                    },
+                    {
+                        name: 'billing',
+                        addressType: 'billing_address'
+                    },
+                    afterCreateHandler
+                );
+            })();
         </script>
     </div>
     <div>
@@ -162,69 +172,79 @@
                     value="[{if $oDelAdress->oxaddress__mojoamspredictions->value}][{$oDelAdress->oxaddress__mojoamspredictions->value}][{/if}]"
             >
             <script>
-                enderecoInitAMS(
-                    {
-                        countryCode: '#endereco-shipping-country-code',
-                        postalCode: '#endereco-shipping-postal-code',
-                        locality: '#endereco-shipping-locality',
-                        streetName: '#endereco-shipping-street-name',
-                        buildingNumber: '#endereco-shipping-building-number',
-                        addressStatus: '#endereco-shipping-status',
-                        addressTimestamp: '#endereco-shipping-timestamp',
-                        addressPredictions: '#endereco-shipping-predictions',
-                        additionalInfo: '#endereco-shipping-additional-info',
-                    },
-                    {
-                        name: 'shipping',
-                        addressType: 'shipping_address'
-                    },
-                    function(EAO) {
-                        EAO.waitForAllExtension().then( function(EAO) {
+                (function() {
+                    function afterCreateHandler(EAO) {
+                        if (!EAO) {
+                            return;
+                        }
 
-                            EAO.onEditAddress.push( function() {
-                                document.querySelectorAll('#orderAddress form')[1].submit();
-                            })
-
-                            EAO.onAfterAddressCheckSelected.push( function(EAO) {
-                                EAO.waitForAllPopupsToClose().then(function() {
-                                    EAO.waitUntilReady().then( function() {
-                                        if (window.EnderecoIntegrator && window.EnderecoIntegrator.globalSpace.reloadPage) {
-                                            window.EnderecoIntegrator.globalSpace.reloadPage();
-                                            window.EnderecoIntegrator.globalSpace.reloadPage = undefined;
-                                        }
-                                    }).catch()
+                        const handleAddressConfirmation = function(EAO) {
+                            EAO.waitForAllPopupsToClose().then(function() {
+                                EAO.waitUntilReady().then(function() {
+                                    if (window.EnderecoIntegrator && window.EnderecoIntegrator.globalSpace.reloadPage) {
+                                        window.EnderecoIntegrator.globalSpace.reloadPage();
+                                        window.EnderecoIntegrator.globalSpace.reloadPage = undefined;
+                                    }
                                 }).catch();
-                                EAO._awaits++;
-                                EAO.util.axios({
-                                    method: 'post',
-                                    url: '[{$sitepath}]?cl=enderecosaveaddress',
-                                    data: {
-                                        method: 'editShippingAddress',
-                                        params: {
-                                            addressId: '[{$oDelAdress->oxaddress__oxid->value}]',
-                                            address: EAO.address,
-                                            enderecometa: {
-                                                ts: EAO.addressTimestamp,
-                                                status: EAO.addressStatus,
-                                                predictions: EAO.addressPredictions,
-                                            }
+                            }).catch();
+
+                            EAO._awaits++;
+                            EAO.util.axios({
+                                method: 'post',
+                                url: '[{$sitepath}]?cl=enderecosaveaddress',
+                                data: {
+                                    method: 'editShippingAddress',
+                                    params: {
+                                        addressId: '[{$oDelAdress->oxaddress__oxid->value}]',
+                                        address: EAO.address,
+                                        enderecometa: {
+                                            ts: EAO.addressTimestamp,
+                                            status: EAO.addressStatus,
+                                            predictions: EAO.addressPredictions,
                                         }
                                     }
-                                }).then( function(response) {
-                                    window.EnderecoIntegrator.globalSpace.reloadPage = function() {
-                                        location.reload();
-                                    }
-                                }).catch( function(error) {
-                                    console.log('Something went wrong.')
-                                }).finally( function() {
-                                    EAO._awaits--;
-                                });
+                                }
+                            }).then(function(response) {
+                                window.EnderecoIntegrator.globalSpace.reloadPage = function() {
+                                    location.reload();
+                                }
+                            }).catch(function(error) {
+                                console.log('Something went wrong.');
+                            }).finally(function() {
+                                EAO._awaits--;
+                            });
+                        };
+
+                        EAO.waitForAllExtension().then(function() {
+                            EAO.onEditAddress.push(function() {
+                                document.querySelectorAll('#orderAddress form')[1].submit();
                             });
 
+                            EAO.onAfterAddressCheckSelected.push(handleAddressConfirmation);
+                            EAO.onConfirmAddress.push(handleAddressConfirmation);
                         }).catch();
-                    },
-                    true
-                );
+                    }
+
+                    enderecoInitAMS(
+                        {
+                            countryCode: '#endereco-shipping-country-code',
+                            postalCode: '#endereco-shipping-postal-code',
+                            locality: '#endereco-shipping-locality',
+                            streetName: '#endereco-shipping-street-name',
+                            buildingNumber: '#endereco-shipping-building-number',
+                            addressStatus: '#endereco-shipping-status',
+                            addressTimestamp: '#endereco-shipping-timestamp',
+                            addressPredictions: '#endereco-shipping-predictions',
+                            additionalInfo: '#endereco-shipping-additional-info',
+                        },
+                        {
+                            name: 'shipping',
+                            addressType: 'shipping_address'
+                        },
+                        afterCreateHandler,
+                        true
+                    );
+                })();
             </script>
         </div>
         [{/if}]
