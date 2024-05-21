@@ -41,8 +41,6 @@ class OrderController extends OrderController_parent
                 && ('oxidpaypal' === $payment->getId())
                 && $bCheckExistingPayPalExpress
             ) {
-                // Reset user status, bacause paypal express checkout reuses the same user entry in db.
-                $oUser->oxuser__mojoamsstatus->rawValue = '';
                 $shouldCheck = true;
             } elseif (
                 ('0000-00-00 00:00:00' !== $oUser->oxuser__oxregister->rawValue)
