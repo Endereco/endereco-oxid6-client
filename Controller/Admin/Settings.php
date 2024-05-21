@@ -105,6 +105,7 @@ class Settings extends \OxidEsales\Eshop\Application\Controller\Admin\AdminContr
             'bChangeFieldsOrder',
             'bAllowCloseModal',
             'bConfirmWithCheckbox',
+            'bCorrectTranspositionedNames'
         ];
 
         $sOxId = \OxidEsales\Eshop\Core\Registry::getConfig()->getRequestEscapedParameter('oxid');
