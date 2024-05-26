@@ -94,18 +94,152 @@ class UserComponent extends UserComponent_parent
     {
         // phpcs:enable
         $this->findAndCloseEnderecoSessions();
-        return parent::changeuser_testvalues();
+
+        $return = parent::changeuser_testvalues();
+
+        // Hash signature. We assume this logic is executed only from the frontend.
+        $oUser = $this->getUser();
+        $billigAmsWasInitiated = isset($_POST['billing_ams_session_counter']);
+        $billingAmsWasUsed = intval($_POST['billing_ams_session_counter']) > 0;
+        if ($oUser && $billigAmsWasInitiated && $billingAmsWasUsed) {
+            $hash = $this->calculateHash(
+                $oUser->oxuser__oxcountryid->rawValue, // Country ID
+                $oUser->oxuser__oxzip->rawValue, // Postal code
+                $oUser->oxuser__oxcity->rawValue, // Locality
+                $oUser->oxuser__oxstreet->rawValue, // Street name
+                $oUser->oxuser__oxstreetnr->rawValue, // House number
+                $oUser->oxuser__oxaddinfo->rawValue // Additional info
+            );
+            $oUser->oxuser__mojoaddresshash->rawValue = $hash;
+            $oUser->save();
+        }
+
+        $aDelAddress = $this->_getDelAddressData();
+        $sAddressId = $this->getConfig()->getRequestParameter('oxaddressid');
+        $shippingAmsWasInitiated = isset($_POST['shipping_ams_session_counter']);
+        $shippingAmsWasUsed = intval($_POST['shipping_ams_session_counter']) > 0;
+        if ($aDelAddress && $sAddressId && $shippingAmsWasInitiated && $shippingAmsWasUsed) {
+            $hash = $this->calculateHash(
+                $aDelAddress['oxaddress__oxcountryid'], // Country ID
+                $aDelAddress['oxaddress__oxzip'], // Postal code
+                $aDelAddress['oxaddress__oxcity'], // Locality
+                $aDelAddress['oxaddress__oxstreet'], // Street name
+                $aDelAddress['oxaddress__oxstreetnr'], // House number
+                $aDelAddress['oxaddress__oxaddinfo'] // Additional info
+            );
+
+            $oAddress = oxNew(\OxidEsales\Eshop\Application\Model\Address::class);
+            $oAddress->setId($sAddressId);
+            $oAddress->load($sAddressId);
+
+            $oAddress->oxaddress__mojoaddresshash->rawValue = $hash;
+            $oAddress->save();
+        }
+
+        return $return;
     }
 
     public function changeUser()
     {
         $this->findAndCloseEnderecoSessions();
-        return parent::changeUser();
+        $return = parent::changeUser();
+
+        // Hash signature. We assume this logic is executed only from the frontend.
+        $oUser = $this->getUser();
+        $billigAmsWasInitiated = isset($_POST['billing_ams_session_counter']);
+        $billingAmsWasUsed = intval($_POST['billing_ams_session_counter']) > 0;
+        if ($oUser && $billigAmsWasInitiated && $billingAmsWasUsed) {
+            $hash = $this->calculateHash(
+                $oUser->oxuser__oxcountryid->rawValue, // Country ID
+                $oUser->oxuser__oxzip->rawValue, // Postal code
+                $oUser->oxuser__oxcity->rawValue, // Locality
+                $oUser->oxuser__oxstreet->rawValue, // Street name
+                $oUser->oxuser__oxstreetnr->rawValue, // House number
+                $oUser->oxuser__oxaddinfo->rawValue // Additional info
+            );
+            $oUser->oxuser__mojoaddresshash->rawValue = $hash;
+            $oUser->save();
+        }
+
+        $aDelAddress = $this->_getDelAddressData();
+        $sAddressId = $this->getConfig()->getRequestParameter('oxaddressid');
+        $shippingAmsWasInitiated = isset($_POST['shipping_ams_session_counter']);
+        $shippingAmsWasUsed = intval($_POST['shipping_ams_session_counter']) > 0;
+        if ($aDelAddress && $sAddressId && $shippingAmsWasInitiated && $shippingAmsWasUsed) {
+            $hash = $this->calculateHash(
+                $aDelAddress['oxaddress__oxcountryid'], // Country ID
+                $aDelAddress['oxaddress__oxzip'], // Postal code
+                $aDelAddress['oxaddress__oxcity'], // Locality
+                $aDelAddress['oxaddress__oxstreet'], // Street name
+                $aDelAddress['oxaddress__oxstreetnr'], // House number
+                $aDelAddress['oxaddress__oxaddinfo'] // Additional info
+            );
+
+            $oAddress = oxNew(\OxidEsales\Eshop\Application\Model\Address::class);
+            $oAddress->setId($sAddressId);
+            $oAddress->load($sAddressId);
+
+            $oAddress->oxaddress__mojoaddresshash->rawValue = $hash;
+            $oAddress->save();
+        }
+
+        return $return;
     }
 
     public function createUser()
     {
         $this->findAndCloseEnderecoSessions();
-        return parent::createUser();
+
+        $return = parent::createUser();
+
+        // Hash signature. We assume this logic is executed only from the frontend.
+        $oUser = $this->getUser();
+        $billigAmsWasInitiated = isset($_POST['billing_ams_session_counter']);
+        $billingAmsWasUsed = intval($_POST['billing_ams_session_counter']) > 0;
+        if ($oUser && $billigAmsWasInitiated && $billingAmsWasUsed) {
+            $hash = $this->calculateHash(
+                $oUser->oxuser__oxcountryid->rawValue, // Country ID
+                $oUser->oxuser__oxzip->rawValue, // Postal code
+                $oUser->oxuser__oxcity->rawValue, // Locality
+                $oUser->oxuser__oxstreet->rawValue, // Street name
+                $oUser->oxuser__oxstreetnr->rawValue, // House number
+                $oUser->oxuser__oxaddinfo->rawValue // Additional info
+            );
+            $oUser->oxuser__mojoaddresshash->rawValue = $hash;
+            $oUser->save();
+        }
+
+        return $return;
+    }
+
+    /**
+     * Calculates a hash based on the provided address components.
+     * This is used to ensure the address integrity.
+     *
+     * @param string $countryCode Country code of the address.
+     * @param string $postalCode Postal code of the address.
+     * @param string $locality Locality (city) of the address.
+     * @param string $streetName Street name of the address.
+     * @param string $buildingNumber Building number of the address.
+     * @param string $additionalInfo Additional information of the address.
+     * @return string The calculated hash.
+     */
+    private function calculateHash(
+        $countryCode,
+        $postalCode,
+        $locality,
+        $streetName,
+        $buildingNumber,
+        $additionalInfo
+    ) {
+        $hashBody = [
+            $countryCode,
+            $postalCode,
+            $locality,
+            $streetName,
+            $buildingNumber,
+            $additionalInfo
+        ];
+        return hash('sha256', implode('', $hashBody));
     }
 }

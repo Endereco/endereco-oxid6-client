@@ -47,6 +47,17 @@ class AddressController extends \OxidEsales\Eshop\Application\Controller\Fronten
                 $oUser->oxuser__mojoamsts->rawValue = $data['params']['enderecometa']['ts'];
                 $predictions = json_encode($data['params']['enderecometa']['predictions']);
                 $oUser->oxuser__mojoamspredictions->rawValue = $predictions;
+
+                // When writing address through endereco modal, always recalculate hash.
+                $hash = $this->calculateHash(
+                    $oUser->oxuser__oxcountryid->rawValue, // Country ID
+                    $oUser->oxuser__oxzip->rawValue, // Postal code
+                    $oUser->oxuser__oxcity->rawValue, // Locality
+                    $oUser->oxuser__oxstreet->rawValue, // Street name
+                    $oUser->oxuser__oxstreetnr->rawValue, // House number
+                    $oUser->oxuser__oxaddinfo->rawValue // Additional info
+                );
+                $oUser->oxuser__mojoaddresshash->rawValue = $hash;
                 $oUser->save();
             }
         }
@@ -85,6 +96,17 @@ class AddressController extends \OxidEsales\Eshop\Application\Controller\Fronten
                 $oAddress->oxaddress__mojoamsts->rawValue = $data['params']['enderecometa']['ts'];
                 $predictions = json_encode($data['params']['enderecometa']['predictions']);
                 $oAddress->oxaddress__mojoamspredictions->rawValue = $predictions;
+
+                // When writing address through endereco modal, always recalculate hash.
+                $hash = $this->calculateHash(
+                    $oAddress->oxaddress__oxcountryid->rawValue, // Country ID
+                    $oAddress->oxaddress__oxzip->rawValue, // Postal code
+                    $oAddress->oxaddress__oxcity->rawValue, // Locality
+                    $oAddress->oxaddress__oxstreet->rawValue, // Street name
+                    $oAddress->oxaddress__oxstreetnr->rawValue, // House number
+                    $oAddress->oxaddress__oxaddinfo->rawValue // Additional info
+                );
+                $oAddress->oxaddress__mojoaddresshash->rawValue = $hash;
                 $oAddress->save();
             }
         }
@@ -92,5 +114,36 @@ class AddressController extends \OxidEsales\Eshop\Application\Controller\Fronten
         \OxidEsales\Eshop\Core\Registry::getUtils()->showMessageAndExit('');
 
         return '';
+    }
+
+    /**
+     * Calculates a hash based on the provided address components.
+     * This is used to ensure the address integrity.
+     *
+     * @param string $countryCode Country code of the address.
+     * @param string $postalCode Postal code of the address.
+     * @param string $locality Locality (city) of the address.
+     * @param string $streetName Street name of the address.
+     * @param string $buildingNumber Building number of the address.
+     * @param string $additionalInfo Additional information of the address.
+     * @return string The calculated hash.
+     */
+    private function calculateHash(
+        $countryCode,
+        $postalCode,
+        $locality,
+        $streetName,
+        $buildingNumber,
+        $additionalInfo
+    ) {
+        $hashBody = [
+            $countryCode,
+            $postalCode,
+            $locality,
+            $streetName,
+            $buildingNumber,
+            $additionalInfo
+        ];
+        return hash('sha256', implode('', $hashBody));
     }
 }

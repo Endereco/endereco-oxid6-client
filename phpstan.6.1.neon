@@ -14,3 +14,6 @@ parameters:
     ignoreErrors:
         - message: "#^Return type \\(string\\) of method .+::render\\(\\) should be compatible with return type \\(null\\) of method .+::render\\(\\)$#"
         - message: "#^Access to an undefined property OxidEsales\\\\Eshop\\\\Application\\\\Model\\\\User::\\$#"
+    universalObjectCratesClasses:
+        - OxidEsales\Eshop\Application\Model\User;
+        - OxidEsales\Eshop\Application\Model\Address

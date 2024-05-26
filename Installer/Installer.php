@@ -135,5 +135,21 @@ class Installer
             DatabaseProvider::getDb()->execute($sql);
         }
         unset($aColumns);
+
+        // Add HASH columns
+        $aColumns = DatabaseProvider::getDb()->getAll("SHOW COLUMNS FROM `oxuser` LIKE 'MOJOADDRESSHASH';");
+        if (0 === count($aColumns)) {
+            $sql = "ALTER TABLE `oxuser`
+            ADD `MOJOADDRESSHASH` VARCHAR(64) NOT NULL DEFAULT '';";
+            DatabaseProvider::getDb()->execute($sql);
+        }
+        unset($aColumns);
+        $aColumns = DatabaseProvider::getDb()->getAll("SHOW COLUMNS FROM `oxaddress` LIKE 'MOJOADDRESSHASH';");
+        if (0 === count($aColumns)) {
+            $sql = "ALTER TABLE `oxaddress`
+            ADD `MOJOADDRESSHASH` VARCHAR(64) NOT NULL DEFAULT '';";
+            DatabaseProvider::getDb()->execute($sql);
+        }
+        unset($aColumns);
     }
 }

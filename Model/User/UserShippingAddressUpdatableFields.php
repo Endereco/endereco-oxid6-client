@@ -12,7 +12,8 @@ class UserShippingAddressUpdatableFields extends UserShippingAddressUpdatableFie
         $aReturn[] = 'MOJOAMSSTATUS';
         $aReturn[] = 'MOJOAMSPREDICTIONS';
         $aReturn[] = 'MOJONAMESCORE';
-
+        $aReturn[] = 'MOJOADDRESSHASH';
+        
         return $aReturn;
     }
 }
