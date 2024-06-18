@@ -7,7 +7,7 @@ use Doctrine\Migrations\AbstractMigration;
 /**
  * Auto-generated Migration: Please modify to your needs!
  */
-final class Version20220125131035 extends AbstractMigration
+final class Version20240522115035 extends AbstractMigration
 {
     /**
      * @SuppressWarnings(PHPMD.UnusedFormalParameter)
