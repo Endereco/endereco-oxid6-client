@@ -124,14 +124,17 @@ class Installer
         $aColumns = DatabaseProvider::getDb()->getAll("SHOW COLUMNS FROM `oxstates` LIKE 'MOJOISO31662';");
         if (0 !== count($aColumns)) {
             $sql = "INSERT INTO `oxstates` (`OXID`, `OXCOUNTRYID`, `MOJOISO31662`)
-                    SELECT * FROM ( 
                         SELECT 
-                            `oxstates`.`OXID`, `oxstates`.`OXCOUNTRYID`, 
-                            CONCAT(`oxcountry`.`OXISOALPHA2`, '-', `oxstates`.`OXISOALPHA2`) AS 'MOJOISO31662'
-                    FROM `oxstates`
-                    JOIN `oxcountry` ON `oxcountry`.`OXID` = `oxstates`.`OXCOUNTRYID`
-                    WHERE `MOJOISO31662` IS NULL) AS `t`
-                    ON DUPLICATE KEY UPDATE `MOJOISO31662` = `t`.`MOJOISO31662`";
+                            `oxstates`.`OXID`, 
+                            `oxstates`.`OXCOUNTRYID`,
+                            CASE 
+                                WHEN LENGTH(`oxstates`.`OXISOALPHA2`) = 5 AND `oxstates`.`OXISOALPHA2` LIKE '__-__' THEN `oxstates`.`OXISOALPHA2`
+                                ELSE CONCAT(`oxcountry`.`OXISOALPHA2`, '-', `oxstates`.`OXISOALPHA2`)
+                            END AS `MOJOISO31662`
+                        FROM `oxstates`
+                            JOIN `oxcountry` ON `oxcountry`.`OXID` = `oxstates`.`OXCOUNTRYID`
+                                WHERE `oxstates`.`MOJOISO31662` IS NULL
+                    ON DUPLICATE KEY UPDATE `MOJOISO31662` = VALUES(`MOJOISO31662`);";
             DatabaseProvider::getDb()->execute($sql);
         }
         unset($aColumns);
