@@ -128,7 +128,8 @@ class Installer
                             `oxstates`.`OXID`, 
                             `oxstates`.`OXCOUNTRYID`,
                             CASE 
-                                WHEN LENGTH(`oxstates`.`OXISOALPHA2`) = 5 AND `oxstates`.`OXISOALPHA2` LIKE '__-__' THEN `oxstates`.`OXISOALPHA2`
+                                WHEN LENGTH(`oxstates`.`OXISOALPHA2`) = 5 
+                                AND `oxstates`.`OXISOALPHA2` LIKE '__-__' THEN `oxstates`.`OXISOALPHA2`
                                 ELSE CONCAT(`oxcountry`.`OXISOALPHA2`, '-', `oxstates`.`OXISOALPHA2`)
                             END AS `MOJOISO31662`
                         FROM `oxstates`
