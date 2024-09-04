@@ -45,15 +45,22 @@ final class Version20220125131035 extends AbstractMigration
                     ADD `MOJOISO31662` char(6) NULL;"
             );
 
-            // Fill up missing values.
-            $this->addSql(
-                "INSERT INTO `oxstates` (`OXID`, `OXCOUNTRYID`, `MOJOISO31662`)
-                    SELECT * FROM ( SELECT `oxstates`.`OXID`, `oxstates`.`OXCOUNTRYID`, CONCAT(`oxcountry`.`OXISOALPHA2`, '-', `oxstates`.`OXISOALPHA2`) AS 'MOJOISO31662'
-                    FROM `oxstates`
-                    JOIN `oxcountry` ON `oxcountry`.`OXID` = `oxstates`.`OXCOUNTRYID`
-                    WHERE `MOJOISO31662` IS NULL) AS `t`
-                    ON DUPLICATE KEY UPDATE `MOJOISO31662` = `t`.`MOJOISO31662`"
-            );
+            // Fill up missing states iso codes once. In general its better to double check, because the default OXISOALPHA2
+            // only allows 2 characters, which is not enough for some countries e.g. Mexico
+            $this->addSql("
+                INSERT INTO `oxstates` (`OXID`, `OXCOUNTRYID`, `MOJOISO31662`)
+                SELECT 
+                    `oxstates`.`OXID`, 
+                    `oxstates`.`OXCOUNTRYID`,
+                    CASE 
+                        WHEN `oxstates`.`OXISOALPHA2` REGEXP '^[A-Z]{2}-[A-Z0-9]{1,3}$' THEN `oxstates`.`OXISOALPHA2`
+                        ELSE CONCAT(`oxcountry`.`OXISOALPHA2`, '-', `oxstates`.`OXISOALPHA2`)
+                    END AS `MOJOISO31662`
+                FROM `oxstates`
+                JOIN `oxcountry` ON `oxcountry`.`OXID` = `oxstates`.`OXCOUNTRYID`
+                WHERE `oxstates`.`MOJOISO31662` IS NULL
+                ON DUPLICATE KEY UPDATE `MOJOISO31662` = VALUES(`MOJOISO31662`)
+            ");
         }
 
         // Allow created columns to be NULL

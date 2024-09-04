@@ -55,26 +55,31 @@ EnderecoIntegrator.resolvers.countryCodeRead = function (value, subscriber) {
 }
 
 EnderecoIntegrator.resolvers.subdivisionCodeWrite = function (value, subscriber) {
-    return new Promise(function (resolve, reject) {
-        var key = window.EnderecoIntegrator.subdivisionMapping[value.toUpperCase()];
-        if (key !== undefined) {
-            resolve(key);
-        } else {
+    return new Promise(resolve => {
+        if (!value) {
             resolve('');
+            return;
         }
+
+        const mapping = window.EnderecoIntegrator?.subdivisionMapping || {};
+        const key = mapping[value];
+        resolve(key !== undefined ? key : '');
     });
 }
 
 EnderecoIntegrator.resolvers.subdivisionCodeRead = function (value, subscriber) {
-    const countryCode = subscriber._subject.countryCode.toUpperCase();
-    const mappingKey = countryCode + '-' + value.toUpperCase();
+    return new Promise(function (resolve) {
+        const countryCode = subscriber._subject.countryCode?.toUpperCase() || '';
 
-    return new Promise(function (resolve, reject) {
-        if ("" !== value.toUpperCase()) {
-            resolve(mappingKey);
-        } else {
+        if (!countryCode || !value) {
             resolve('');
+            return;
         }
+
+        const mapping = window.EnderecoIntegrator?.subdivisionMappingReverse || {};
+        const submapping = mapping[countryCode] || {};
+        const key = submapping[value];
+        resolve(key !== undefined ? key : '');
     });
 }
 

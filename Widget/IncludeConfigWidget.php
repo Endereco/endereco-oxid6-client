@@ -138,7 +138,7 @@ class IncludeConfigWidget extends \OxidEsales\Eshop\Application\Component\Widget
 
         $sStatesTable = $viewNameGenerator->getViewName('oxstates', $languageId, $sOxId);
         $sql =
-            "SELECT c.`OXISOALPHA2`, s.`OXTITLE`, s.`OXID`, s.`OXISOALPHA2`
+            "SELECT c.`OXISOALPHA2`, s.`OXTITLE`, s.`OXID`, s.`MOJOISO31662`
                 FROM {$sStatesTable} s
                 JOIN oxcountry c ON s.`OXCOUNTRYID` = c.`OXID`
                 WHERE s.`MOJOISO31662` <> '' AND s.`MOJOISO31662` IS NOT NULL";
@@ -152,18 +152,18 @@ class IncludeConfigWidget extends \OxidEsales\Eshop\Application\Component\Widget
         $aStatesMappingReverse = [];
 
         foreach ($resultSet as $result) {
-            $countryCode = $result[0];
-            $stateCode = $result[2];
-            $combinedCode = $countryCode . '-' . $stateCode;
+            $countryCode = $result[0]; // e.g. "DE"
+            $fullStateCode = $result[3]; // e.g. "DE-BW"
+            $stateName = $result[1]; // e.g. "Baden-Würtemberg"
+            $stateId = $result[2]; // any char(32) e.g. "1c34c5132c23c45.c5234c"
 
-            $aStates[$combinedCode] = $result[1];
-
-            $aStatesMapping[strtoupper($combinedCode)] = $stateCode;
+            $aStates[$fullStateCode] = $stateName;
+            $aStatesMapping[mb_strtoupper($fullStateCode)] = $stateId;
 
             if (!isset($aStatesMappingReverse[$countryCode])) {
                 $aStatesMappingReverse[$countryCode] = [];
             }
-            $aStatesMappingReverse[$countryCode][$stateCode] = $combinedCode;
+            $aStatesMappingReverse[$countryCode][$stateId] = mb_strtoupper($fullStateCode);
         }
 
         $this->_aViewData['enderecoclient']['oSubdivisions'] = json_encode($aStates);
