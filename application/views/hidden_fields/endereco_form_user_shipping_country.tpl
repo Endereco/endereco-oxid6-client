@@ -9,6 +9,7 @@
     enderecoInitAMS(
         {
             countryCode: '[name="deladr[oxaddress__oxcountryid]"]',
+            subdivisionCode: '[name="deladr[oxaddress__oxstateid]"]',
             postalCode: '[name="deladr[oxaddress__oxzip]"]',
             locality: '[name="deladr[oxaddress__oxcity]"]',
             streetName: '[name="deladr[oxaddress__oxstreet]"]',
