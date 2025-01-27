@@ -164,7 +164,7 @@ class UserComponent extends UserComponent_parent
         $aDelAddress = $this->_getDelAddressData();
         $sAddressId = $this->getConfig()->getRequestParameter('oxaddressid');
         $shippingAmsWasInitiated = isset($_POST['shipping_ams_session_counter']);
-        $shippingAmsWasUsed = intval($_POST['shipping_ams_session_counter']) > 0;
+        $shippingAmsWasUsed = intval($_POST['shipping_ams_session_counter'] ?? 0) > 0;
         if ($aDelAddress && $sAddressId && $shippingAmsWasInitiated && $shippingAmsWasUsed) {
             $hash = $this->calculateHash(
                 $aDelAddress['oxaddress__oxcountryid'], // Country ID
