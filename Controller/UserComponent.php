@@ -100,7 +100,7 @@ class UserComponent extends UserComponent_parent
         // Hash signature. We assume this logic is executed only from the frontend.
         $oUser = $this->getUser();
         $billigAmsWasInitiated = isset($_POST['billing_ams_session_counter']);
-        $billingAmsWasUsed = intval($_POST['billing_ams_session_counter']) > 0;
+        $billingAmsWasUsed = intval($_POST['billing_ams_session_counter'] ?? 0) > 0;
         if ($oUser && $billigAmsWasInitiated && $billingAmsWasUsed) {
             $hash = $this->calculateHash(
                 $oUser->oxuser__oxcountryid->rawValue, // Country ID
