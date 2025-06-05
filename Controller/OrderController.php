@@ -44,8 +44,9 @@ class OrderController extends OrderController_parent
 
             // Check if its a PayPal Express checkout user
             if (
-                ('0000-00-00 00:00:00' === $oUser->oxuser__oxregister->rawValue)
-                && ('oxidpaypal' === $payment->getId())
+                $payment
+                && ('0000-00-00 00:00:00' === $oUser->oxuser__oxregister->rawValue)
+                && ('oxidpaypal' === $payment->getId() || 'oscpaypal_express' === $payment->getId())
                 && $bCheckExistingPayPalExpress
             ) {
                 $shouldCheck = true;
@@ -76,10 +77,10 @@ class OrderController extends OrderController_parent
                         'streetName' => $oUser->oxuser__oxstreet->rawValue,
                         'buildingNumber' => $oUser->oxuser__oxstreetnr->rawValue,
                         '__status' => (
-                            ('' !== $oUser->oxuser__mojoamsstatus->rawValue)
-                                ? $oUser->oxuser__mojoamsstatus->rawValue
-                                : ''
-                            ),
+                        ('' !== $oUser->oxuser__mojoamsstatus->rawValue)
+                            ? $oUser->oxuser__mojoamsstatus->rawValue
+                            : ''
+                        ),
                         '__predictions' => '',
                         '__timestamp' => '',
                     );
@@ -119,9 +120,9 @@ class OrderController extends OrderController_parent
                         'streetName' => $oDeliveryAddress->oxaddress__oxstreet->rawValue,
                         'buildingNumber' => $oDeliveryAddress->oxaddress__oxstreetnr->rawValue,
                         '__status' => (
-                            ('' !== $oDeliveryAddress->oxaddress__mojoamsstatus->rawValue)
-                                ? $oDeliveryAddress->oxaddress__mojoamsstatus->rawValue
-                                : ''
+                        ('' !== $oDeliveryAddress->oxaddress__mojoamsstatus->rawValue)
+                            ? $oDeliveryAddress->oxaddress__mojoamsstatus->rawValue
+                            : ''
                         ),
                         '__predictions' => '',
                         '__timestamp' => '',
