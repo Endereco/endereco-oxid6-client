@@ -44,8 +44,9 @@ class OrderController extends OrderController_parent
 
             // Check if its a PayPal Express checkout user
             if (
-                ('0000-00-00 00:00:00' === $oUser->oxuser__oxregister->rawValue)
-                && ('oxidpaypal' === $payment->getId())
+                $payment
+                && ('0000-00-00 00:00:00' === $oUser->oxuser__oxregister->rawValue)
+                && ('oxidpaypal' === $payment->getId() || 'oscpaypal_express' === $payment->getId())
                 && $bCheckExistingPayPalExpress
             ) {
                 $shouldCheck = true;
