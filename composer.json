@@ -2,6 +2,7 @@
     "name": "endereco/endereco-oxid6-client",
     "type": "oxideshop-module",
     "license": "GPL-3.0-only",
+    "version": "4.5.4",
     "extra": {
         "oxideshop": {
             "target-directory": "endereco/endereco-oxid6-client"

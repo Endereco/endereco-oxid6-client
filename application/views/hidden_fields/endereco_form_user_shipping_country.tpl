@@ -22,10 +22,10 @@
         }, 
         {
             name: 'shipping',
-            addressType: 'shipping_address'
+            addressType: 'shipping_address',
+            intent: 'edit'
         }, 
         function(EAO) {
-            EAO.waitForAllExtension().then( function(EAO) {
                 EAO.onAfterModalRendered.push(function(EAO) {
                     if (!document.querySelector('[name="deladr[oxaddress__oxzip]"]').offsetParent) {
                         if ('billing_address' === EAO.addressType) {
@@ -39,7 +39,6 @@
                         }
                     }
                 })
-            }).catch();
         }, 
         true
     );

@@ -6,44 +6,62 @@
 [{$smarty.block.parent}]
 
 <script>
+
     ( function() {
-        var $interval = setInterval( function() {
-            if (window.EnderecoIntegrator && window.EnderecoIntegrator.ready) {
-                var EAO = window.EnderecoIntegrator.initAMS(
-                    'invadr[oxuser__',
-                    {
-                        name: 'billing',
-                        addressType: 'billing_address'
-                    }
-                );
 
-                if (EAO) {
-                    EAO.waitForAllExtension().then( function(EAO) {
-                        EAO.onAfterModalRendered.push(function(EAO) {
-                            if (!document.querySelector('[name="invadr[oxuser__oxzip]"]').offsetParent) {
-                                if ('billing_address' === EAO.addressType) {
-                                    if (document.querySelector('#userChangeAddress')) {
-                                        document.querySelector('#userChangeAddress').click();
-                                    }
-                                } else if ('shipping_address' === EAO.addressType) {
-                                    if (document.querySelector('.dd-available-addresses .dd-edit-shipping-address')) {
-                                        document.querySelector('.dd-available-addresses .dd-edit-shipping-address').click();
-                                    }
-                                }
-                            }
-                        })
-                    }).catch();
-                }
+        function afterCreateHandler(EAO) {
 
-                window.EnderecoIntegrator.initPersonServices(
-                    'invadr[oxuser__',
-                    {
-                        name: 'billing',
-                    }
-                );
-                clearInterval($interval);
+            if (!EAO) {
+                return;
             }
-        }, 100);
+
+            if (EAO) {
+
+                EAO.onAfterModalRendered.push(function (EAO) {
+                    if (!document.querySelector('[name="invadr[oxuser__oxzip]"]').offsetParent) {
+                        if ('billing_address' === EAO.addressType) {
+                            if (document.querySelector('#userChangeAddress')) {
+                                document.querySelector('#userChangeAddress').click();
+                            }
+                        } else if ('shipping_address' === EAO.addressType) {
+                            if (document.querySelector('.dd-available-addresses .dd-edit-shipping-address')) {
+                                document.querySelector('.dd-available-addresses .dd-edit-shipping-address').click();
+                            }
+                        }
+                    }
+                });
+
+            }
+
+            window.EnderecoIntegrator.initPersonServices(
+                'invadr[oxuser__',
+                {
+                    name: 'billing',
+                }
+            );
+        }
+
+        enderecoInitAMS(
+            {
+                countryCode: '[name="invadr[oxuser__oxcountryid]"]',
+                postalCode: '[name="invadr[oxuser__oxzip]"]',
+                locality: '[name="invadr[oxuser__oxcity]"]',
+                streetName: '[name="invadr[oxuser__oxstreet]"]',
+                buildingNumber: '[name="invadr[oxuser__oxstreetnr]"]',
+                additionalInfo: '[name="invadr[oxuser__oxaddinfo]"]',
+                addressStatus: '[name="invadr[oxuser__mojoamsstatus]"]',
+                addressTimestamp: '[name="invadr[oxuser__mojoamsts]"]',
+                addressPredictions: '[name="invadr[oxuser__mojoamspredictions]"]'
+            },
+            {
+                name: 'billing',
+                addressType: 'billing_address',
+                intent: 'edit',
+            },
+            afterCreateHandler
+        );
+
     })();
+
 </script>
 
