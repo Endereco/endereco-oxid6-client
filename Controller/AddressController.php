@@ -40,8 +40,8 @@ class AddressController extends \OxidEsales\Eshop\Application\Controller\Fronten
 
                 $oUser->oxuser__oxstreetnr->rawValue
                     = $addressChanges['buildingNumber']
-                        ? $data['params']['address']['buildingNumber']
-                        : $oUser->oxuser__oxstreetnr->rawValue;
+                    ? $data['params']['address']['buildingNumber']
+                    : $oUser->oxuser__oxstreetnr->rawValue;
 
                 $oUser->oxuser__oxaddinfo->rawValue
                     = $addressChanges['additionalInfo'] ?? $oUser->oxuser__oxaddinfo->rawValue;
@@ -124,9 +124,8 @@ class AddressController extends \OxidEsales\Eshop\Application\Controller\Fronten
             }
         }
 
-        \OxidEsales\Eshop\Core\Registry::getUtils()->showMessageAndExit((string) $isChanged);
-
-        return (string) $isChanged;
+        echo $isChanged;
+        exit();
     }
 
     /**
@@ -162,6 +161,7 @@ class AddressController extends \OxidEsales\Eshop\Application\Controller\Fronten
 
     private function getChangesFromPredictions($data)
     {
+
         if ($data) {
             if (isset($data['enderecometa']['predictions']) && count($data['enderecometa']['predictions']) > 0) {
                 $predictions = $data['enderecometa']['predictions'];

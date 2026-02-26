@@ -44,6 +44,7 @@
         enderecoInitAMS(
             {
                 countryCode: '[name="invadr[oxuser__oxcountryid]"]',
+                subdivisionCode: '[name="invadr[oxuser__oxstateid]"]',
                 postalCode: '[name="invadr[oxuser__oxzip]"]',
                 locality: '[name="invadr[oxuser__oxcity]"]',
                 streetName: '[name="invadr[oxuser__oxstreet]"]',
