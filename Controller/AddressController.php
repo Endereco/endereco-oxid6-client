@@ -18,7 +18,6 @@ class AddressController extends \OxidEsales\Eshop\Application\Controller\Fronten
             // Save billing address.
             $oUser = oxNew(User::class);
             if ($oUser->load($data['params']['addressId'])) {
-
                 $hashBefore = $this->calculateHash(
                     $oUser->oxuser__oxcountryid->rawValue, // Country ID
                     $oUser->oxuser__oxzip->rawValue, // Postal code
@@ -40,7 +39,7 @@ class AddressController extends \OxidEsales\Eshop\Application\Controller\Fronten
                     = $addressChanges['streetName'] ?? $oUser->oxuser__oxstreet->rawValue;
 
                 $oUser->oxuser__oxstreetnr->rawValue
-                    =$addressChanges['buildingNumber']
+                    = $addressChanges['buildingNumber']
                         ? $data['params']['address']['buildingNumber']
                         : $oUser->oxuser__oxstreetnr->rawValue;
 
@@ -63,7 +62,7 @@ class AddressController extends \OxidEsales\Eshop\Application\Controller\Fronten
                     $oUser->oxuser__oxaddinfo->rawValue // Additional info
                 );
 
-                if($hash != $hashBefore){
+                if ($hash != $hashBefore) {
                     $isChanged = 2;
                 }
 
@@ -76,7 +75,6 @@ class AddressController extends \OxidEsales\Eshop\Application\Controller\Fronten
             // Save shipping address.
             $oAddress = oxNew(Address::class);
             if ($oAddress->load($data['params']['addressId'])) {
-
                 $hashBefore = $this->calculateHash(
                     $oAddress->oxaddress__oxcountryid->rawValue, // Country ID
                     $oAddress->oxaddress__oxzip->rawValue, // Postal code
@@ -118,7 +116,7 @@ class AddressController extends \OxidEsales\Eshop\Application\Controller\Fronten
                     $oAddress->oxaddress__oxstreetnr->rawValue, // House number
                     $oAddress->oxaddress__oxaddinfo->rawValue // Additional info
                 );
-                if($hash != $hashBefore){
+                if ($hash != $hashBefore) {
                     $isChanged = 2;
                 }
                 $oAddress->oxaddress__mojoaddresshash->rawValue = $hash;
@@ -126,10 +124,9 @@ class AddressController extends \OxidEsales\Eshop\Application\Controller\Fronten
             }
         }
 
-        echo $isChanged;
-        \OxidEsales\Eshop\Core\Registry::getUtils()->showMessageAndExit($isChanged);
+        \OxidEsales\Eshop\Core\Registry::getUtils()->showMessageAndExit((string) $isChanged);
 
-        return $isChanged;
+        return (string) $isChanged;
     }
 
     /**
@@ -163,18 +160,17 @@ class AddressController extends \OxidEsales\Eshop\Application\Controller\Fronten
         return hash('sha256', implode('', $hashBody));
     }
 
-    private function getChangesFromPredictions($data){
-
-        if($data){
-            if(isset($data['enderecometa']['predictions']) && count($data['enderecometa']['predictions']) > 0){
+    private function getChangesFromPredictions($data)
+    {
+        if ($data) {
+            if (isset($data['enderecometa']['predictions']) && count($data['enderecometa']['predictions']) > 0) {
                 $predictions = $data['enderecometa']['predictions'];
-                foreach($predictions as $prediction){
+                foreach ($predictions as $prediction) {
                     return $prediction;
                 }
-            }elseif($data['enderecometa']['status'][0] == "address_not_found"){
+            } elseif ($data['enderecometa']['status'][0] == "address_not_found") {
                 return $data['address'];
             }
-
         }
     }
 }
