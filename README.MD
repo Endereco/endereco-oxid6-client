@@ -162,12 +162,42 @@ This repository includes several shell scripts to assist with development and te
 #### `playground.sh`
 Launches an interactive OXID 6 development environment in Docker.
 
-**Description:** Builds a Docker image with the selected OXID version (6.3, 6.4, or 6.5) and the module volume-mounted for live development. Handles port conflicts, optional XDebug setup, optional migration mode, and full auto-setup on first start.
+Builds a Docker image with the selected OXID version (6.3, 6.4, or 6.5) and the module volume-mounted for live development. Handles port conflicts, optional XDebug setup, optional migration mode, and full auto-setup on first start.
 
-**Usage:**
 ```bash
 ./playground.sh
 ```
 
 Access the shop at `http://localhost/` and the admin panel at `http://localhost/admin` with credentials `admin@example.com` / `admin`.
+
+#### `fetch_shops.sh`
+Downloads OXID shop installations (6.1–6.5) into the `shops/` directory using Docker.
+
+These local shop copies provide the class stubs that PHPStan needs to analyse the module against each OXID version. Run this once after cloning or whenever you need to refresh the shops.
+
+Requires Docker.
+
+```bash
+./fetch_shops.sh
+```
+
+#### `check_phpmd.sh`
+Runs PHP Mess Detector on all project PHP files, excluding `vendor/`, `shops/`, and `node_modules/`.
+
+Called automatically by `composer phpmd` and as part of `composer qa`.
+
+```bash
+./check_phpmd.sh
+```
+
+#### `test_php_versions.sh`
+Checks PHP syntax compatibility by running `php -l` against PHP 7.0–8.1 using Docker images.
+
+Called automatically by `composer phpcompat` and as part of `composer qa`.
+
+Requires Docker.
+
+```bash
+bash test_php_versions.sh
+```
 
