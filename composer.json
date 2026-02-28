@@ -45,11 +45,10 @@
         "phpcbf": "phpcbf --standard=PSR12 --ignore=vendor/*,shops/*,node_modules/* ./**/*.php",
         "phpcs": "phpcs --standard=PSR12 --ignore=vendor/*,shops/*,node_modules/* ./**/*.php",
         "phpstan": [
-            "phpstan analyse -c phpstan.6.1.neon",
-            "phpstan analyse -c phpstan.6.2.neon",
-            "phpstan analyse -c phpstan.6.3.neon",
-            "phpstan analyse -c phpstan.6.4.neon",
-            "phpstan analyse -c phpstan.6.5.neon"
+            "phpstan analyse -c phpstan.6.2.neon --memory-limit=1G",
+            "phpstan analyse -c phpstan.6.3.neon --memory-limit=1G",
+            "phpstan analyse -c phpstan.6.4.neon --memory-limit=1G",
+            "phpstan analyse -c phpstan.6.5.neon --memory-limit=1G"
         ],
         "phpmd": "./check_phpmd.sh",
         "phpcompat": "bash test_php_versions.sh",
