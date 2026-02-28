@@ -6,27 +6,18 @@
 [{$smarty.block.parent}]
 
 <script>
-    enderecoInitAMS(
-        {
-            countryCode: '[name="deladr[oxaddress__oxcountryid]"]',
-            subdivisionCode: '[name="deladr[oxaddress__oxstateid]"]',
-            postalCode: '[name="deladr[oxaddress__oxzip]"]',
-            locality: '[name="deladr[oxaddress__oxcity]"]',
-            streetName: '[name="deladr[oxaddress__oxstreet]"]',
-            buildingNumber: '[name="deladr[oxaddress__oxstreetnr]"]',
-            additionalInfo: '[name="deladr[oxaddress__oxaddinfo]"]',
-            addressStatus: '[name="deladr[oxaddress__mojoamsstatus]"]',
-            addressTimestamp: '[name="deladr[oxaddress__mojoamsts]"]',
-            addressPredictions: '[name="deladr[oxaddress__mojoamspredictions]"]'
-            
-        }, 
-        {
-            name: 'shipping',
-            addressType: 'shipping_address',
-            intent: 'edit'
-        }, 
-        function(EAO) {
-                EAO.onAfterModalRendered.push(function(EAO) {
+
+    ( function() {
+
+        function afterCreateHandler(EAO) {
+
+            if (!EAO) {
+                return;
+            }
+
+            if (EAO) {
+
+                EAO.onAfterModalRendered.push(function (EAO) {
                     if (!document.querySelector('[name="deladr[oxaddress__oxzip]"]').offsetParent) {
                         if ('billing_address' === EAO.addressType) {
                             if (document.querySelector('#userChangeAddress')) {
@@ -38,23 +29,39 @@
                             }
                         }
                     }
-                })
-        }, 
-        true
-    );
-</script>
-<script>
-    ( function() {
-        var $interval = setInterval( function() {
-            if (window.EnderecoIntegrator && window.EnderecoIntegrator.ready) {
-                window.EnderecoIntegrator.initPersonServices(
-                    'deladr[oxaddress__',
-                    {
-                        name: 'shipping'
-                    }
-                );
-                clearInterval($interval);
+                });
+
             }
-        }, 100);
+
+            window.EnderecoIntegrator.initPersonServices(
+                'deladr[oxaddress__',
+                {
+                    name: 'shipping',
+                }
+            );
+        }
+
+        enderecoInitAMS(
+            {
+                countryCode: '[name="deladr[oxaddress__oxcountryid]"]',
+                subdivisionCode: '[name="deladr[oxaddress__oxstateid]"]',
+                postalCode: '[name="deladr[oxaddress__oxzip]"]',
+                locality: '[name="deladr[oxaddress__oxcity]"]',
+                streetName: '[name="deladr[oxaddress__oxstreet]"]',
+                buildingNumber: '[name="deladr[oxaddress__oxstreetnr]"]',
+                additionalInfo: '[name="deladr[oxaddress__oxaddinfo]"]',
+                addressStatus: '[name="deladr[oxaddress__mojoamsstatus]"]',
+                addressTimestamp: '[name="deladr[oxaddress__mojoamsts]"]',
+                addressPredictions: '[name="deladr[oxaddress__mojoamspredictions]"]'
+            },
+            {
+                name: 'shipping',
+                addressType: 'shipping_address',
+                intent: 'edit',
+            },
+            afterCreateHandler
+        );
+
     })();
+
 </script>
