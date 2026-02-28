@@ -108,7 +108,7 @@ class EnderecoService
                     'postCode' => $address['postalCode'],
                     'cityName' => $address['locality'],
                     'street' => $address['streetName'],
-                    'houseNumber' => $address['buildingNumber'],
+                    'houseNumber' => $address['buildingNumber']
                 ]
             ];
             $client = new Client(['timeout' => 6.0]);
