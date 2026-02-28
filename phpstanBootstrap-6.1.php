@@ -1,7 +1,7 @@
 <?php
 
 include "./shops/6.1/vendor/autoload.php"; 
-include "./shops/6.1/vendor/oxid-esales/oxideshop-ce/source/oxfunctions.php";
+include "./shops/6.1/source/oxfunctions.php"; 
 include "./Mocks/Settings.php";
 
 

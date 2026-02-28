@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # Find PHP files and run PHPMD, excluding certain paths
-OUTPUT=$(find . -type f -name '*.php' ! -path './vendor/*' ! -path './shops/*' -exec vendor/bin/phpmd {} text unusedcode \;)
+OUTPUT=$(find . -type f -name '*.php' ! -path './vendor/*' ! -path './shops/*' -exec phpmd {} text unusedcode \;)
 
 if [ -n "$OUTPUT" ]; then
     echo "PHPMD reported issues:"
