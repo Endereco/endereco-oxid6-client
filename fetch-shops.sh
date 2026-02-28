@@ -1,29 +1,77 @@
-#!/bin/bash
+#!/usr/bin/env bash
+set -euo pipefail
 
-# Versions to be installed with their corresponding Composer versions
-declare -A versions=( ["6.1"]="1" ["6.2"]="1" ["6.3"]="1" ["6.4"]="2" ["6.5"]="2" )
+versions=(6.2 6.3 6.4 6.5)
+base_dir="shops"
+cache_dir="$HOME/.composer-docker-cache"
 
+mkdir -p "$base_dir"
+mkdir -p "$cache_dir"
 
-# Loop through each version and set up the projects
-for version in "${!versions[@]}"
-do
-    # Determine which Composer version to use based on the version
-    composer_version="${versions[$version]}"
+for version in "${versions[@]}"; do
+  target_dir="$base_dir/$version"
 
-    # Target directory for each project
-    TARGET_DIR="shops/$version"
+  echo "==============================="
+  echo "Installing OXID $version"
+  echo "==============================="
 
-    # Remove the existing directory and recreate it
-    rm -rf "$TARGET_DIR"
-    mkdir -p "$TARGET_DIR"
+  rm -rf -- "$target_dir"
 
-    # Use Docker to run Composer 2 for each project version
+  case "$version" in
+    6.2) composer_image="composer:2.1.5" ;;
+    6.3|6.4) composer_image="composer:2.2.23" ;;
+    6.5) composer_image="composer:2.7.7" ;;
+    *) echo "Unknown version $version"; exit 1 ;;
+  esac
+
+  echo "Using $composer_image"
+
+  # 1. create-project ohne install
+  docker run --rm \
+    -v "$PWD:/app" \
+    -v "$cache_dir:/tmp/composer-cache" \
+    -e COMPOSER_CACHE_DIR=/tmp/composer-cache \
+    -w /app \
+    "$composer_image" \
+    composer create-project --no-dev --ignore-platform-reqs --no-install \
+      oxid-esales/oxideshop-project "$target_dir" "dev-b-${version}-ce"
+
+  # 2. Plugins erlauben (nur bei Composer >= 2.2)
+  if [[ "$version" != "6.2" ]]; then
     docker run --rm \
-        -v $(pwd):/app \
-        -w /app \
-        composer:$composer_version \
-        composer create-project --no-dev --ignore-platform-reqs oxid-esales/oxideshop-project $TARGET_DIR dev-b-$version-ce
+      -v "$PWD:/app" \
+      -v "$cache_dir:/tmp/composer-cache" \
+      -e COMPOSER_CACHE_DIR=/tmp/composer-cache \
+      -w "/app/$target_dir" \
+      "$composer_image" \
+      composer config --no-plugins allow-plugins.oxid-esales/oxideshop-unified-namespace-generator true
+
+    docker run --rm \
+      -v "$PWD:/app" \
+      -v "$cache_dir:/tmp/composer-cache" \
+      -e COMPOSER_CACHE_DIR=/tmp/composer-cache \
+      -w "/app/$target_dir" \
+      "$composer_image" \
+      composer config --no-plugins allow-plugins.oxid-esales/oxideshop-composer-plugin true
+  fi
+
+  # 3. install mit Cache
+  docker run --rm \
+    -v "$PWD:/app" \
+    -v "$cache_dir:/tmp/composer-cache" \
+    -e COMPOSER_CACHE_DIR=/tmp/composer-cache \
+    -w "/app/$target_dir" \
+    "$composer_image" \
+    composer install --no-dev --ignore-platform-reqs --no-interaction --prefer-dist
+
 done
 
-# Change the owner of the shops directory to the user who ran the script
-sudo chown -R $(whoami) shops/
+# Rechte korrigieren
+if command -v sudo >/dev/null 2>&1; then
+  if [[ "${EUID:-$(id -u)}" -ne 0 ]]; then
+    sudo chown -R "$(id -u):$(id -g)" "$base_dir"
+  fi
+fi
+
+echo ""
+echo "All installations completed successfully."
