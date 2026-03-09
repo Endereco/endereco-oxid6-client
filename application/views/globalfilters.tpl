@@ -26,8 +26,8 @@
     });
 
     function enderecoInitAMS(prefix, config, cb, withDelay = false) {
-        const initializeAMS = () => {
-            const EAO = window.EnderecoIntegrator.initAMS(prefix, config);
+        const initializeAMS = async () => {
+            const EAO = await window.EnderecoIntegrator.initAMS(prefix, config);
             if (cb) {
                 cb(EAO);
             }
@@ -45,6 +45,26 @@
             executeInit();
         } else {
             window.EnderecoIntegrator.onLoad.push(executeInit);
+        }
+    }
+
+    function enderecoInitES(prefix, config) {
+        if (undefined !== window.EnderecoIntegrator.initEmailServices) {
+            window.EnderecoIntegrator.initEmailServices(prefix, config);
+        } else {
+            window.EnderecoIntegrator.onLoad.push(function () {
+                window.EnderecoIntegrator.initEmailServices(prefix, config);
+            });
+        }
+    }
+
+    function enderecoInitPS(prefix, config) {
+        if (undefined !== window.EnderecoIntegrator.initPersonServices) {
+            window.EnderecoIntegrator.initPersonServices(prefix, config);
+        } else {
+            window.EnderecoIntegrator.onLoad.push(function () {
+                window.EnderecoIntegrator.initPersonServices(prefix, config);
+            });
         }
     }
 </script>
