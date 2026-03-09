@@ -1,3 +1,8 @@
+<input type="hidden"
+    data-endereco-subdivision-helper="shipping_ams"
+    data-country-id="[{$delivadr->oxaddress__oxcountryid->value}]"
+    data-selected-state-id="[{$delivadr->oxaddress__oxstateid->value}]"
+>
 <input type="hidden" name="deladr[oxaddress__mojoamsts]" value="[{if isset( $deladr.oxaddress__mojoamsts )}][{$deladr.oxaddress__mojoamsts}][{else}][{$delivadr->oxaddress__mojoamsts->value}][{/if}]">
 <input type="hidden" name="deladr[oxaddress__mojoamsstatus]" value="[{if isset( $deladr.oxaddress__mojoamsstatus )}][{$deladr.oxaddress__mojoamsstatus}][{else}][{$delivadr->oxaddress__mojoamsstatus->value}][{/if}]">
 <input type="hidden" name="deladr[oxaddress__mojoamspredictions]" value="[{if isset( $deladr.oxaddress__mojoamspredictions )}][{$deladr.oxaddress__mojoamspredictions}][{else}][{$delivadr->oxaddress__mojoamspredictions->value}][{/if}]">
@@ -6,27 +11,17 @@
 [{$smarty.block.parent}]
 
 <script>
-    enderecoInitAMS(
-        {
-            countryCode: '[name="deladr[oxaddress__oxcountryid]"]',
-            subdivisionCode: '[name="deladr[oxaddress__oxstateid]"]',
-            postalCode: '[name="deladr[oxaddress__oxzip]"]',
-            locality: '[name="deladr[oxaddress__oxcity]"]',
-            streetName: '[name="deladr[oxaddress__oxstreet]"]',
-            buildingNumber: '[name="deladr[oxaddress__oxstreetnr]"]',
-            additionalInfo: '[name="deladr[oxaddress__oxaddinfo]"]',
-            addressStatus: '[name="deladr[oxaddress__mojoamsstatus]"]',
-            addressTimestamp: '[name="deladr[oxaddress__mojoamsts]"]',
-            addressPredictions: '[name="deladr[oxaddress__mojoamspredictions]"]'
-            
-        }, 
-        {
-            name: 'shipping',
-            addressType: 'shipping_address'
-        }, 
-        function(EAO) {
-            EAO.waitForAllExtension().then( function(EAO) {
-                EAO.onAfterModalRendered.push(function(EAO) {
+    ( function() {
+
+        function afterCreateHandler(EAO) {
+
+            if (!EAO) {
+                return;
+            }
+
+            if (EAO) {
+
+                EAO.onAfterModalRendered.push(function (EAO) {
                     if (!document.querySelector('[name="deladr[oxaddress__oxzip]"]').offsetParent) {
                         if ('billing_address' === EAO.addressType) {
                             if (document.querySelector('#userChangeAddress')) {
@@ -38,24 +33,39 @@
                             }
                         }
                     }
-                })
-            }).catch();
-        }, 
-        true
-    );
-</script>
-<script>
-    ( function() {
-        var $interval = setInterval( function() {
-            if (window.EnderecoIntegrator && window.EnderecoIntegrator.ready) {
-                window.EnderecoIntegrator.initPersonServices(
-                    'deladr[oxaddress__',
-                    {
-                        name: 'shipping'
-                    }
-                );
-                clearInterval($interval);
+                });
+
             }
-        }, 100);
+        }
+
+        enderecoInitAMS(
+            {
+                countryCode: '[name="deladr[oxaddress__oxcountryid]"]',
+                subdivisionCode: '[name="deladr[oxaddress__oxstateid]"]',
+                postalCode: '[name="deladr[oxaddress__oxzip]"]',
+                locality: '[name="deladr[oxaddress__oxcity]"]',
+                streetName: '[name="deladr[oxaddress__oxstreet]"]',
+                buildingNumber: '[name="deladr[oxaddress__oxstreetnr]"]',
+                additionalInfo: '[name="deladr[oxaddress__oxaddinfo]"]',
+                addressStatus: '[name="deladr[oxaddress__mojoamsstatus]"]',
+                addressTimestamp: '[name="deladr[oxaddress__mojoamsts]"]',
+                addressPredictions: '[name="deladr[oxaddress__mojoamspredictions]"]'
+            },
+            {
+                name: 'shipping_ams',
+                addressType: 'shipping_address',
+                intent: 'edit',
+            },
+            afterCreateHandler
+        );
+
+        enderecoInitPS(
+            'deladr[oxaddress__',
+            {
+                name: 'shipping',
+            }
+        );
+
     })();
+
 </script>

@@ -45,5 +45,17 @@ $aLang = [
     'ENDERECOOXID6CLIENT_STATUS_localityNeedsCorrection' => 'De spelling van de plaats is onjuist.',
     'ENDERECOOXID6CLIENT_STATUS_postalCodeNeedsCorrection' => 'De postcode is ongeldig.',
     'ENDERECOOXID6CLIENT_STATUS_countryCodeNeedsCorrection' => 'Het door u ingevulde adres is gevonden in een ander land.',
+    'ENDERECOOXID6CLIENT_STATUS_packstationHasMissingPostnummer' => 'Het postnummer ontbreekt.',
+    'ENDERECOOXID6CLIENT_STATUS_phoneInvalid' => 'Het telefoonnummer is ongeldig.',
+    'ENDERECOOXID6CLIENT_STATUS_phoneFormatNeedsCorrection' => 'Het telefoonnummer heeft een ongeldig formaat.',
+    'ENDERECOOXID6CLIENT_STATUS_phoneShouldBeFixed' => 'Voer een vast telefoonnummer in.',
+    'ENDERECOOXID6CLIENT_STATUS_phoneShouldBeMobile' => 'Voer een mobiel nummer in.',
+    'ENDERECOOXID6CLIENT_ERROR_addressHasMissingBuildingNumberContent' => 'Het huisnummer ontbreekt in de invoer.',
+    'ENDERECOOXID6CLIENT_ERROR_addressHasUnresolvableBuildingNumberContent' => 'Met het ingevoerde huisnummer kon het adres niet worden geverifieerd.',
+    'ENDERECOOXID6CLIENT_ERROR_packstationHasUnresolvableAddress' => 'Het Packstation-adres kon niet worden gevonden.',
+    'ENDERECOOXID6CLIENT_ERROR_postofficeHasUnresolvableAddress' => 'Het postkantooradres kon niet worden gevonden.',
+    'ENDERECOOXID6CLIENT_ERROR_packstationHasMissingPostnummer' => 'Het postnummer ontbreekt in de invoer.',
+    'ENDERECOOXID6CLIENT_ERROR_packstationHasUnresolvablePostnummer' => 'Het postnummer is ongeldig.',
+
 ];
 

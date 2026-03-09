@@ -45,5 +45,17 @@ $aLang = [
     'ENDERECOOXID6CLIENT_STATUS_localityNeedsCorrection' => 'The spelling of the locality is incorrect.',
     'ENDERECOOXID6CLIENT_STATUS_postalCodeNeedsCorrection' => 'The postal code is invalid.',
     'ENDERECOOXID6CLIENT_STATUS_countryCodeNeedsCorrection' => 'The entered address was found in another country.',
+    'ENDERECOOXID6CLIENT_STATUS_packstationHasMissingPostnummer' => 'The post number is missing.',
+    'ENDERECOOXID6CLIENT_STATUS_phoneInvalid' => 'The phone is invalid.',
+    'ENDERECOOXID6CLIENT_STATUS_phoneFormatNeedsCorrection' => 'The phone formatted is incorrect.',
+    'ENDERECOOXID6CLIENT_STATUS_phoneShouldBeFixed' => 'A fixed line number is expected here.',
+    'ENDERECOOXID6CLIENT_STATUS_phoneShouldBeMobile' => 'A mobile phone number is expected here.',
+    'ENDERECOOXID6CLIENT_ERROR_addressHasMissingBuildingNumberContent' => 'The house number is missing in the input.',
+    'ENDERECOOXID6CLIENT_ERROR_addressHasUnresolvableBuildingNumberContent' => 'The address could not be verified with the entered house number.',
+    'ENDERECOOXID6CLIENT_ERROR_packstationHasUnresolvableAddress' => 'The Packstation address could not be found.',
+    'ENDERECOOXID6CLIENT_ERROR_postofficeHasUnresolvableAddress' => 'The post office address could not be found.',
+    'ENDERECOOXID6CLIENT_ERROR_packstationHasMissingPostnummer' => 'The post number is missing in the input.',
+    'ENDERECOOXID6CLIENT_ERROR_packstationHasUnresolvablePostnummer' => 'The post number is invalid.',
+
 ];
 

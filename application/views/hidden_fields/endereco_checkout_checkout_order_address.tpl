@@ -1,7 +1,13 @@
 [{$smarty.block.parent}]
 [{assign var="sitepath" value=$oViewConf->getBaseDir()}]
+<input type="hidden"
+    data-endereco-subdivision-helper="billing_ams"
+    data-country-id="[{$oxcmp_user->oxuser__oxcountryid->value}]"
+    data-selected-state-id="[{$oxcmp_user->oxuser__oxstateid->value}]"
+>
 <div style="display: none!important">
     <div>
+        <form>
         <input
                 type="text"
                 id="endereco-billing-country-code"
@@ -32,6 +38,13 @@
                 id="endereco-billing-additional-info"
                 value="[{if $oxcmp_user->oxuser__oxaddinfo->value}][{$oxcmp_user->oxuser__oxaddinfo->value}][{/if}]"
         >
+        [{if $oView->countryHasSubdivisions($oxcmp_user->oxuser__oxcountryid->value)}]
+        <input
+                type="text"
+                id="endereco-billing-subdivision-code"
+                value="[{$oxcmp_user->oxuser__oxstateid->value}]"
+        >
+        [{/if}]
         <input
                 type="text"
                 id="endereco-billing-status"
@@ -47,6 +60,7 @@
                 id="endereco-billing-predictions"
                 value="[{if $oxcmp_user->oxuser__mojoamspredictions->value}][{$oxcmp_user->oxuser__mojoamspredictions->value}][{/if}]"
         >
+        </form>
         <script>
             (function() {
                 function afterCreateHandler(EAO) {
@@ -82,7 +96,9 @@
                             }
                         }).then(function(response) {
                             window.EnderecoIntegrator.globalSpace.reloadPage = function() {
-                                location.reload();
+                                if(window.EnderecoIntegrator.popupQueue <= 0 && response.data == 2){
+                                    location.reload();
+                                }
                             }
                         }).catch(function(error) {
                             console.log('Something went wrong.');
@@ -96,8 +112,13 @@
                             document.querySelectorAll('#orderAddress form')[0].submit();
                         });
 
-                        EAO.onAfterAddressCheckSelected.push(handleAddressConfirmation);
-                        EAO.onConfirmAddress.push(handleAddressConfirmation);
+                        EAO.onAfterAddressPersisted.push((e, result) => {
+                            if (result.processStatus === 'finished') {
+                                return handleAddressConfirmation(e)
+                            }
+
+                            return Promise.resolve();
+                        })
                     }).catch();
                 }
 
@@ -109,13 +130,17 @@
                         streetName: '#endereco-billing-street-name',
                         buildingNumber: '#endereco-billing-building-number',
                         additionalInfo: '#endereco-billing-additional-info',
+                        [{if $oView->countryHasSubdivisions($oxcmp_user->oxuser__oxcountryid->value)}]
+                        subdivisionCode: '#endereco-billing-subdivision-code',
+                        [{/if}]
                         addressStatus: '#endereco-billing-status',
                         addressTimestamp: '#endereco-billing-timestamp',
                         addressPredictions: '#endereco-billing-predictions'
                     },
                     {
-                        name: 'billing',
-                        addressType: 'billing_address'
+                        name: 'billing_ams',
+                        addressType: 'billing_address',
+                        intent: 'review'
                     },
                     afterCreateHandler
                 );
@@ -125,7 +150,13 @@
     <div>
         [{assign var="oDelAdress" value=$oView->getDelAddress()}]
         [{if $oDelAdress}]
+        <input type="hidden"
+            data-endereco-subdivision-helper="shipping_ams"
+            data-country-id="[{$oDelAdress->oxaddress__oxcountryid->value}]"
+            data-selected-state-id="[{$oDelAdress->oxaddress__oxstateid->value}]"
+        >
         <div>
+            <form>
             <input
                     type="text"
                     id="endereco-shipping-country-code"
@@ -156,6 +187,13 @@
                     id="endereco-shipping-additional-info"
                     value="[{if $oDelAdress->oxaddress__oxaddinfo->value}][{$oDelAdress->oxaddress__oxaddinfo->value}][{/if}]"
             >
+            [{if $oView->countryHasSubdivisions($oDelAdress->oxaddress__oxcountryid->value)}]
+            <input
+                    type="text"
+                    id="endereco-shipping-subdivision-code"
+                    value="[{$oDelAdress->oxaddress__oxstateid->value}]"
+            >
+            [{/if}]
             <input
                     type="text"
                     id="endereco-shipping-status"
@@ -171,6 +209,7 @@
                     id="endereco-shipping-predictions"
                     value="[{if $oDelAdress->oxaddress__mojoamspredictions->value}][{$oDelAdress->oxaddress__mojoamspredictions->value}][{/if}]"
             >
+            </form>
             <script>
                 (function() {
                     function afterCreateHandler(EAO) {
@@ -206,7 +245,9 @@
                                 }
                             }).then(function(response) {
                                 window.EnderecoIntegrator.globalSpace.reloadPage = function() {
-                                    location.reload();
+                                    if(response.data == 2){
+                                        location.reload();
+                                    }
                                 }
                             }).catch(function(error) {
                                 console.log('Something went wrong.');
@@ -220,8 +261,15 @@
                                 document.querySelectorAll('#orderAddress form')[1].submit();
                             });
 
-                            EAO.onAfterAddressCheckSelected.push(handleAddressConfirmation);
-                            EAO.onConfirmAddress.push(handleAddressConfirmation);
+
+                            EAO.onAfterAddressPersisted.push((e, result) => {
+                                if (result.processStatus === 'finished') {
+                                    return handleAddressConfirmation(e)
+                                }
+
+                                return Promise.resolve();
+                            })
+
                         }).catch();
                     }
 
@@ -232,14 +280,18 @@
                             locality: '#endereco-shipping-locality',
                             streetName: '#endereco-shipping-street-name',
                             buildingNumber: '#endereco-shipping-building-number',
+                            [{if $oView->countryHasSubdivisions($oDelAdress->oxaddress__oxcountryid->value)}]
+                            subdivisionCode: '#endereco-shipping-subdivision-code',
+                            [{/if}]
                             addressStatus: '#endereco-shipping-status',
                             addressTimestamp: '#endereco-shipping-timestamp',
                             addressPredictions: '#endereco-shipping-predictions',
                             additionalInfo: '#endereco-shipping-additional-info',
                         },
                         {
-                            name: 'shipping',
-                            addressType: 'shipping_address'
+                            name: 'shipping_ams',
+                            addressType: 'shipping_address',
+                            intent: 'review'
                         },
                         afterCreateHandler,
                         true

@@ -63,11 +63,18 @@ class OrderController extends OrderController_parent
                 $localLanguage = $oLang->getLanguageAbbr();
 
                 // Check invoice address.
-                if ($oUser && $this->isBillingHashMismatch($oUser)) {
+                if (
+                    $oUser
+                    && ($this->isBillingHashMismatch($oUser)
+                        || $this->isValidationNeeded($oUser->oxuser__mojoamsstatus->rawValue))
+                ) {
                     $oCountry = oxNew(Country::class);
                     $oCountry->load($oUser->oxuser__oxcountryid->rawValue);
                     $countryCode = strtolower($oCountry->oxcountry__oxisoalpha2->rawValue);
 
+                    $billingHasSubdivisions = $EnderecoService->countryHasSubdivisions(
+                        $oUser->oxuser__oxcountryid->rawValue
+                    );
                     $billingAddress = array(
                         'countryCode' => $countryCode,
                         '__language' => $localLanguage,
@@ -84,6 +91,9 @@ class OrderController extends OrderController_parent
                         '__predictions' => '',
                         '__timestamp' => '',
                     );
+                    if ($billingHasSubdivisions) {
+                        $billingAddress['subdivisionCode'] = $oUser->oxuser__oxstateid->rawValue ?? '';
+                    }
 
                     // Check.
                     $checkedBillingAddress = $EnderecoService->checkAddress($billingAddress);
@@ -95,6 +105,7 @@ class OrderController extends OrderController_parent
                         $oUser->oxuser__mojoamspredictions->rawValue = $checkedBillingAddress['__predictions'];
                         $oUser->oxuser__mojoaddresshash->rawValue = $this->calculateHash(
                             $oUser->oxuser__oxcountryid->rawValue,
+                            $billingHasSubdivisions ? ($oUser->oxuser__oxstateid->rawValue ?? '') : null,
                             $oUser->oxuser__oxzip->rawValue,
                             $oUser->oxuser__oxcity->rawValue,
                             $oUser->oxuser__oxstreet->rawValue,
@@ -106,11 +117,18 @@ class OrderController extends OrderController_parent
                 }
 
                 // Check invoice address.
-                if ($oDeliveryAddress && $this->isDeliveryHashMismatch($oDeliveryAddress)) {
+                if (
+                    $oDeliveryAddress
+                    && ($this->isDeliveryHashMismatch($oDeliveryAddress)
+                        || $this->isValidationNeeded($oDeliveryAddress->oxaddress__mojoamsstatus->rawValue))
+                ) {
                     $oCountry = oxNew('oxCountry');
                     $oCountry->load($oDeliveryAddress->oxaddress__oxcountryid->rawValue);
                     $countryCode = strtolower($oCountry->oxcountry__oxisoalpha2->rawValue);
 
+                    $shippingHasSubdivisions = $EnderecoService->countryHasSubdivisions(
+                        $oDeliveryAddress->oxaddress__oxcountryid->rawValue
+                    );
                     $shippingAddress = array(
                         'countryCode' => $countryCode,
                         '__language' => $localLanguage,
@@ -127,6 +145,9 @@ class OrderController extends OrderController_parent
                         '__predictions' => '',
                         '__timestamp' => '',
                     );
+                    if ($shippingHasSubdivisions) {
+                        $shippingAddress['subdivisionCode'] = $oDeliveryAddress->oxaddress__oxstateid->rawValue ?? '';
+                    }
 
                     // Check.
                     $checkedShippingAddress = $EnderecoService->checkAddress($shippingAddress);
@@ -141,6 +162,7 @@ class OrderController extends OrderController_parent
                             = $checkedShippingAddress['__predictions'];
                         $oDeliveryAddress->oxaddress__mojoaddresshash->rawValue = $this->calculateHash(
                             $oDeliveryAddress->oxaddress__oxcountryid->rawValue,
+                            $shippingHasSubdivisions ? ($oDeliveryAddress->oxaddress__oxstateid->rawValue ?? '') : null,
                             $oDeliveryAddress->oxaddress__oxzip->rawValue,
                             $oDeliveryAddress->oxaddress__oxcity->rawValue,
                             $oDeliveryAddress->oxaddress__oxstreet->rawValue,
@@ -157,6 +179,17 @@ class OrderController extends OrderController_parent
     }
 
     /**
+     * Exposes the subdivision check to templates (called as $oView->countryHasSubdivisions()).
+     *
+     * @param string $countryId OXID internal country ID.
+     * @return bool
+     */
+    public function countryHasSubdivisions($countryId)
+    {
+        return (new EnderecoService())->countryHasSubdivisions($countryId);
+    }
+
+    /**
      * Checks if the billing address hash is mismatched.
      *
      * @param User $billingAddress The billing address to check.
@@ -164,13 +197,17 @@ class OrderController extends OrderController_parent
      */
     private function isBillingHashMismatch($billingAddress)
     {
+        $hasSubdivisions = (new EnderecoService())->countryHasSubdivisions(
+            $billingAddress->oxuser__oxcountryid->rawValue
+        );
         $hash = $this->calculateHash(
-            $billingAddress->oxuser__oxcountryid->rawValue, // Country ID
-            $billingAddress->oxuser__oxzip->rawValue, // Postal code
-            $billingAddress->oxuser__oxcity->rawValue, // Locality
-            $billingAddress->oxuser__oxstreet->rawValue, // Street name
-            $billingAddress->oxuser__oxstreetnr->rawValue, // House number
-            $billingAddress->oxuser__oxaddinfo->rawValue // Additional info
+            $billingAddress->oxuser__oxcountryid->rawValue,
+            $hasSubdivisions ? ($billingAddress->oxuser__oxstateid->rawValue ?? '') : null,
+            $billingAddress->oxuser__oxzip->rawValue,
+            $billingAddress->oxuser__oxcity->rawValue,
+            $billingAddress->oxuser__oxstreet->rawValue,
+            $billingAddress->oxuser__oxstreetnr->rawValue,
+            $billingAddress->oxuser__oxaddinfo->rawValue
         );
 
         return $hash !== $billingAddress->oxuser__mojoaddresshash->rawValue;
@@ -184,13 +221,17 @@ class OrderController extends OrderController_parent
      */
     private function isDeliveryHashMismatch($deliveryAddress)
     {
+        $hasSubdivisions = (new EnderecoService())->countryHasSubdivisions(
+            $deliveryAddress->oxaddress__oxcountryid->rawValue
+        );
         $hash = $this->calculateHash(
-            $deliveryAddress->oxaddress__oxcountryid->rawValue, // Country ID
-            $deliveryAddress->oxaddress__oxzip->rawValue, // Postal code
-            $deliveryAddress->oxaddress__oxcity->rawValue, // Locality
-            $deliveryAddress->oxaddress__oxstreet->rawValue, // Street name
-            $deliveryAddress->oxaddress__oxstreetnr->rawValue, // House number
-            $deliveryAddress->oxaddress__oxaddinfo->rawValue // Additional info
+            $deliveryAddress->oxaddress__oxcountryid->rawValue,
+            $hasSubdivisions ? ($deliveryAddress->oxaddress__oxstateid->rawValue ?? '') : null,
+            $deliveryAddress->oxaddress__oxzip->rawValue,
+            $deliveryAddress->oxaddress__oxcity->rawValue,
+            $deliveryAddress->oxaddress__oxstreet->rawValue,
+            $deliveryAddress->oxaddress__oxstreetnr->rawValue,
+            $deliveryAddress->oxaddress__oxaddinfo->rawValue
         );
 
         return $hash !== $deliveryAddress->oxaddress__mojoaddresshash->rawValue;
@@ -200,7 +241,10 @@ class OrderController extends OrderController_parent
      * Calculates a hash based on the provided address components.
      * This is used to ensure the address integrity.
      *
+     * TODO: Extract to a shared location — duplicated in AddressController and UserComponent.
+     *
      * @param string $countryCode Country code of the address.
+     * @param string|null $subdivisionCode ISO 3166-2 subdivision code, or null if not applicable.
      * @param string $postalCode Postal code of the address.
      * @param string $locality Locality (city) of the address.
      * @param string $streetName Street name of the address.
@@ -210,6 +254,7 @@ class OrderController extends OrderController_parent
      */
     private function calculateHash(
         $countryCode,
+        $subdivisionCode,
         $postalCode,
         $locality,
         $streetName,
@@ -217,13 +262,40 @@ class OrderController extends OrderController_parent
         $additionalInfo
     ) {
         $hashBody = [
-            $countryCode,
-            $postalCode,
-            $locality,
-            $streetName,
-            $buildingNumber,
-            $additionalInfo
+            'countryCode' => $countryCode,
+            'postalCode' => $postalCode,
+            'locality' => $locality,
+            'streetName' => $streetName,
+            'buildingNumber' => $buildingNumber,
+            'additionalInfo' => $additionalInfo
         ];
-        return hash('sha256', implode('', $hashBody));
+        if ($subdivisionCode !== null) {
+            $hashBody['subdivisionCode'] = $subdivisionCode;
+        }
+        return hash('sha256', json_encode($hashBody));
+    }
+
+    /**
+     * Determines if a new AMS status check is needed based on the current AMS status of the address extension.
+     *
+     * A check is needed if the AMS status is empty or matches the constant AMS_STATUS_NOT_CHECKED
+     *
+     * @return bool True if a new AMS status check is required, false otherwise
+     */
+    public function isValidationNeeded($currentStatus): bool
+    {
+
+
+        $isEmpty = empty($currentStatus);
+
+        // The JS SDK may set 'not-checked' as a default status value. In practice this
+        // is always overwritten before form submission, but we check defensively.
+        // Not using a class constant because PHP 7.0 doesn't support constant visibility
+        // modifiers, and PSR-12 requires them.
+        $hasDefaultValue = ($currentStatus === 'not-checked');
+
+        $isCheckNeeded = $isEmpty || $hasDefaultValue;
+
+        return $isCheckNeeded;
     }
 }

@@ -45,4 +45,16 @@ $aLang = [
     'ENDERECOOXID6CLIENT_STATUS_localityNeedsCorrection' => 'L\'ortografia del luogo non è corretta.',
     'ENDERECOOXID6CLIENT_STATUS_postalCodeNeedsCorrection' => 'Il codice postale non è valido.',
     'ENDERECOOXID6CLIENT_STATUS_countryCodeNeedsCorrection' => 'L\'indirizzo inserito è stato trovato in un altro paese.',
+    'ENDERECOOXID6CLIENT_STATUS_packstationHasMissingPostnummer' => 'Il numero postale manca.',
+    'ENDERECOOXID6CLIENT_STATUS_phoneInvalid' => 'Il numero di telefono non è valido.',
+    'ENDERECOOXID6CLIENT_STATUS_phoneFormatNeedsCorrection' => 'Il numero di telefono ha un formato non valido.',
+    'ENDERECOOXID6CLIENT_STATUS_phoneShouldBeFixed' => 'Inserire un numero di rete fissa.',
+    'ENDERECOOXID6CLIENT_STATUS_phoneShouldBeMobile' => 'Inserire un numero di cellulare.',
+    'ENDERECOOXID6CLIENT_ERROR_addressHasMissingBuildingNumberContent' => 'Il numero civico manca nell\'inserimento.',
+    'ENDERECOOXID6CLIENT_ERROR_addressHasUnresolvableBuildingNumberContent' => 'Con il numero civico inserito non è stato possibile verificare l\'indirizzo.',
+    'ENDERECOOXID6CLIENT_ERROR_packstationHasUnresolvableAddress' => 'L\'indirizzo Packstation non è stato trovato.',
+    'ENDERECOOXID6CLIENT_ERROR_postofficeHasUnresolvableAddress' => 'L\'indirizzo dell\'ufficio postale non è stato trovato.',
+    'ENDERECOOXID6CLIENT_ERROR_packstationHasMissingPostnummer' => 'Il numero postale manca nell\'inserimento.',
+    'ENDERECOOXID6CLIENT_ERROR_packstationHasUnresolvablePostnummer' => 'Il numero postale non è valido.',
+
 ];
