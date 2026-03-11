@@ -26,8 +26,8 @@
     });
 
     function enderecoInitAMS(prefix, config, cb, withDelay = false) {
-        const initializeAMS = () => {
-            const EAO = window.EnderecoIntegrator.initAMS(prefix, config);
+        const initializeAMS = async () => {
+            const EAO = await window.EnderecoIntegrator.initAMS(prefix, config);
             if (cb) {
                 cb(EAO);
             }

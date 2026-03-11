@@ -2,6 +2,7 @@
 [{assign var="sitepath" value=$oViewConf->getBaseDir()}]
 <div style="display: none!important">
     <div>
+        <form>
         <input
                 type="text"
                 id="endereco-billing-country-code"
@@ -47,6 +48,7 @@
                 id="endereco-billing-predictions"
                 value="[{if $oxcmp_user->oxuser__mojoamspredictions->value}][{$oxcmp_user->oxuser__mojoamspredictions->value}][{/if}]"
         >
+        </form>
         <script>
             (function() {
                 function afterCreateHandler(EAO) {
@@ -82,7 +84,9 @@
                             }
                         }).then(function(response) {
                             window.EnderecoIntegrator.globalSpace.reloadPage = function() {
-                                location.reload();
+                                if(window.EnderecoIntegrator.popupQueue <= 0 && response.data == 2){
+                                    location.reload();
+                                }
                             }
                         }).catch(function(error) {
                             console.log('Something went wrong.');
@@ -96,8 +100,13 @@
                             document.querySelectorAll('#orderAddress form')[0].submit();
                         });
 
-                        EAO.onAfterAddressCheckSelected.push(handleAddressConfirmation);
-                        EAO.onConfirmAddress.push(handleAddressConfirmation);
+                        EAO.onAfterAddressPersisted.push((e, result) => {
+                            if (result.processStatus === 'finished') {
+                                return handleAddressConfirmation(e)
+                            }
+
+                            return Promise.resolve();
+                        })
                     }).catch();
                 }
 
@@ -115,7 +124,8 @@
                     },
                     {
                         name: 'billing',
-                        addressType: 'billing_address'
+                        addressType: 'billing_address',
+                        intent: "review"
                     },
                     afterCreateHandler
                 );
@@ -126,6 +136,7 @@
         [{assign var="oDelAdress" value=$oView->getDelAddress()}]
         [{if $oDelAdress}]
         <div>
+            <form>
             <input
                     type="text"
                     id="endereco-shipping-country-code"
@@ -171,6 +182,7 @@
                     id="endereco-shipping-predictions"
                     value="[{if $oDelAdress->oxaddress__mojoamspredictions->value}][{$oDelAdress->oxaddress__mojoamspredictions->value}][{/if}]"
             >
+            </form>
             <script>
                 (function() {
                     function afterCreateHandler(EAO) {
@@ -206,7 +218,9 @@
                                 }
                             }).then(function(response) {
                                 window.EnderecoIntegrator.globalSpace.reloadPage = function() {
-                                    location.reload();
+                                    if(response.data == 2){
+                                        location.reload();
+                                    }
                                 }
                             }).catch(function(error) {
                                 console.log('Something went wrong.');
@@ -220,8 +234,15 @@
                                 document.querySelectorAll('#orderAddress form')[1].submit();
                             });
 
-                            EAO.onAfterAddressCheckSelected.push(handleAddressConfirmation);
-                            EAO.onConfirmAddress.push(handleAddressConfirmation);
+
+                            EAO.onAfterAddressPersisted.push((e, result) => {
+                                if (result.processStatus === 'finished') {
+                                    return handleAddressConfirmation(e)
+                                }
+
+                                return Promise.resolve();
+                            })
+
                         }).catch();
                     }
 
@@ -239,7 +260,8 @@
                         },
                         {
                             name: 'shipping',
-                            addressType: 'shipping_address'
+                            addressType: 'shipping_address',
+                            intent: "review"
                         },
                         afterCreateHandler,
                         true
