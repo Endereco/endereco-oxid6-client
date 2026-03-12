@@ -1,7 +1,8 @@
-#!/bin/bash
+#!/usr/bin/env bash
+set -euo pipefail
 
 # Find PHP files and run PHPMD, excluding certain paths
-OUTPUT=$(find . -type f -name '*.php' ! -path './vendor/*' ! -path './shops/*' -exec phpmd {} text unusedcode \;)
+OUTPUT=$(find . -type f -name '*.php' ! -path './vendor/*' ! -path './shops/*' ! -path './node_modules/*' -exec vendor/phpmd/phpmd/src/bin/phpmd {} text unusedcode \;)
 
 if [ -n "$OUTPUT" ]; then
     echo "PHPMD reported issues:"

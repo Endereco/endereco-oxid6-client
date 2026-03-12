@@ -112,9 +112,92 @@ The installation is done in the following steps:
    - `phpstan.6.5.neon` - OXID 6.5
 
 4. **Before Committing**
-   
+
    Ensure all quality checks pass:
    ```bash
    composer qa
    ```
+
+## Testing
+
+Test the module with different OXID 6 versions using:
+
+```bash
+./playground.sh
+```
+
+The script will prompt for the following options:
+
+- **OXID version** — `6.3`, `6.4`, or `6.5`
+- **XDebug** — enable step debugging on port 9003 (IDE must be in listen mode)
+- **Migration mode** — test the `bEnderecoUseMigrations = true` code path instead of the default `onActivate`-based DB setup
+- **Force rebuild** — discard the cached Docker image and rebuild from scratch
+
+The container starts on **port 80**. If the port is already in use, the script offers to stop the blocking container or choose an alternative port (81–89 or 8080–8089).
+
+On first start the OXID shop is set up automatically (schema import, demo data, module activation). The shop shows a 500 error during setup — reload after a moment.
+
+Log in to the OXID admin panel at `http://localhost/admin` with:
+
+```
+E-Mail:   admin@example.com
+Password: admin
+```
+
+In the admin panel, navigate to **Extensions → Modules → Endereco** and open the module configuration to enter a valid API key.
+You can request a test API key at [endereco.de](https://endereco.de).
+
+To stop the environment:
+
+```bash
+docker rm -f oxid-{version} oxid-{version}-db && docker network rm oxid-{version}-net
+```
+
+## Scripts and Utilities
+
+This repository includes several shell scripts to assist with development and testing.
+
+### Shell Scripts
+
+#### `playground.sh`
+Launches an interactive OXID 6 development environment in Docker.
+
+Builds a Docker image with the selected OXID version (6.3, 6.4, or 6.5) and the module volume-mounted for live development. Handles port conflicts, optional XDebug setup, optional migration mode, and full auto-setup on first start.
+
+```bash
+./playground.sh
+```
+
+Access the shop at `http://localhost/` and the admin panel at `http://localhost/admin` with credentials `admin@example.com` / `admin`.
+
+#### `fetch_shops.sh`
+Downloads OXID shop installations (6.1–6.5) into the `shops/` directory using Docker.
+
+These local shop copies provide the class stubs that PHPStan needs to analyse the module against each OXID version. Run this once after cloning or whenever you need to refresh the shops.
+
+Requires Docker.
+
+```bash
+./fetch_shops.sh
+```
+
+#### `check_phpmd.sh`
+Runs PHP Mess Detector on all project PHP files, excluding `vendor/`, `shops/`, and `node_modules/`.
+
+Called automatically by `composer phpmd` and as part of `composer qa`.
+
+```bash
+./check_phpmd.sh
+```
+
+#### `test_php_versions.sh`
+Checks PHP syntax compatibility by running `php -l` against PHP 7.0–8.1 using Docker images.
+
+Called automatically by `composer phpcompat` and as part of `composer qa`.
+
+Requires Docker.
+
+```bash
+bash test_php_versions.sh
+```
 
