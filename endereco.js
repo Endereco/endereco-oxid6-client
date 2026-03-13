@@ -164,6 +164,120 @@ EnderecoIntegrator.afterAMSActivation.push( function(EAO) {
     }
 });
 
+EnderecoIntegrator.hasActiveSubscriber = (fieldName, domElement, dataObject) => {
+    if (fieldName === 'subdivisionCode' && domElement && domElement.tagName === 'SELECT') {
+        // window.EnderecoIntegrator.subdivisionMappingReverse keys contain local ID's
+        const mapping = window.EnderecoIntegrator?.subdivisionMappingReverse || {};
+        const selectState = checkSelectValuesAgainstMapping(
+            domElement,
+            mapping[dataObject.countryCode] || {}
+        );
+        return selectState.hasValidOptions && selectState.allValuesInMapping;
+    }
+
+    return true;
+};
+
+
+/**
+ * @function checkSelectValuesAgainstMapping
+ * @description Validates the <option> elements within a given <select> element against a provided mapping object.
+ * It determines if the select element contains any "valid" options (non-disabled, with a non-empty value)
+ * and checks if the values of all such valid options exist as keys within the mapping object.
+ *
+ * @param {HTMLSelectElement | null | undefined} domElementOfSelect - The <select> DOM element whose options should be checked.
+ * The function handles null or undefined input gracefully by returning the default result structure.
+ * @param {object} mappingObject - The JavaScript object used as a reference map. The function checks
+ * if the `value` attribute of the valid options exists as a key in this object.
+ * It expects this to be a non-null object for the mapping check to work correctly.
+ *
+ * @returns {{
+ * hasValidOptions: boolean,
+ * allValuesInMapping: boolean,
+ * missingValues: string[],
+ * allOptionValues: string[]
+ * }} An object containing the results of the validation:
+ * - `hasValidOptions`: `true` if the select element has at least one option that is not disabled and has a non-empty value; `false` otherwise.
+ * - `allValuesInMapping`: `true` if `hasValidOptions` is true AND every valid option's value exists as a key in `mappingObject`; `false` otherwise.
+ * - `missingValues`: An array of strings containing the values of valid options that were *not* found as keys in `mappingObject`. Empty if all values are found or if `hasValidOptions` is false.
+ * - `allOptionValues`: An array of strings containing the values of *all* valid options found in the select element. Empty if `hasValidOptions` is false.
+ */
+const checkSelectValuesAgainstMapping = (domElementOfSelect, mappingObject) => {
+    // Initialize default return structure
+    const result = {
+        hasValidOptions: false,
+        allValuesInMapping: false,
+        missingValues: [],
+        allOptionValues: []
+    };
+
+    // Check if select element exists
+    if (!domElementOfSelect) {
+        return result;
+    }
+
+    const options = domElementOfSelect.options;
+    const optionValues = [];
+
+    // Process all valid options
+    for (let i = 0; i < options.length; i++) {
+        const option = options[i];
+        if (option.value && !option.disabled) {
+            result.hasValidOptions = true;
+            optionValues.push(option.value);
+        }
+    }
+
+    // Set allOptionValues regardless of whether options are valid
+    result.allOptionValues = optionValues;
+
+    // Find missing values only if we have valid options
+    if (result.hasValidOptions) {
+        for (const value of optionValues) {
+            if (!Object.prototype.hasOwnProperty.call(mappingObject, value)) {
+                result.missingValues.push(value);
+            }
+        }
+
+        result.allValuesInMapping = result.missingValues.length === 0;
+    }
+
+    return result;
+}
+
+/**
+ * This function is needed to simulate blur, change and other events for better compatibility with frontend validation
+ * frameworks and some themes that expect those events. Without it endereco js-sdk would set some field without
+ * third party actors realising it, which lead to broken UX sometimes.
+ *
+ * @param DOMElement
+ * @param addressObject
+ */
+window.EnderecoIntegrator.prepareDOMElement = (DOMElement, addressObject) => {
+    // Check if the element has already been prepared
+    if (DOMElement._enderecoBlurListenerAttached) {
+        return; // Skip if already prepared
+    }
+
+    const enderecoBlurListener = async (e) => {
+        // Wait for any active prediction applications to complete
+        if (addressObject && addressObject.waitForPredictionApplication) {
+            await addressObject.waitForPredictionApplication();
+        }
+
+        // Dispatch 'focus' and 'blur' events on the target element
+        const prevActiveElement = document.activeElement;
+        e.target.dispatchEvent(new CustomEvent('focus', { bubbles: true, cancelable: true }));
+        e.target.dispatchEvent(new CustomEvent('blur', { bubbles: true, cancelable: true }));
+        prevActiveElement.dispatchEvent(new CustomEvent('focus', { bubbles: true, cancelable: true }));
+    }
+
+    DOMElement.addEventListener('endereco-blur', enderecoBlurListener);
+
+    // Mark the element as prepared
+    DOMElement._enderecoBlurListenerAttached = true;
+}
+
 if (window.EnderecoIntegrator) {
     window.EnderecoIntegrator = merge(EnderecoIntegrator, window.EnderecoIntegrator);
 } else {

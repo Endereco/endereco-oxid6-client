@@ -36,6 +36,24 @@
     [{assign var="localityNeedsCorrection" value="ENDERECOOXID6CLIENT_STATUS_localityNeedsCorrection"|oxmultilangassign}]
     [{assign var="postalCodeNeedsCorrection" value="ENDERECOOXID6CLIENT_STATUS_postalCodeNeedsCorrection"|oxmultilangassign}]
     [{assign var="countryCodeNeedsCorrection" value="ENDERECOOXID6CLIENT_STATUS_countryCodeNeedsCorrection"|oxmultilangassign}]
+    [{assign var="packstationHasMissingPostnummer" value="ENDERECOOXID6CLIENT_STATUS_packstationHasMissingPostnummer"|oxmultilangassign}]
+    [{assign var="phoneInvalid" value="ENDERECOOXID6CLIENT_STATUS_phoneInvalid"|oxmultilangassign}]
+    [{assign var="phoneFormatNeedsCorrection" value="ENDERECOOXID6CLIENT_STATUS_phoneFormatNeedsCorrection"|oxmultilangassign}]
+    [{assign var="phoneShouldBeFixed" value="ENDERECOOXID6CLIENT_STATUS_phoneShouldBeFixed"|oxmultilangassign}]
+    [{assign var="phoneShouldBeMobile" value="ENDERECOOXID6CLIENT_STATUS_phoneShouldBeMobile"|oxmultilangassign}]
+    [{assign var="addressHasMissingBuildingNumberContent" value="ENDERECOOXID6CLIENT_ERROR_addressHasMissingBuildingNumberContent"|oxmultilangassign}]
+    [{assign var="addressHasUnresolvableBuildingNumberContent" value="ENDERECOOXID6CLIENT_ERROR_addressHasUnresolvableBuildingNumberContent"|oxmultilangassign}]
+    [{assign var="packstationHasUnresolvableAddress" value="ENDERECOOXID6CLIENT_ERROR_packstationHasUnresolvableAddress"|oxmultilangassign}]
+    [{assign var="postofficeHasUnresolvableAddress" value="ENDERECOOXID6CLIENT_ERROR_postofficeHasUnresolvableAddress"|oxmultilangassign}]
+    [{assign var="packstationHasMissingPostnummerContent" value="ENDERECOOXID6CLIENT_ERROR_packstationHasMissingPostnummer"|oxmultilangassign}]
+    [{assign var="packstationHasUnresolvablePostnummer" value="ENDERECOOXID6CLIENT_ERROR_packstationHasUnresolvablePostnummer"|oxmultilangassign}]
+    [{assign var="hintFormatE164" value="ENDERECOOXID6CLIENT_HINT_hintFormatE164"|oxmultilangassign}]
+    [{assign var="hintFormatInternational" value="ENDERECOOXID6CLIENT_HINT_hintFormatInternational"|oxmultilangassign}]
+    [{assign var="hintFormatNational" value="ENDERECOOXID6CLIENT_HINT_hintFormatNational"|oxmultilangassign}]
+    [{assign var="enderedoStreetLabel" value="ENDERECOOXID6CLIENT_INPUT_enderedoStreetLabel"|oxmultilangassign}]
+    [{assign var="enderedoStreetPlaceholder" value="ENDERECOOXID6CLIENT_INPUT_enderedoStreetPlaceholder"|oxmultilangassign}]
+    [{assign var="enderedoHousenumberLabel" value="ENDERECOOXID6CLIENT_INPUT_enderedoHousenumberLabel"|oxmultilangassign}]
+    [{assign var="enderedoHousenumberPlaceholder" value="ENDERECOOXID6CLIENT_INPUT_enderedoHousenumberPlaceholder"|oxmultilangassign}]
 
     <script>
         function enderecoLoadAMSConfig() {
@@ -87,7 +105,31 @@
                     'street_name_needs_correction': '[{$streetNameNeedsCorrection|escape:quotes}]',
                     'locality_needs_correction': '[{$localityNeedsCorrection|escape:quotes}]',
                     'postal_code_needs_correction': '[{$postalCodeNeedsCorrection|escape:quotes}]',
-                    'country_code_needs_correction': '[{$countryCodeNeedsCorrection|escape:quotes}]'
+                    'country_code_needs_correction': '[{$countryCodeNeedsCorrection|escape:quotes}]',
+                    'packstation_has_missing_postnummer': '[{$packstationHasMissingPostnummer|escape:quotes}]',
+                    "phone_invalid": '[{$phoneInvalid|escape:quotes}]',
+                    "phone_format_needs_correction": '[{$phoneFormatNeedsCorrection|escape:quotes}]',
+                    "phone_should_be_fixed": '[{$phoneShouldBeFixed|escape:quotes}]',
+                    "phone_should_be_mobile": '[{$phoneShouldBeMobile|escape:quotes}]'
+                },
+                "errorMessages": {
+                    "address_has_missing_building_number_content": '[{$addressHasMissingBuildingNumberContent|escape:quotes}]',
+                    "address_has_unresolvable_building_number_content": '[{$addressHasUnresolvableBuildingNumberContent|escape:quotes}]',
+                    "packstation_has_unresolvable_address": '[{$packstationHasUnresolvableAddress|escape:quotes}]',
+                    "postoffice_has_unresolvable_address": '[{$postofficeHasUnresolvableAddress|escape:quotes}]',
+                    "packstation_has_missing_postnummer": '[{$packstationHasMissingPostnummerContent|escape:quotes}]',
+                    "packstation_has_unresolvable_postnummer": '[{$packstationHasUnresolvablePostnummer|escape:quotes}]'
+                },
+                "requiredFormat": {
+                    "hintFormatE164": '[{$hintFormatE164|escape:quotes}]',
+                    "hintFormatInternational": '[{$hintFormatInternational|escape:quotes}]',
+                    "hintFormatNational": '[{$hintFormatNational|escape:quotes}]'
+                },
+                "inputFields": {
+                    "enderedoStreetLabel": '[{$enderedoStreetLabel|escape:quotes}]',
+                    "enderedoStreetPlaceholder": '[{$enderedoStreetPlaceholder|escape:quotes}]',
+                    "enderedoHousenumberLabel": '[{$enderedoHousenumberLabel|escape:quotes}]',
+                    "enderedoHousenumberPlaceholder": '[{$enderedoHousenumberPlaceholder|escape:quotes}]'
                 }
             };
             window.EnderecoIntegrator.activeServices = {
