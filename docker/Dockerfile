@@ -72,6 +72,11 @@ RUN mkdir -p source/modules/endereco/endereco-oxid6-client \
     && rm /tmp/patch-composer.php \
     && composer dump-autoload --no-dev --optimize
 
+# AdminNeo — single-file database manager (MySQL-only build)
+RUN mkdir -p /var/www/adminneo \
+    && curl -fsSL -o /var/www/adminneo/index.php \
+       "https://www.adminneo.org/files/latest/mysql_en_default/adminneo-latest.php"
+
 # PHP dev configuration
 COPY docker/php.ini /usr/local/etc/php/conf.d/oxid-dev.ini
 

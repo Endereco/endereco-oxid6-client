@@ -226,10 +226,11 @@ fi
 echo ""
 echo "OXID ${version} is running."
 echo ""
-echo "  Shop:    ${shop_url}"
-echo "  Admin:   ${shop_url}admin/"
+echo "  Shop:      ${shop_url}"
+echo "  Admin:     ${shop_url}admin/"
+echo "  AdminNeo:  ${shop_url}adminneo/?mysql=${container_db}&username=user&db=db  (pwd: pwd)"
 if [[ "$enable_xdebug" =~ ^[Yy]$ ]]; then
-echo "  XDebug:  port 9003 (IDE listen mode, trigger: start_with_request)"
+echo "  XDebug:    port 9003 (IDE listen mode, trigger: start_with_request)"
 fi
 echo ""
 echo "Default admin credentials (auto-configured on first start):"
