@@ -45,5 +45,17 @@ $aLang = [
     'ENDERECOOXID6CLIENT_STATUS_localityNeedsCorrection' => 'Die Schreibweise des Ortes ist fehlerhaft.',
     'ENDERECOOXID6CLIENT_STATUS_postalCodeNeedsCorrection' => 'Die PLZ ist ungültig.',
     'ENDERECOOXID6CLIENT_STATUS_countryCodeNeedsCorrection' => 'Die eingegebene Adresse wurde in einem anderen Land gefunden.',
+    'ENDERECOOXID6CLIENT_STATUS_packstationHasMissingPostnummer' => 'Die Postnummer fehlt.',
+    'ENDERECOOXID6CLIENT_STATUS_phoneInvalid' => 'Die Rufnummer ist ungültig.',
+    'ENDERECOOXID6CLIENT_STATUS_phoneFormatNeedsCorrection' => 'Die Rufnummer ist falsch formatiert.',
+    'ENDERECOOXID6CLIENT_STATUS_phoneShouldBeFixed' => 'Bitte eine Festnetznummer eingeben.',
+    'ENDERECOOXID6CLIENT_STATUS_phoneShouldBeMobile' => 'Bitte eine Mobilfunknummer eingeben.',
+    'ENDERECOOXID6CLIENT_ERROR_addressHasMissingBuildingNumberContent' => 'Die Hausnummer fehlt in der Eingabe.',
+    'ENDERECOOXID6CLIENT_ERROR_addressHasUnresolvableBuildingNumberContent' => 'Mit der eingegebenen Hausnummer konnte die Adresse nicht verifiziert werden.',
+    'ENDERECOOXID6CLIENT_ERROR_packstationHasUnresolvableAddress' => 'Die Packstation-Adresse konnte nicht gefunden werden.',
+    'ENDERECOOXID6CLIENT_ERROR_postofficeHasUnresolvableAddress' => 'Die Postfilialen-Adresse konnte nicht gefunden werden.',
+    'ENDERECOOXID6CLIENT_ERROR_packstationHasMissingPostnummer' => 'Die Postnummer fehlt in der Eingabe',
+    'ENDERECOOXID6CLIENT_ERROR_packstationHasUnresolvablePostnummer' => 'Die Postnummer ist ungültig.',
+
 ];
 
