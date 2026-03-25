@@ -52,6 +52,7 @@ class AddressController extends \OxidEsales\Eshop\Application\Controller\Fronten
                 // When writing address through endereco modal, always recalculate hash.
                 $hash = $this->calculateHash(
                     $oUser->oxuser__oxcountryid->rawValue, // Country ID
+                    $oUser->oxuser__oxstateid->rawValue, // Subdivision code
                     $oUser->oxuser__oxzip->rawValue, // Postal code
                     $oUser->oxuser__oxcity->rawValue, // Locality
                     $oUser->oxuser__oxstreet->rawValue, // Street name
@@ -103,6 +104,7 @@ class AddressController extends \OxidEsales\Eshop\Application\Controller\Fronten
                 // When writing address through endereco modal, always recalculate hash.
                 $hash = $this->calculateHash(
                     $oAddress->oxaddress__oxcountryid->rawValue, // Country ID
+                    $oAddress->oxaddress__oxstateid->rawValue, // Subdivision code
                     $oAddress->oxaddress__oxzip->rawValue, // Postal code
                     $oAddress->oxaddress__oxcity->rawValue, // Locality
                     $oAddress->oxaddress__oxstreet->rawValue, // Street name
@@ -134,6 +136,7 @@ class AddressController extends \OxidEsales\Eshop\Application\Controller\Fronten
      */
     private function calculateHash(
         $countryCode,
+        $subdivisonCode,
         $postalCode,
         $locality,
         $streetName,
@@ -142,6 +145,7 @@ class AddressController extends \OxidEsales\Eshop\Application\Controller\Fronten
     ) {
         $hashBody = [
             $countryCode,
+            $subdivisonCode,
             $postalCode,
             $locality,
             $streetName,

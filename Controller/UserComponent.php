@@ -104,6 +104,7 @@ class UserComponent extends UserComponent_parent
         if ($oUser && $billigAmsWasInitiated && $billingAmsWasUsed) {
             $hash = $this->calculateHash(
                 $oUser->oxuser__oxcountryid->rawValue, // Country ID
+                $oUser->oxuser__oxstateid->rawValue, // Subdivision code
                 $oUser->oxuser__oxzip->rawValue, // Postal code
                 $oUser->oxuser__oxcity->rawValue, // Locality
                 $oUser->oxuser__oxstreet->rawValue, // Street name
@@ -121,6 +122,7 @@ class UserComponent extends UserComponent_parent
         if ($aDelAddress && $sAddressId && $shippingAmsWasInitiated && $shippingAmsWasUsed) {
             $hash = $this->calculateHash(
                 $aDelAddress['oxaddress__oxcountryid'], // Country ID
+                $aDelAddress['oxaddress__oxstateid'], // Subdivision code
                 $aDelAddress['oxaddress__oxzip'], // Postal code
                 $aDelAddress['oxaddress__oxcity'], // Locality
                 $aDelAddress['oxaddress__oxstreet'], // Street name
@@ -146,11 +148,12 @@ class UserComponent extends UserComponent_parent
 
         // Hash signature. We assume this logic is executed only from the frontend.
         $oUser = $this->getUser();
-        $billigAmsWasInitiated = isset($_POST['billing_ams_session_counter']);
-        $billingAmsWasUsed = intval($_POST['billing_ams_session_counter']) > 0;
+        $billigAmsWasInitiated = isset($_POST['billing_ams_session_counter']) ||  isset($_POST['billing_session_counter']);
+        $billingAmsWasUsed = intval($_POST['billing_ams_session_counter']) > 0 || intval($_POST['billing_session_counter']) > 0;
         if ($oUser && $billigAmsWasInitiated && $billingAmsWasUsed) {
             $hash = $this->calculateHash(
                 $oUser->oxuser__oxcountryid->rawValue, // Country ID
+                $oUser->oxuser__oxstateid->rawValue, // Country ID
                 $oUser->oxuser__oxzip->rawValue, // Postal code
                 $oUser->oxuser__oxcity->rawValue, // Locality
                 $oUser->oxuser__oxstreet->rawValue, // Street name
@@ -163,11 +166,12 @@ class UserComponent extends UserComponent_parent
 
         $aDelAddress = $this->_getDelAddressData();
         $sAddressId = $this->getConfig()->getRequestParameter('oxaddressid');
-        $shippingAmsWasInitiated = isset($_POST['shipping_ams_session_counter']);
-        $shippingAmsWasUsed = intval($_POST['shipping_ams_session_counter'] ?? 0) > 0;
+        $shippingAmsWasInitiated = isset($_POST['shipping_ams_session_counter']) ||  isset($_POST['shipping_session_counter']);
+        $shippingAmsWasUsed = intval($_POST['shipping_ams_session_counter'] ?? 0) > 0 || intval($_POST['shipping_session_counter'] ?? 0) > 0;
         if ($aDelAddress && $sAddressId && $shippingAmsWasInitiated && $shippingAmsWasUsed) {
             $hash = $this->calculateHash(
                 $aDelAddress['oxaddress__oxcountryid'], // Country ID
+                $aDelAddress['oxaddress__oxstateid'], // Subdivision code
                 $aDelAddress['oxaddress__oxzip'], // Postal code
                 $aDelAddress['oxaddress__oxcity'], // Locality
                 $aDelAddress['oxaddress__oxstreet'], // Street name
@@ -194,11 +198,12 @@ class UserComponent extends UserComponent_parent
 
         // Hash signature. We assume this logic is executed only from the frontend.
         $oUser = $this->getUser();
-        $billigAmsWasInitiated = isset($_POST['billing_ams_session_counter']);
-        $billingAmsWasUsed = intval($_POST['billing_ams_session_counter']) > 0;
+        $billigAmsWasInitiated = isset($_POST['billing_ams_session_counter']) ||  isset($_POST['billing_session_counter']);
+        $billingAmsWasUsed = intval($_POST['billing_ams_session_counter']) > 0 || intval($_POST['billing_session_counter']) > 0;
         if ($oUser && $billigAmsWasInitiated && $billingAmsWasUsed) {
             $hash = $this->calculateHash(
                 $oUser->oxuser__oxcountryid->rawValue, // Country ID
+                $oUser->oxuser__oxstateid->rawValue, // Subdivision code
                 $oUser->oxuser__oxzip->rawValue, // Postal code
                 $oUser->oxuser__oxcity->rawValue, // Locality
                 $oUser->oxuser__oxstreet->rawValue, // Street name
@@ -226,6 +231,7 @@ class UserComponent extends UserComponent_parent
      */
     private function calculateHash(
         $countryCode,
+        $subdivisonCode,
         $postalCode,
         $locality,
         $streetName,
@@ -234,6 +240,7 @@ class UserComponent extends UserComponent_parent
     ) {
         $hashBody = [
             $countryCode,
+            $subdivisonCode,
             $postalCode,
             $locality,
             $streetName,

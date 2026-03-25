@@ -111,6 +111,14 @@ class EnderecoService
                     'houseNumber' => $address['buildingNumber']
                 ]
             ];
+
+            if(isset($address['subdivisonCode']) && $address['subdivisonCode']){
+                $message['params']['subdivisonCode'] = $address['subdivisonCode'];
+            }
+            if(isset($address['additionalInfo']) && $address['additionalInfo']){
+                $message['params']['additionalInfo'] = $address['additionalInfo'];
+            }
+
             $client = new Client(['timeout' => 6.0]);
             $sSessionId = $this->generateSessionId();
             $newHeaders = [
@@ -134,8 +142,7 @@ class EnderecoService
                 foreach ($result['predictions'] as $prediction) {
                     $tempAddress = array(
                         'countryCode' => $prediction['countryCode']
-                            ? $prediction['countryCode']
-                            : $address['countryCode'],
+                            ?: $address['countryCode'],
                         'postalCode' => $prediction['postCode'],
                         'locality' => $prediction['cityName'],
                         'streetName' => $prediction['street'],
@@ -143,6 +150,9 @@ class EnderecoService
                     );
                     if (array_key_exists('additionalInfo', $prediction)) {
                         $tempAddress['additionalInfo'] = $prediction['additionalInfo'];
+                    }
+                    if (array_key_exists('subdivisionCode', $prediction)) {
+                        $tempAddress['subdivisionCode'] = $prediction['subdivisionCode'];
                     }
 
                     $predictions[] = $tempAddress;
