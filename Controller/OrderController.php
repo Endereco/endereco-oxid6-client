@@ -10,6 +10,13 @@ use OxidEsales\Eshop\Core\Registry;
 
 class OrderController extends OrderController_parent
 {
+
+    /*
+     * AMS Status Constants
+     */
+    protected const AMS_STATUS_NOT_CHECKED = 'not-checked';
+
+
     /**
      * Renders the order page and checks the addresses if necessary.
      * This method performs address validation for billing and delivery addresses
@@ -63,13 +70,14 @@ class OrderController extends OrderController_parent
                 $localLanguage = $oLang->getLanguageAbbr();
 
                 // Check invoice address.
-                if ($oUser && $this->isBillingHashMismatch($oUser)) {
+                if ($oUser && ($this->isBillingHashMismatch($oUser) || $this->isValidationNeeded($oUser->oxuser__mojoamsstatus->rawValue))) {
                     $oCountry = oxNew(Country::class);
                     $oCountry->load($oUser->oxuser__oxcountryid->rawValue);
                     $countryCode = strtolower($oCountry->oxcountry__oxisoalpha2->rawValue);
 
                     $billingAddress = array(
                         'countryCode' => $countryCode,
+                        'subdivisonCode' => $oUser->oxuser__oxstateid->rawValue,
                         '__language' => $localLanguage,
                         'additionalInfo' => $oUser->oxuser__oxaddinfo->rawValue,
                         'postalCode' => $oUser->oxuser__oxzip->rawValue,
@@ -95,6 +103,7 @@ class OrderController extends OrderController_parent
                         $oUser->oxuser__mojoamspredictions->rawValue = $checkedBillingAddress['__predictions'];
                         $oUser->oxuser__mojoaddresshash->rawValue = $this->calculateHash(
                             $oUser->oxuser__oxcountryid->rawValue,
+                            $oUser->oxuser__oxstateid->rawValue,
                             $oUser->oxuser__oxzip->rawValue,
                             $oUser->oxuser__oxcity->rawValue,
                             $oUser->oxuser__oxstreet->rawValue,
@@ -106,13 +115,14 @@ class OrderController extends OrderController_parent
                 }
 
                 // Check invoice address.
-                if ($oDeliveryAddress && $this->isDeliveryHashMismatch($oDeliveryAddress)) {
+                if ($oDeliveryAddress && ($this->isDeliveryHashMismatch($oDeliveryAddress) || $this->isValidationNeeded($oDeliveryAddress->oxaddress__mojoamsstatus->rawValue))) {
                     $oCountry = oxNew('oxCountry');
                     $oCountry->load($oDeliveryAddress->oxaddress__oxcountryid->rawValue);
                     $countryCode = strtolower($oCountry->oxcountry__oxisoalpha2->rawValue);
 
                     $shippingAddress = array(
                         'countryCode' => $countryCode,
+                        'subdivisonCode' => $oDeliveryAddress->oxaddress__oxstateid->rawValue,
                         '__language' => $localLanguage,
                         'additionalInfo' => $oDeliveryAddress->oxaddress__oxaddinfo->rawValue,
                         'postalCode' => $oDeliveryAddress->oxaddress__oxzip->rawValue,
@@ -141,6 +151,7 @@ class OrderController extends OrderController_parent
                             = $checkedShippingAddress['__predictions'];
                         $oDeliveryAddress->oxaddress__mojoaddresshash->rawValue = $this->calculateHash(
                             $oDeliveryAddress->oxaddress__oxcountryid->rawValue,
+                            $oDeliveryAddress->oxaddress__oxstateid->rawValue,
                             $oDeliveryAddress->oxaddress__oxzip->rawValue,
                             $oDeliveryAddress->oxaddress__oxcity->rawValue,
                             $oDeliveryAddress->oxaddress__oxstreet->rawValue,
@@ -166,6 +177,7 @@ class OrderController extends OrderController_parent
     {
         $hash = $this->calculateHash(
             $billingAddress->oxuser__oxcountryid->rawValue, // Country ID
+            $billingAddress->oxuser__oxstateid->rawValue, // Subdivision code
             $billingAddress->oxuser__oxzip->rawValue, // Postal code
             $billingAddress->oxuser__oxcity->rawValue, // Locality
             $billingAddress->oxuser__oxstreet->rawValue, // Street name
@@ -186,6 +198,7 @@ class OrderController extends OrderController_parent
     {
         $hash = $this->calculateHash(
             $deliveryAddress->oxaddress__oxcountryid->rawValue, // Country ID
+            $deliveryAddress->oxaddress__oxstateid->rawValue, // Subdivision code
             $deliveryAddress->oxaddress__oxzip->rawValue, // Postal code
             $deliveryAddress->oxaddress__oxcity->rawValue, // Locality
             $deliveryAddress->oxaddress__oxstreet->rawValue, // Street name
@@ -210,6 +223,7 @@ class OrderController extends OrderController_parent
      */
     private function calculateHash(
         $countryCode,
+        $subdivisonCode,
         $postalCode,
         $locality,
         $streetName,
@@ -218,6 +232,7 @@ class OrderController extends OrderController_parent
     ) {
         $hashBody = [
             $countryCode,
+            $subdivisonCode,
             $postalCode,
             $locality,
             $streetName,
@@ -226,4 +241,25 @@ class OrderController extends OrderController_parent
         ];
         return hash('sha256', implode('', $hashBody));
     }
+
+    /**
+     * Determines if a new AMS status check is needed based on the current AMS status of the address extension.
+     *
+     * A check is needed if the AMS status is empty or matches the constant AMS_STATUS_NOT_CHECKED 
+     *
+     * @return bool True if a new AMS status check is required, false otherwise
+     */
+    public function isValidationNeeded($currentStatus): bool
+    {
+
+
+        $isEmpty = empty($currentStatus);
+
+        $hasDefaultValue =  ($currentStatus === self::AMS_STATUS_NOT_CHECKED);
+
+        $isCheckNeeded = $isEmpty || $hasDefaultValue;
+
+        return $isCheckNeeded;
+    }
+
 }
