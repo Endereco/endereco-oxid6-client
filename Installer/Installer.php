@@ -3,6 +3,7 @@
 namespace Endereco\Oxid6Client\Installer;
 
 use OxidEsales\Eshop\Core\DatabaseProvider;
+use OxidEsales\Eshop\Core\DbMetaDataHandler;
 use OxidEsales\Eshop\Core\Registry;
 use OxidEsales\Facts\Config\ConfigFile;
 
@@ -23,102 +24,34 @@ class Installer
         // Underneath is a fallback in case your system can't use migrations.
 
         // Extend oxaddress.
-        $aColumns = DatabaseProvider::getDb()->getAll("SHOW COLUMNS FROM `oxaddress` LIKE 'MOJOAMSTS';");
-        if (0 === count($aColumns)) {
-            $sql = "ALTER TABLE `oxaddress`
-            ADD `MOJOAMSTS` varchar(64) NULL;";
-            DatabaseProvider::getDb()->execute($sql);
-        }
-        unset($aColumns);
+        self::addDbField('oxaddress', 'MOJOAMSTS',"varchar(64) NULL");
 
         // Extend oxaddress.
-        $aColumns = DatabaseProvider::getDb()->getAll("SHOW COLUMNS FROM `oxaddress` LIKE 'MOJOAMSSTATUS';");
-        if (0 === count($aColumns)) {
-            $sql = "ALTER TABLE `oxaddress`
-            ADD `MOJOAMSSTATUS` TEXT NULL;";
-            DatabaseProvider::getDb()->execute($sql);
-        }
-        unset($aColumns);
+        self::addDbField('oxaddress', 'MOJOAMSSTATUS',"TEXT NULL");
 
         // Extend oxaddress.
-        $aColumns = DatabaseProvider::getDb()->getAll("SHOW COLUMNS FROM `oxaddress` LIKE 'MOJOAMSPREDICTIONS';");
-        if (0 === count($aColumns)) {
-            $sql = "ALTER TABLE `oxaddress`
-            ADD `MOJOAMSPREDICTIONS` TEXT NULL;";
-            DatabaseProvider::getDb()->execute($sql);
-        }
-        unset($aColumns);
+        self::addDbField('oxaddress', 'MOJOAMSPREDICTIONS',"TEXT NULL");
 
         // Extend oxuser.
-        $aColumns = DatabaseProvider::getDb()->getAll("SHOW COLUMNS FROM `oxuser` LIKE 'MOJOAMSTS';");
-        if (0 === count($aColumns)) {
-            $sql = "ALTER TABLE `oxuser`
-            ADD `MOJOAMSTS` varchar(64) NULL;";
-            DatabaseProvider::getDb()->execute($sql);
-        }
-        unset($aColumns);
+        self::addDbField('oxuser', 'MOJOAMSTS',"varchar(64) NULL");
 
         // Extend oxuser.
-        $aColumns = DatabaseProvider::getDb()->getAll("SHOW COLUMNS FROM `oxuser` LIKE 'MOJOAMSSTATUS';");
-        if (0 === count($aColumns)) {
-            $sql = "ALTER TABLE `oxuser`
-            ADD `MOJOAMSSTATUS` TEXT NULL;";
-            DatabaseProvider::getDb()->execute($sql);
-        }
-        unset($aColumns);
+        self::addDbField('oxuser', 'MOJOAMSSTATUS',"TEXT NULL");
 
         // Extend oxaddress.
-        $aColumns = DatabaseProvider::getDb()->getAll("SHOW COLUMNS FROM `oxuser` LIKE 'MOJOAMSPREDICTIONS';");
-        if (0 === count($aColumns)) {
-            $sql = "ALTER TABLE `oxuser`
-            ADD `MOJOAMSPREDICTIONS` TEXT NULL;";
-            DatabaseProvider::getDb()->execute($sql);
-        }
-        unset($aColumns);
+        self::addDbField('oxuser', 'MOJOAMSPREDICTIONS',"TEXT NULL");
 
         // Convert existing ams status to TEXT.
-        $aOxUserDetail = DatabaseProvider::getDb()->select("SELECT DATA_TYPE FROM INFORMATION_SCHEMA.COLUMNS 
-  WHERE table_name = 'oxuser' AND COLUMN_NAME = 'MOJOAMSSTATUS'");
-        foreach ($aOxUserDetail as $rowDetail) {
-            if ('text' !== strtolower($rowDetail[0])) {
-                $sql = "ALTER TABLE `oxuser` CHANGE `MOJOAMSSTATUS` `MOJOAMSSTATUS` TEXT NULL;";
-                DatabaseProvider::getDb()->execute($sql);
-            }
-        }
+        self::changeDbFieldType('oxuser','MOJOAMSSTATUS','TEXT');
 
-        $aOxAddressDetail = DatabaseProvider::getDb()->select("SELECT DATA_TYPE FROM INFORMATION_SCHEMA.COLUMNS 
-  WHERE table_name = 'oxaddress' AND COLUMN_NAME = 'MOJOAMSSTATUS'");
-        foreach ($aOxAddressDetail as $rowDetail) {
-            if ('text' !== strtolower($rowDetail[0])) {
-                $sql = "ALTER TABLE `oxaddress` CHANGE `MOJOAMSSTATUS` `MOJOAMSSTATUS` TEXT NULL;";
-                DatabaseProvider::getDb()->execute($sql);
-            }
-        }
+        self::changeDbFieldType('oxaddress','MOJOAMSSTATUS','TEXT');
 
         // Add NAMESCORE
-        $aColumns = DatabaseProvider::getDb()->getAll("SHOW COLUMNS FROM `oxuser` LIKE 'MOJONAMESCORE';");
-        if (0 === count($aColumns)) {
-            $sql = "ALTER TABLE `oxuser`
-            ADD `MOJONAMESCORE` double NOT NULL DEFAULT '1.0';";
-            DatabaseProvider::getDb()->execute($sql);
-        }
-        unset($aColumns);
-        $aColumns = DatabaseProvider::getDb()->getAll("SHOW COLUMNS FROM `oxaddress` LIKE 'MOJONAMESCORE';");
-        if (0 === count($aColumns)) {
-            $sql = "ALTER TABLE `oxaddress`
-            ADD `MOJONAMESCORE` double NOT NULL DEFAULT '1.0';";
-            DatabaseProvider::getDb()->execute($sql);
-        }
-        unset($aColumns);
+        self::addDbField('oxuser', 'MOJONAMESCORE',"double NOT NULL DEFAULT '1.0'");
+        self::addDbField('oxaddress', 'MOJONAMESCORE',"double NOT NULL DEFAULT '1.0'");
 
         // Extend oxtates.
-        $aColumns = DatabaseProvider::getDb()->getAll("SHOW COLUMNS FROM `oxstates` LIKE 'MOJOISO31662';");
-        if (0 === count($aColumns)) {
-            $sql = "ALTER TABLE `oxstates`
-                    ADD `MOJOISO31662` char(6) NULL;";
-            DatabaseProvider::getDb()->execute($sql);
-        }
-        unset($aColumns);
+        self::addDbField('oxstates', 'MOJOISO31662',"char(6) NULL");
 
         // Fill up missing states iso codes once. In general its better to double check, because the default OXISOALPHA2
         // only allows 2 characters, which is not enough for some countries e.g. Mexico
@@ -142,19 +75,51 @@ class Installer
         unset($aColumns);
 
         // Add HASH columns
-        $aColumns = DatabaseProvider::getDb()->getAll("SHOW COLUMNS FROM `oxuser` LIKE 'MOJOADDRESSHASH';");
-        if (0 === count($aColumns)) {
-            $sql = "ALTER TABLE `oxuser`
-            ADD `MOJOADDRESSHASH` VARCHAR(64) NOT NULL DEFAULT '';";
-            DatabaseProvider::getDb()->execute($sql);
+        self::addDbField('oxuser', 'MOJOADDRESSHASH',"VARCHAR(64) NOT NULL DEFAULT ''");
+        self::addDbField('oxaddress', 'MOJOADDRESSHASH',"VARCHAR(64) NOT NULL DEFAULT ''");
+
+        // Add columns to oxorder table
+        self::addDbField('oxorder', 'MOJOAMSTS',"varchar(64) NULL");
+        self::addDbField('oxorder', 'MOJOAMSSTATUS',"TEXT NULL");
+        self::addDbField('oxorder', 'MOJOAMSPREDICTIONS',"TEXT NULL");
+        self::addDbField('oxorder', 'MOJONAMESCORE',"double NOT NULL DEFAULT '1.0'");
+    }
+
+    /**
+     * @param $sTableName
+     * @param $sFieldName
+     * @param $sFieldDefinition
+     * @param string $sFieldComment
+     */
+    protected static function addDbField($sTableName, $sFieldName, $sFieldDefinition, $sFieldComment = '' ){
+
+        $oDbMetaDataHandler = Registry::get(DbMetaDataHandler::class);
+        if(!$oDbMetaDataHandler->fieldExists($sFieldName,$sTableName)){
+            if($sFieldComment){
+                $sFieldComment = "COMMENT '$sFieldComment'";
+            }
+            DatabaseProvider::getDb()->execute("ALTER TABLE $sTableName ADD COLUMN $sFieldName $sFieldDefinition $sFieldComment");
+
         }
-        unset($aColumns);
-        $aColumns = DatabaseProvider::getDb()->getAll("SHOW COLUMNS FROM `oxaddress` LIKE 'MOJOADDRESSHASH';");
-        if (0 === count($aColumns)) {
-            $sql = "ALTER TABLE `oxaddress`
-            ADD `MOJOADDRESSHASH` VARCHAR(64) NOT NULL DEFAULT '';";
-            DatabaseProvider::getDb()->execute($sql);
+    }
+
+    /**
+     * @param $sTableName
+     * @param $sFieldName
+     * @param $sFieldType
+     */
+    protected static function changeDbFieldType($sTableName, $sFieldName, $sFieldType ){
+        $aTableFields = DatabaseProvider::getDb()->getAll("SHOW FIELDS FROM $sTableName");
+        foreach($aTableFields as $aField){
+            if(strtolower($aField[0]) == strtolower($sFieldName)){
+                if(strtolower($aField[1]) != strtolower($sFieldType)){
+                    DatabaseProvider::getDb()->execute("ALTER TABLE $sTableName MODIFY $sFieldName $sFieldType");
+                    $oDbMetaDataHandler = Registry::get(DbMetaDataHandler::class);
+                    $oDbMetaDataHandler->updateViews();
+                }
+
+            }
+
         }
-        unset($aColumns);
     }
 }
