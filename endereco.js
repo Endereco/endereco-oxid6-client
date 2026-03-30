@@ -67,20 +67,52 @@ EnderecoIntegrator.resolvers.subdivisionCodeWrite = function (value, subscriber)
     });
 }
 
-EnderecoIntegrator.resolvers.subdivisionCodeRead = function (value, subscriber) {
-    return new Promise(function (resolve) {
-        const countryCode = subscriber._subject.countryCode?.toUpperCase() || '';
-
-        if (!countryCode || !value) {
-            resolve('');
-            return;
+// Transforms the internal OXID state ID (from the states select element) into an
+// ISO 3166-2 subdivision code that the JS-SDK and Endereco WebAPI expect.
+//
+// During initial page load and AMS object initiation, the states <select> may not
+// be populated with <option> elements yet. In that case, we fall back to a helper
+// DOM element injected by the module that carries the selected state ID and country
+// ID as data attributes, allowing us to resolve correctly before the select is ready.
+EnderecoIntegrator.resolvers.subdivisionCodeRead = async function (value, subscriber) {
+    // Resolve country code. The SDK may not have it yet during init,
+    // so fall back to the helper element's country ID.
+    var countryCode = subscriber._subject.countryCode?.toUpperCase() || '';
+    if (!countryCode && subscriber._subject.fullName) {
+        const helper = document.querySelector(
+            '[data-endereco-subdivision-helper="' + subscriber._subject.fullName + '"]'
+        );
+        if (helper && helper.dataset.countryId) {
+            countryCode = await EnderecoIntegrator.resolvers.countryCodeRead(
+                helper.dataset.countryId, subscriber
+            );
+            countryCode = countryCode?.toUpperCase() || '';
         }
+    }
 
-        const mapping = window.EnderecoIntegrator?.subdivisionMappingReverse || {};
-        const submapping = mapping[countryCode] || {};
-        const key = submapping[value];
-        resolve(key !== undefined ? key : '');
-    });
+    if (!countryCode) {
+        return '';
+    }
+
+    // If the select has no value yet (not populated), try the helper element as fallback.
+    var effectiveValue = value;
+    if (!effectiveValue && subscriber._subject.fullName) {
+        const helper = document.querySelector(
+            '[data-endereco-subdivision-helper="' + subscriber._subject.fullName + '"]'
+        );
+        if (helper) {
+            effectiveValue = helper.dataset.selectedStateId || '';
+        }
+    }
+
+    if (!effectiveValue) {
+        return '';
+    }
+
+    const mapping = window.EnderecoIntegrator?.subdivisionMappingReverse || {};
+    const submapping = mapping[countryCode] || {};
+    const key = submapping[effectiveValue];
+    return key !== undefined ? key : '';
 }
 
 EnderecoIntegrator.resolvers.countryCodeSetValue = function (subscriber, value) {
@@ -165,14 +197,28 @@ EnderecoIntegrator.afterAMSActivation.push( function(EAO) {
 });
 
 EnderecoIntegrator.hasActiveSubscriber = (fieldName, domElement, dataObject) => {
-    if (fieldName === 'subdivisionCode' && domElement && domElement.tagName === 'SELECT') {
-        // window.EnderecoIntegrator.subdivisionMappingReverse keys contain local ID's
-        const mapping = window.EnderecoIntegrator?.subdivisionMappingReverse || {};
-        const selectState = checkSelectValuesAgainstMapping(
-            domElement,
-            mapping[dataObject.countryCode] || {}
+    if (fieldName === 'subdivisionCode') {
+        // Check helper element first — it knows server-side whether the country has states,
+        // even before OXID's JS populates the select with options.
+        const helper = document.querySelector(
+            '[data-endereco-subdivision-helper="' + dataObject.fullName + '"]'
         );
-        return selectState.hasValidOptions && selectState.allValuesInMapping;
+        if (helper) {
+            const countryId = helper.dataset.countryId || '';
+            const mapping = window.EnderecoIntegrator?.subdivisionMappingReverse || {};
+            const countryCode = window.EnderecoIntegrator?.countryMappingReverse?.[countryId] || '';
+            return !!countryCode && !!mapping[countryCode] && Object.keys(mapping[countryCode]).length > 0;
+        }
+
+        // Fallback: check the select's options directly (no helper available).
+        if (domElement && domElement.tagName === 'SELECT') {
+            const mapping = window.EnderecoIntegrator?.subdivisionMappingReverse || {};
+            const selectState = checkSelectValuesAgainstMapping(
+                domElement,
+                mapping[dataObject.countryCode] || {}
+            );
+            return selectState.hasValidOptions && selectState.allValuesInMapping;
+        }
     }
 
     return true;

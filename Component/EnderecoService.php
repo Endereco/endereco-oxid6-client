@@ -11,6 +11,56 @@ class EnderecoService
     private $apiKey;
     private $endpoint;
     private $moduleVer;
+    // TODO: Extract cache into an injectable dependency for better testability.
+    // For now the static coupling is acceptable — it avoids extra DB reads
+    // when multiple EnderecoService instances query the same country per request.
+    private static $subdivisionCache = [];
+
+    /**
+     * Checks if a country has subdivisions with ISO 3166-2 codes configured.
+     *
+     * This is a simple DB lookup with no dependency on instance state.
+     * We keep it as an instance method (rather than static) for consistency
+     * with the rest of this class and to allow injecting the DB dependency
+     * in tests later without changing the call signature.
+     *
+     * @param string $countryId OXID internal country ID.
+     * @return bool
+     */
+    public function countryHasSubdivisions($countryId): bool
+    {
+        if (array_key_exists($countryId, self::$subdivisionCache)) {
+            return self::$subdivisionCache[$countryId];
+        }
+
+        $db = \OxidEsales\Eshop\Core\DatabaseProvider::getDb();
+        $count = $db->getOne(
+            "SELECT COUNT(*) FROM oxstates WHERE OXCOUNTRYID = ? AND MOJOISO31662 <> '' AND MOJOISO31662 IS NOT NULL",
+            [$countryId]
+        );
+        // We naively assume, that if there are some states in the database for that country,
+        // then the list is complete and 1-to-1 matches the states our API can recognize and correct.
+        $countryHasSelectableStates = $count > 0;
+        self::$subdivisionCache[$countryId] = $countryHasSelectableStates;
+
+        return self::$subdivisionCache[$countryId];
+    }
+
+    /**
+     * Maps an ISO 3166-2 subdivision code back to the OXID internal state ID.
+     *
+     * @param string $isoCode ISO 3166-2 code (e.g. "DE-BY").
+     * @return string OXID state ID, or empty string if not found.
+     */
+    public function resolveSubdivisionToStateId($isoCode): string
+    {
+        $db = \OxidEsales\Eshop\Core\DatabaseProvider::getDb();
+        $result = $db->getOne(
+            "SELECT OXID FROM oxstates WHERE UPPER(MOJOISO31662) = UPPER(?)",
+            [$isoCode]
+        );
+        return $result ?: '';
+    }
 
     public function __construct()
     {
@@ -98,26 +148,26 @@ class EnderecoService
     public function checkAddress($address)
     {
         try {
+            $params = [
+                'country' => $address['countryCode'],
+                'language' => $address['__language'],
+                'postCode' => $address['postalCode'],
+                'cityName' => $address['locality'],
+                'street' => $address['streetName'],
+                'houseNumber' => $address['buildingNumber'],
+                'additionalInfo' => $address['additionalInfo']
+            ];
+
+            if (array_key_exists('subdivisionCode', $address)) {
+                $params['subdivisionCode'] = $address['subdivisionCode'];
+            }
+
             $message = [
                 'jsonrpc' => '2.0',
                 'id' => 1,
                 'method' => 'addressCheck',
-                'params' => [
-                    'country' => $address['countryCode'],
-                    'language' => $address['__language'],
-                    'postCode' => $address['postalCode'],
-                    'cityName' => $address['locality'],
-                    'street' => $address['streetName'],
-                    'houseNumber' => $address['buildingNumber']
-                ]
+                'params' => $params
             ];
-
-            if(isset($address['subdivisonCode']) && $address['subdivisonCode']){
-                $message['params']['subdivisonCode'] = $address['subdivisonCode'];
-            }
-            if(isset($address['additionalInfo']) && $address['additionalInfo']){
-                $message['params']['additionalInfo'] = $address['additionalInfo'];
-            }
 
             $client = new Client(['timeout' => 6.0]);
             $sSessionId = $this->generateSessionId();

@@ -1,5 +1,10 @@
 [{$smarty.block.parent}]
 [{assign var="sitepath" value=$oViewConf->getBaseDir()}]
+<input type="hidden"
+    data-endereco-subdivision-helper="billing_ams"
+    data-country-id="[{$oxcmp_user->oxuser__oxcountryid->value}]"
+    data-selected-state-id="[{$oxcmp_user->oxuser__oxstateid->value}]"
+>
 <div style="display: none!important">
     <div>
         <form>
@@ -33,6 +38,13 @@
                 id="endereco-billing-additional-info"
                 value="[{if $oxcmp_user->oxuser__oxaddinfo->value}][{$oxcmp_user->oxuser__oxaddinfo->value}][{/if}]"
         >
+        [{if $oView->countryHasSubdivisions($oxcmp_user->oxuser__oxcountryid->value)}]
+        <input
+                type="text"
+                id="endereco-billing-subdivision-code"
+                value="[{$oxcmp_user->oxuser__oxstateid->value}]"
+        >
+        [{/if}]
         <input
                 type="text"
                 id="endereco-billing-status"
@@ -118,12 +130,15 @@
                         streetName: '#endereco-billing-street-name',
                         buildingNumber: '#endereco-billing-building-number',
                         additionalInfo: '#endereco-billing-additional-info',
+                        [{if $oView->countryHasSubdivisions($oxcmp_user->oxuser__oxcountryid->value)}]
+                        subdivisionCode: '#endereco-billing-subdivision-code',
+                        [{/if}]
                         addressStatus: '#endereco-billing-status',
                         addressTimestamp: '#endereco-billing-timestamp',
                         addressPredictions: '#endereco-billing-predictions'
                     },
                     {
-                        name: 'billing',
+                        name: 'billing_ams',
                         addressType: 'billing_address',
                         intent: 'review'
                     },
@@ -135,6 +150,11 @@
     <div>
         [{assign var="oDelAdress" value=$oView->getDelAddress()}]
         [{if $oDelAdress}]
+        <input type="hidden"
+            data-endereco-subdivision-helper="shipping_ams"
+            data-country-id="[{$oDelAdress->oxaddress__oxcountryid->value}]"
+            data-selected-state-id="[{$oDelAdress->oxaddress__oxstateid->value}]"
+        >
         <div>
             <form>
             <input
@@ -167,6 +187,13 @@
                     id="endereco-shipping-additional-info"
                     value="[{if $oDelAdress->oxaddress__oxaddinfo->value}][{$oDelAdress->oxaddress__oxaddinfo->value}][{/if}]"
             >
+            [{if $oView->countryHasSubdivisions($oDelAdress->oxaddress__oxcountryid->value)}]
+            <input
+                    type="text"
+                    id="endereco-shipping-subdivision-code"
+                    value="[{$oDelAdress->oxaddress__oxstateid->value}]"
+            >
+            [{/if}]
             <input
                     type="text"
                     id="endereco-shipping-status"
@@ -253,13 +280,16 @@
                             locality: '#endereco-shipping-locality',
                             streetName: '#endereco-shipping-street-name',
                             buildingNumber: '#endereco-shipping-building-number',
+                            [{if $oView->countryHasSubdivisions($oDelAdress->oxaddress__oxcountryid->value)}]
+                            subdivisionCode: '#endereco-shipping-subdivision-code',
+                            [{/if}]
                             addressStatus: '#endereco-shipping-status',
                             addressTimestamp: '#endereco-shipping-timestamp',
                             addressPredictions: '#endereco-shipping-predictions',
                             additionalInfo: '#endereco-shipping-additional-info',
                         },
                         {
-                            name: 'shipping',
+                            name: 'shipping_ams',
                             addressType: 'shipping_address',
                             intent: 'review'
                         },

@@ -4,9 +4,77 @@ namespace Endereco\Oxid6Client\Controller;
 
 use GuzzleHttp\Client;
 use GuzzleHttp\Psr7\Request;
+use Endereco\Oxid6Client\Component\EnderecoService;
 
 class UserComponent extends UserComponent_parent
 {
+    /**
+     * Invalidates stale Endereco status codes on page load.
+     *
+     * Recalculates the address hash for billing and the selected shipping address.
+     * If the stored hash doesn't match, the status codes are outdated (e.g. because
+     * the address changed externally or the hash formula changed). In that case we
+     * clear status, timestamp, and predictions so the frontend JS re-triggers validation.
+     *
+     * @return \OxidEsales\Eshop\Application\Model\User|false
+     */
+    public function render()
+    {
+        $return = parent::render();
+
+        $oUser = $this->getUser();
+        if ($oUser) {
+            $enderecoService = new EnderecoService();
+
+            // Billing address hash check.
+            $hasSubdivisions = $enderecoService->countryHasSubdivisions(
+                $oUser->oxuser__oxcountryid->rawValue
+            );
+            $hash = $this->calculateHash(
+                $oUser->oxuser__oxcountryid->rawValue,
+                $hasSubdivisions ? ($oUser->oxuser__oxstateid->rawValue ?? '') : null,
+                $oUser->oxuser__oxzip->rawValue,
+                $oUser->oxuser__oxcity->rawValue,
+                $oUser->oxuser__oxstreet->rawValue,
+                $oUser->oxuser__oxstreetnr->rawValue,
+                $oUser->oxuser__oxaddinfo->rawValue
+            );
+            if ($hash !== ($oUser->oxuser__mojoaddresshash->rawValue ?? '')) {
+                $oUser->oxuser__mojoamsstatus->rawValue = '';
+                $oUser->oxuser__mojoamsts->rawValue = '';
+                $oUser->oxuser__mojoamspredictions->rawValue = '';
+                $oUser->oxuser__mojoaddresshash->rawValue = '';
+                $oUser->save();
+            }
+
+            // Shipping address hash check.
+            $oSelectedAddress = $oUser->getSelectedAddress();
+            if ($oSelectedAddress) {
+                $hasSubdivisions = $enderecoService->countryHasSubdivisions(
+                    $oSelectedAddress->oxaddress__oxcountryid->rawValue
+                );
+                $hash = $this->calculateHash(
+                    $oSelectedAddress->oxaddress__oxcountryid->rawValue,
+                    $hasSubdivisions ? ($oSelectedAddress->oxaddress__oxstateid->rawValue ?? '') : null,
+                    $oSelectedAddress->oxaddress__oxzip->rawValue,
+                    $oSelectedAddress->oxaddress__oxcity->rawValue,
+                    $oSelectedAddress->oxaddress__oxstreet->rawValue,
+                    $oSelectedAddress->oxaddress__oxstreetnr->rawValue,
+                    $oSelectedAddress->oxaddress__oxaddinfo->rawValue
+                );
+                if ($hash !== ($oSelectedAddress->oxaddress__mojoaddresshash->rawValue ?? '')) {
+                    $oSelectedAddress->oxaddress__mojoamsstatus->rawValue = '';
+                    $oSelectedAddress->oxaddress__mojoamsts->rawValue = '';
+                    $oSelectedAddress->oxaddress__mojoamspredictions->rawValue = '';
+                    $oSelectedAddress->oxaddress__mojoaddresshash->rawValue = '';
+                    $oSelectedAddress->save();
+                }
+            }
+        }
+
+        return $return;
+    }
+
     /**
      * This functions inspects POST and tries to find open sessions in it.
      * In case something is found, doaccountings are sent.
@@ -99,17 +167,20 @@ class UserComponent extends UserComponent_parent
 
         // Hash signature. We assume this logic is executed only from the frontend.
         $oUser = $this->getUser();
-        $billigAmsWasInitiated = isset($_POST['billing_ams_session_counter']);
+        $billingAmsWasInitiated = isset($_POST['billing_ams_session_counter']);
         $billingAmsWasUsed = intval($_POST['billing_ams_session_counter'] ?? 0) > 0;
-        if ($oUser && $billigAmsWasInitiated && $billingAmsWasUsed) {
+        if ($oUser && $billingAmsWasInitiated && $billingAmsWasUsed) {
+            $hasSubdivisions = (new EnderecoService())->countryHasSubdivisions(
+                $oUser->oxuser__oxcountryid->rawValue
+            );
             $hash = $this->calculateHash(
-                $oUser->oxuser__oxcountryid->rawValue, // Country ID
-                $oUser->oxuser__oxstateid->rawValue, // Subdivision code
-                $oUser->oxuser__oxzip->rawValue, // Postal code
-                $oUser->oxuser__oxcity->rawValue, // Locality
-                $oUser->oxuser__oxstreet->rawValue, // Street name
-                $oUser->oxuser__oxstreetnr->rawValue, // House number
-                $oUser->oxuser__oxaddinfo->rawValue // Additional info
+                $oUser->oxuser__oxcountryid->rawValue,
+                $hasSubdivisions ? ($oUser->oxuser__oxstateid->rawValue ?? '') : null,
+                $oUser->oxuser__oxzip->rawValue,
+                $oUser->oxuser__oxcity->rawValue,
+                $oUser->oxuser__oxstreet->rawValue,
+                $oUser->oxuser__oxstreetnr->rawValue,
+                $oUser->oxuser__oxaddinfo->rawValue
             );
             $oUser->oxuser__mojoaddresshash->rawValue = $hash;
             $oUser->save();
@@ -120,14 +191,17 @@ class UserComponent extends UserComponent_parent
         $shippingAmsWasInitiated = isset($_POST['shipping_ams_session_counter']);
         $shippingAmsWasUsed = intval($_POST['shipping_ams_session_counter']) > 0;
         if ($aDelAddress && $sAddressId && $shippingAmsWasInitiated && $shippingAmsWasUsed) {
+            $hasSubdivisions = (new EnderecoService())->countryHasSubdivisions(
+                $aDelAddress['oxaddress__oxcountryid']
+            );
             $hash = $this->calculateHash(
-                $aDelAddress['oxaddress__oxcountryid'], // Country ID
-                $aDelAddress['oxaddress__oxstateid'], // Subdivision code
-                $aDelAddress['oxaddress__oxzip'], // Postal code
-                $aDelAddress['oxaddress__oxcity'], // Locality
-                $aDelAddress['oxaddress__oxstreet'], // Street name
-                $aDelAddress['oxaddress__oxstreetnr'], // House number
-                $aDelAddress['oxaddress__oxaddinfo'] // Additional info
+                $aDelAddress['oxaddress__oxcountryid'],
+                $hasSubdivisions ? ($aDelAddress['oxaddress__oxstateid'] ?? '') : null,
+                $aDelAddress['oxaddress__oxzip'],
+                $aDelAddress['oxaddress__oxcity'],
+                $aDelAddress['oxaddress__oxstreet'],
+                $aDelAddress['oxaddress__oxstreetnr'],
+                $aDelAddress['oxaddress__oxaddinfo']
             );
 
             $oAddress = oxNew(\OxidEsales\Eshop\Application\Model\Address::class);
@@ -148,17 +222,20 @@ class UserComponent extends UserComponent_parent
 
         // Hash signature. We assume this logic is executed only from the frontend.
         $oUser = $this->getUser();
-        $billigAmsWasInitiated = isset($_POST['billing_ams_session_counter']) ||  isset($_POST['billing_session_counter']);
-        $billingAmsWasUsed = intval($_POST['billing_ams_session_counter']) > 0 || intval($_POST['billing_session_counter']) > 0;
-        if ($oUser && $billigAmsWasInitiated && $billingAmsWasUsed) {
+        $billingAmsWasInitiated = isset($_POST['billing_ams_session_counter']);
+        $billingAmsWasUsed = intval($_POST['billing_ams_session_counter'] ?? 0) > 0;
+        if ($oUser && $billingAmsWasInitiated && $billingAmsWasUsed) {
+            $hasSubdivisions = (new EnderecoService())->countryHasSubdivisions(
+                $oUser->oxuser__oxcountryid->rawValue
+            );
             $hash = $this->calculateHash(
-                $oUser->oxuser__oxcountryid->rawValue, // Country ID
-                $oUser->oxuser__oxstateid->rawValue, // Country ID
-                $oUser->oxuser__oxzip->rawValue, // Postal code
-                $oUser->oxuser__oxcity->rawValue, // Locality
-                $oUser->oxuser__oxstreet->rawValue, // Street name
-                $oUser->oxuser__oxstreetnr->rawValue, // House number
-                $oUser->oxuser__oxaddinfo->rawValue // Additional info
+                $oUser->oxuser__oxcountryid->rawValue,
+                $hasSubdivisions ? ($oUser->oxuser__oxstateid->rawValue ?? '') : null,
+                $oUser->oxuser__oxzip->rawValue,
+                $oUser->oxuser__oxcity->rawValue,
+                $oUser->oxuser__oxstreet->rawValue,
+                $oUser->oxuser__oxstreetnr->rawValue,
+                $oUser->oxuser__oxaddinfo->rawValue
             );
             $oUser->oxuser__mojoaddresshash->rawValue = $hash;
             $oUser->save();
@@ -166,17 +243,20 @@ class UserComponent extends UserComponent_parent
 
         $aDelAddress = $this->_getDelAddressData();
         $sAddressId = $this->getConfig()->getRequestParameter('oxaddressid');
-        $shippingAmsWasInitiated = isset($_POST['shipping_ams_session_counter']) ||  isset($_POST['shipping_session_counter']);
-        $shippingAmsWasUsed = intval($_POST['shipping_ams_session_counter'] ?? 0) > 0 || intval($_POST['shipping_session_counter'] ?? 0) > 0;
+        $shippingAmsWasInitiated = isset($_POST['shipping_ams_session_counter']);
+        $shippingAmsWasUsed = intval($_POST['shipping_ams_session_counter'] ?? 0) > 0;
         if ($aDelAddress && $sAddressId && $shippingAmsWasInitiated && $shippingAmsWasUsed) {
+            $hasSubdivisions = (new EnderecoService())->countryHasSubdivisions(
+                $aDelAddress['oxaddress__oxcountryid']
+            );
             $hash = $this->calculateHash(
-                $aDelAddress['oxaddress__oxcountryid'], // Country ID
-                $aDelAddress['oxaddress__oxstateid'], // Subdivision code
-                $aDelAddress['oxaddress__oxzip'], // Postal code
-                $aDelAddress['oxaddress__oxcity'], // Locality
-                $aDelAddress['oxaddress__oxstreet'], // Street name
-                $aDelAddress['oxaddress__oxstreetnr'], // House number
-                $aDelAddress['oxaddress__oxaddinfo'] // Additional info
+                $aDelAddress['oxaddress__oxcountryid'],
+                $hasSubdivisions ? ($aDelAddress['oxaddress__oxstateid'] ?? '') : null,
+                $aDelAddress['oxaddress__oxzip'],
+                $aDelAddress['oxaddress__oxcity'],
+                $aDelAddress['oxaddress__oxstreet'],
+                $aDelAddress['oxaddress__oxstreetnr'],
+                $aDelAddress['oxaddress__oxaddinfo']
             );
 
             $oAddress = oxNew(\OxidEsales\Eshop\Application\Model\Address::class);
@@ -198,17 +278,20 @@ class UserComponent extends UserComponent_parent
 
         // Hash signature. We assume this logic is executed only from the frontend.
         $oUser = $this->getUser();
-        $billigAmsWasInitiated = isset($_POST['billing_ams_session_counter']) ||  isset($_POST['billing_session_counter']);
-        $billingAmsWasUsed = intval($_POST['billing_ams_session_counter']) > 0 || intval($_POST['billing_session_counter']) > 0;
-        if ($oUser && $billigAmsWasInitiated && $billingAmsWasUsed) {
+        $billingAmsWasInitiated = isset($_POST['billing_ams_session_counter']);
+        $billingAmsWasUsed = intval($_POST['billing_ams_session_counter'] ?? 0) > 0;
+        if ($oUser && $billingAmsWasInitiated && $billingAmsWasUsed) {
+            $hasSubdivisions = (new EnderecoService())->countryHasSubdivisions(
+                $oUser->oxuser__oxcountryid->rawValue
+            );
             $hash = $this->calculateHash(
-                $oUser->oxuser__oxcountryid->rawValue, // Country ID
-                $oUser->oxuser__oxstateid->rawValue, // Subdivision code
-                $oUser->oxuser__oxzip->rawValue, // Postal code
-                $oUser->oxuser__oxcity->rawValue, // Locality
-                $oUser->oxuser__oxstreet->rawValue, // Street name
-                $oUser->oxuser__oxstreetnr->rawValue, // House number
-                $oUser->oxuser__oxaddinfo->rawValue // Additional info
+                $oUser->oxuser__oxcountryid->rawValue,
+                $hasSubdivisions ? ($oUser->oxuser__oxstateid->rawValue ?? '') : null,
+                $oUser->oxuser__oxzip->rawValue,
+                $oUser->oxuser__oxcity->rawValue,
+                $oUser->oxuser__oxstreet->rawValue,
+                $oUser->oxuser__oxstreetnr->rawValue,
+                $oUser->oxuser__oxaddinfo->rawValue
             );
             $oUser->oxuser__mojoaddresshash->rawValue = $hash;
             $oUser->save();
@@ -221,7 +304,10 @@ class UserComponent extends UserComponent_parent
      * Calculates a hash based on the provided address components.
      * This is used to ensure the address integrity.
      *
+     * TODO: Extract to a shared location — duplicated in AddressController and OrderController.
+     *
      * @param string $countryCode Country code of the address.
+     * @param string|null $subdivisionCode ISO 3166-2 subdivision code, or null if not applicable.
      * @param string $postalCode Postal code of the address.
      * @param string $locality Locality (city) of the address.
      * @param string $streetName Street name of the address.
@@ -231,7 +317,7 @@ class UserComponent extends UserComponent_parent
      */
     private function calculateHash(
         $countryCode,
-        $subdivisonCode,
+        $subdivisionCode,
         $postalCode,
         $locality,
         $streetName,
@@ -239,14 +325,16 @@ class UserComponent extends UserComponent_parent
         $additionalInfo
     ) {
         $hashBody = [
-            $countryCode,
-            $subdivisonCode,
-            $postalCode,
-            $locality,
-            $streetName,
-            $buildingNumber,
-            $additionalInfo
+            'countryCode' => $countryCode,
+            'postalCode' => $postalCode,
+            'locality' => $locality,
+            'streetName' => $streetName,
+            'buildingNumber' => $buildingNumber,
+            'additionalInfo' => $additionalInfo
         ];
-        return hash('sha256', implode('', $hashBody));
+        if ($subdivisionCode !== null) {
+            $hashBody['subdivisionCode'] = $subdivisionCode;
+        }
+        return hash('sha256', json_encode($hashBody));
     }
 }

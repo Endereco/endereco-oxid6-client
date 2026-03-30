@@ -4,6 +4,7 @@ namespace Endereco\Oxid6Client\Controller;
 
 use OxidEsales\Eshop\Application\Model\User;
 use OxidEsales\Eshop\Application\Model\Address;
+use Endereco\Oxid6Client\Component\EnderecoService;
 
 class AddressController extends \OxidEsales\Eshop\Application\Controller\FrontendController
 {
@@ -43,6 +44,16 @@ class AddressController extends \OxidEsales\Eshop\Application\Controller\Fronten
                     ? $data['params']['address']['additionalInfo']
                     : $oUser->oxuser__oxaddinfo->rawValue;
 
+                $enderecoService = new EnderecoService();
+                $hasSubdivisions = $enderecoService->countryHasSubdivisions(
+                    $oUser->oxuser__oxcountryid->rawValue
+                );
+                if ($hasSubdivisions && !empty($data['params']['address']['subdivisionCode'])) {
+                    $oUser->oxuser__oxstateid->rawValue = $enderecoService->resolveSubdivisionToStateId(
+                        $data['params']['address']['subdivisionCode']
+                    );
+                }
+
                 $status = implode(',', $data['params']['enderecometa']['status']);
                 $oUser->oxuser__mojoamsstatus->rawValue = $status;
                 $oUser->oxuser__mojoamsts->rawValue = $data['params']['enderecometa']['ts'];
@@ -51,13 +62,13 @@ class AddressController extends \OxidEsales\Eshop\Application\Controller\Fronten
 
                 // When writing address through endereco modal, always recalculate hash.
                 $hash = $this->calculateHash(
-                    $oUser->oxuser__oxcountryid->rawValue, // Country ID
-                    $oUser->oxuser__oxstateid->rawValue, // Subdivision code
-                    $oUser->oxuser__oxzip->rawValue, // Postal code
-                    $oUser->oxuser__oxcity->rawValue, // Locality
-                    $oUser->oxuser__oxstreet->rawValue, // Street name
-                    $oUser->oxuser__oxstreetnr->rawValue, // House number
-                    $oUser->oxuser__oxaddinfo->rawValue // Additional info
+                    $oUser->oxuser__oxcountryid->rawValue,
+                    $hasSubdivisions ? ($oUser->oxuser__oxstateid->rawValue ?? '') : null,
+                    $oUser->oxuser__oxzip->rawValue,
+                    $oUser->oxuser__oxcity->rawValue,
+                    $oUser->oxuser__oxstreet->rawValue,
+                    $oUser->oxuser__oxstreetnr->rawValue,
+                    $oUser->oxuser__oxaddinfo->rawValue
                 );
                 $oUser->oxuser__mojoaddresshash->rawValue = $hash;
                 if ($oUser->save()) {
@@ -95,6 +106,16 @@ class AddressController extends \OxidEsales\Eshop\Application\Controller\Fronten
                     ? $data['params']['address']['additionalInfo']
                     : $oAddress->oxaddress__oxaddinfo->rawValue;
 
+                $enderecoService = new EnderecoService();
+                $hasSubdivisions = $enderecoService->countryHasSubdivisions(
+                    $oAddress->oxaddress__oxcountryid->rawValue
+                );
+                if ($hasSubdivisions && !empty($data['params']['address']['subdivisionCode'])) {
+                    $oAddress->oxaddress__oxstateid->rawValue = $enderecoService->resolveSubdivisionToStateId(
+                        $data['params']['address']['subdivisionCode']
+                    );
+                }
+
                 $status = implode(',', $data['params']['enderecometa']['status']);
                 $oAddress->oxaddress__mojoamsstatus->rawValue = $status;
                 $oAddress->oxaddress__mojoamsts->rawValue = $data['params']['enderecometa']['ts'];
@@ -103,13 +124,13 @@ class AddressController extends \OxidEsales\Eshop\Application\Controller\Fronten
 
                 // When writing address through endereco modal, always recalculate hash.
                 $hash = $this->calculateHash(
-                    $oAddress->oxaddress__oxcountryid->rawValue, // Country ID
-                    $oAddress->oxaddress__oxstateid->rawValue, // Subdivision code
-                    $oAddress->oxaddress__oxzip->rawValue, // Postal code
-                    $oAddress->oxaddress__oxcity->rawValue, // Locality
-                    $oAddress->oxaddress__oxstreet->rawValue, // Street name
-                    $oAddress->oxaddress__oxstreetnr->rawValue, // House number
-                    $oAddress->oxaddress__oxaddinfo->rawValue // Additional info
+                    $oAddress->oxaddress__oxcountryid->rawValue,
+                    $hasSubdivisions ? ($oAddress->oxaddress__oxstateid->rawValue ?? '') : null,
+                    $oAddress->oxaddress__oxzip->rawValue,
+                    $oAddress->oxaddress__oxcity->rawValue,
+                    $oAddress->oxaddress__oxstreet->rawValue,
+                    $oAddress->oxaddress__oxstreetnr->rawValue,
+                    $oAddress->oxaddress__oxaddinfo->rawValue
                 );
                 $oAddress->oxaddress__mojoaddresshash->rawValue = $hash;
                 if ($oAddress->save()) {
@@ -126,7 +147,10 @@ class AddressController extends \OxidEsales\Eshop\Application\Controller\Fronten
      * Calculates a hash based on the provided address components.
      * This is used to ensure the address integrity.
      *
+     * TODO: Extract to a shared location — duplicated in OrderController and UserComponent.
+     *
      * @param string $countryCode Country code of the address.
+     * @param string|null $subdivisionCode ISO 3166-2 subdivision code, or null if not applicable.
      * @param string $postalCode Postal code of the address.
      * @param string $locality Locality (city) of the address.
      * @param string $streetName Street name of the address.
@@ -136,7 +160,7 @@ class AddressController extends \OxidEsales\Eshop\Application\Controller\Fronten
      */
     private function calculateHash(
         $countryCode,
-        $subdivisonCode,
+        $subdivisionCode,
         $postalCode,
         $locality,
         $streetName,
@@ -144,14 +168,16 @@ class AddressController extends \OxidEsales\Eshop\Application\Controller\Fronten
         $additionalInfo
     ) {
         $hashBody = [
-            $countryCode,
-            $subdivisonCode,
-            $postalCode,
-            $locality,
-            $streetName,
-            $buildingNumber,
-            $additionalInfo
+            'countryCode' => $countryCode,
+            'postalCode' => $postalCode,
+            'locality' => $locality,
+            'streetName' => $streetName,
+            'buildingNumber' => $buildingNumber,
+            'additionalInfo' => $additionalInfo
         ];
-        return hash('sha256', implode('', $hashBody));
+        if ($subdivisionCode !== null) {
+            $hashBody['subdivisionCode'] = $subdivisionCode;
+        }
+        return hash('sha256', json_encode($hashBody));
     }
 }

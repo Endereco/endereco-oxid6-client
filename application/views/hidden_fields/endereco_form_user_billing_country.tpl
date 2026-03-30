@@ -1,3 +1,8 @@
+<input type="hidden"
+    data-endereco-subdivision-helper="billing_ams"
+    data-country-id="[{$oxcmp_user->oxuser__oxcountryid->value}]"
+    data-selected-state-id="[{$oxcmp_user->oxuser__oxstateid->value}]"
+>
 <input type="hidden" name="invadr[oxuser__mojoamsts]" value="[{if isset( $invadr.oxuser__mojoamsts )}][{$invadr.oxuser__mojoamsts}][{else}][{$oxcmp_user->oxuser__mojoamsts->value}][{/if}]">
 <input type="hidden" name="invadr[oxuser__mojoamsstatus]" value="[{if isset( $invadr.oxuser__mojoamsstatus )}][{$invadr.oxuser__mojoamsstatus}][{else}][{$oxcmp_user->oxuser__mojoamsstatus->value}][{/if}]">
 <input type="hidden" name="invadr[oxuser__mojoamspredictions]" value="[{if isset( $invadr.oxuser__mojoamspredictions )}][{$invadr.oxuser__mojoamspredictions}][{else}][{$oxcmp_user->oxuser__mojoamspredictions->value}][{/if}]">
@@ -50,7 +55,7 @@
                 addressPredictions: '[name="invadr[oxuser__mojoamspredictions]"]'
             },
             {
-                name: 'billing',
+                name: 'billing_ams',
                 addressType: 'billing_address',
                 intent: 'edit',
             },
