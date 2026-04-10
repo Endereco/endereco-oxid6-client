@@ -278,14 +278,15 @@ class OrderController extends OrderController_parent
     /**
      * Determines if a new AMS status check is needed based on the current AMS status of the address extension.
      *
-     * A check is needed if the AMS status is empty or matches the constant AMS_STATUS_NOT_CHECKED
+     * A check is needed if the AMS status is empty or matches the default 'not-checked' value.
+     * Addresses already confirmed by the customer are excluded from rechecking.
+     *
+     * @param string $currentStatus The current AMS status string of the address
      *
      * @return bool True if a new AMS status check is required, false otherwise
      */
     public function isValidationNeeded($currentStatus): bool
     {
-
-
         $isEmpty = empty($currentStatus);
 
         // The JS SDK may set 'not-checked' as a default status value. In practice this
@@ -293,6 +294,12 @@ class OrderController extends OrderController_parent
         // Not using a class constant because PHP 7.0 doesn't support constant visibility
         // modifiers, and PSR-12 requires them.
         $hasDefaultValue = ($currentStatus === 'not-checked');
+
+        // If the customer already confirmed their address in the checkout modal,
+        // skip revalidation to avoid overriding their explicit choice.
+        if (str_contains($currentStatus, 'address_selected_by_customer')) {
+            return false;
+        }
 
         $isCheckNeeded = $isEmpty || $hasDefaultValue;
 
