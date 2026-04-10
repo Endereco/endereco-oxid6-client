@@ -38,26 +38,62 @@
             }
         }
 
-        enderecoInitAMS(
-            {
-                countryCode: '[name="deladr[oxaddress__oxcountryid]"]',
-                subdivisionCode: '[name="deladr[oxaddress__oxstateid]"]',
-                postalCode: '[name="deladr[oxaddress__oxzip]"]',
-                locality: '[name="deladr[oxaddress__oxcity]"]',
-                streetName: '[name="deladr[oxaddress__oxstreet]"]',
-                buildingNumber: '[name="deladr[oxaddress__oxstreetnr]"]',
-                additionalInfo: '[name="deladr[oxaddress__oxaddinfo]"]',
-                addressStatus: '[name="deladr[oxaddress__mojoamsstatus]"]',
-                addressTimestamp: '[name="deladr[oxaddress__mojoamsts]"]',
-                addressPredictions: '[name="deladr[oxaddress__mojoamspredictions]"]'
-            },
-            {
-                name: 'shipping_ams',
-                addressType: 'shipping_address',
-                intent: 'edit',
-            },
-            afterCreateHandler
-        );
+        var shippingAmsInitialized = false;
+
+        function initShippingAMS(triggerCheck) {
+            if (shippingAmsInitialized) {
+                return;
+            }
+            shippingAmsInitialized = true;
+
+            enderecoInitAMS(
+                {
+                    countryCode: '[name="deladr[oxaddress__oxcountryid]"]',
+                    subdivisionCode: '[name="deladr[oxaddress__oxstateid]"]',
+                    postalCode: '[name="deladr[oxaddress__oxzip]"]',
+                    locality: '[name="deladr[oxaddress__oxcity]"]',
+                    streetName: '[name="deladr[oxaddress__oxstreet]"]',
+                    buildingNumber: '[name="deladr[oxaddress__oxstreetnr]"]',
+                    additionalInfo: '[name="deladr[oxaddress__oxaddinfo]"]',
+                    addressStatus: '[name="deladr[oxaddress__mojoamsstatus]"]',
+                    addressTimestamp: '[name="deladr[oxaddress__mojoamsts]"]',
+                    addressPredictions: '[name="deladr[oxaddress__mojoamspredictions]"]'
+                },
+                {
+                    name: 'shipping_ams',
+                    addressType: 'shipping_address',
+                    intent: 'edit',
+                },
+                function(EAO) {
+                    afterCreateHandler(EAO);
+                    if (triggerCheck && EAO && EAO.util && EAO.util.checkAddress) {
+                        EAO.util.checkAddress();
+                    }
+                }
+            );
+        }
+
+        function isCountryFieldVisible() {
+            var field = document.querySelector('[name="deladr[oxaddress__oxcountryid]"]');
+            return field && field.offsetParent !== null;
+        }
+
+        if (isCountryFieldVisible()) {
+            initShippingAMS(false);
+        } else {
+            var visibilityObserver = new MutationObserver(function() {
+                if (isCountryFieldVisible()) {
+                    visibilityObserver.disconnect();
+                    initShippingAMS(true);
+                }
+            });
+            visibilityObserver.observe(document.body, {
+                attributes: true,
+                attributeFilter: ['style', 'class'],
+                subtree: true,
+                childList: true
+            });
+        }
 
         enderecoInitPS(
             'deladr[oxaddress__',

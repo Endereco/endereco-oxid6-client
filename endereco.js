@@ -207,7 +207,9 @@ EnderecoIntegrator.hasActiveSubscriber = (fieldName, domElement, dataObject) => 
             const countryId = helper.dataset.countryId || '';
             const mapping = window.EnderecoIntegrator?.subdivisionMappingReverse || {};
             const countryCode = window.EnderecoIntegrator?.countryMappingReverse?.[countryId] || '';
-            return !!countryCode && !!mapping[countryCode] && Object.keys(mapping[countryCode]).length > 0;
+            if(countryCode){
+                return !!mapping[countryCode] && Object.keys(mapping[countryCode]).length > 0;
+            }
         }
 
         // Fallback: check the select's options directly (no helper available).
