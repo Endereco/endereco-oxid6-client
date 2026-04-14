@@ -339,6 +339,33 @@ window.EnderecoIntegrator.waitUntilReady().then(function () {
     //
 });
 
+window.EnderecoIntegrator.isAddressFormStillValid = (EAO) => {
+    if (EAO.fullName !== 'shipping_ams') {
+        return true;
+    }
+
+    // Check if EAO.forms exists and is an array
+    if (EAO.forms && Array.isArray(EAO.forms)) {
+        // Loop through each form in the forms array
+        for (let i = 0; i < EAO.forms.length; i++) {
+            const form = EAO.forms[i];
+
+            // Check if the form is a DOM element
+            if (form instanceof Element) {
+                // Look for a checkbox with name "blshowshipaddress"
+                const disableCheckbox = form.querySelector('input[type="checkbox"][name="blshowshipaddress"]');
+
+                // If the checkbox exists and is checked, return false
+                if (disableCheckbox && disableCheckbox.checked) {
+                    return false;
+                }
+            }
+        }
+    }
+
+    return true;
+}
+
 const waitForConfig = setInterval(function () {
     if (typeof enderecoLoadAMSConfig === 'function') {
         try {
