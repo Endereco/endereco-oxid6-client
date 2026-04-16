@@ -94,14 +94,23 @@ EnderecoIntegrator.resolvers.subdivisionCodeRead = async function (value, subscr
         return '';
     }
 
-    // If the select has no value yet (not populated), try the helper element as fallback.
+    // If the select has no value, distinguish "user chose no subdivision" from
+    // "select not populated yet". Only fall back to the helper in the latter case.
     var effectiveValue = value;
-    if (!effectiveValue && subscriber._subject.fullName) {
-        const helper = document.querySelector(
-            '[data-endereco-subdivision-helper="' + subscriber._subject.fullName + '"]'
-        );
-        if (helper) {
-            effectiveValue = helper.dataset.selectedStateId || '';
+    const itIsSelectElement = subscriber.object && subscriber.object.tagName === 'SELECT';
+    if (!effectiveValue && subscriber._subject.fullName && itIsSelectElement) {
+        const mapping = window.EnderecoIntegrator?.subdivisionMappingReverse || {};
+        const submapping = mapping[countryCode] || {};
+        const selectState = checkSelectValuesAgainstMapping(subscriber.object, submapping);
+        const selectIsReady = selectState.hasValidOptions && selectState.allValuesInMapping;
+
+        if (!selectIsReady) {
+            const helper = document.querySelector(
+                '[data-endereco-subdivision-helper="' + subscriber._subject.fullName + '"]'
+            );
+            if (helper) {
+                effectiveValue = helper.dataset.selectedStateId || '';
+            }
         }
     }
 
@@ -198,27 +207,30 @@ EnderecoIntegrator.afterAMSActivation.push( function(EAO) {
 
 EnderecoIntegrator.hasActiveSubscriber = (fieldName, domElement, dataObject) => {
     if (fieldName === 'subdivisionCode') {
-        // Check helper element first — it knows server-side whether the country has states,
-        // even before OXID's JS populates the select with options.
+        const mapping = window.EnderecoIntegrator?.subdivisionMappingReverse || {};
+
+        // If the select is populated with valid mapped options, it is the source of truth.
+        if (domElement && domElement.tagName === 'SELECT') {
+            const selectState = checkSelectValuesAgainstMapping(
+                domElement,
+                mapping[dataObject.countryCode] || {}
+            );
+            if (selectState.hasValidOptions && selectState.allValuesInMapping) {
+                return true;
+            }
+        }
+
+        // Select not ready — fall back to the helper for server-rendered state.
         const helper = document.querySelector(
             '[data-endereco-subdivision-helper="' + dataObject.fullName + '"]'
         );
         if (helper) {
             const countryId = helper.dataset.countryId || '';
-            const mapping = window.EnderecoIntegrator?.subdivisionMappingReverse || {};
             const countryCode = window.EnderecoIntegrator?.countryMappingReverse?.[countryId] || '';
             return !!countryCode && !!mapping[countryCode] && Object.keys(mapping[countryCode]).length > 0;
         }
 
-        // Fallback: check the select's options directly (no helper available).
-        if (domElement && domElement.tagName === 'SELECT') {
-            const mapping = window.EnderecoIntegrator?.subdivisionMappingReverse || {};
-            const selectState = checkSelectValuesAgainstMapping(
-                domElement,
-                mapping[dataObject.countryCode] || {}
-            );
-            return selectState.hasValidOptions && selectState.allValuesInMapping;
-        }
+        return false;
     }
 
     return true;
