@@ -125,36 +125,46 @@ EnderecoIntegrator.resolvers.subdivisionCodeRead = async function (value, subscr
 }
 
 EnderecoIntegrator.resolvers.countryCodeSetValue = function (subscriber, value) {
-    if (
-        !!$ &&
-        subscriber.object &&
-        subscriber.object.classList.contains('selectpicker') &&
-        !!$(subscriber.object).selectpicker
-    ) {
-        $(subscriber.object).selectpicker('val', value);
-    } else {
-        subscriber.object.value = value;
-    }
-
-    if (!!$) {
-        $(subscriber.object).trigger('change');
+    if (subscriber.dispatchEvent('endereco-change')) {
+        subscriber._allowFieldInspection = false;
+        if (
+            !!$ &&
+            subscriber.object &&
+            subscriber.object.classList.contains('selectpicker') &&
+            !!$(subscriber.object).selectpicker
+        ) {
+            $(subscriber.object).selectpicker('val', value);
+        } else {
+            subscriber.object.value = value;
+        }
+        if (!!$) {
+            $(subscriber.object).trigger('change');
+        }
+        subscriber.lastValue = value;
+        subscriber._allowFieldInspection = true;
+        subscriber.dispatchEvent('endereco-blur');
     }
 }
 
 EnderecoIntegrator.resolvers.subdivisionCodeSetValue = function (subscriber, value) {
-    if (
-      !!$ &&
-      subscriber.object &&
-      subscriber.object.classList.contains('selectpicker') &&
-      !!$(subscriber.object).selectpicker
-    ) {
-        $(subscriber.object).selectpicker('val', value);
-    } else {
-        subscriber.object.value = value;
-    }
-
-    if (!!$) {
-        $(subscriber.object).trigger('change');
+    if (subscriber.dispatchEvent('endereco-change')) {
+        subscriber._allowFieldInspection = false;
+        if (
+          !!$ &&
+          subscriber.object &&
+          subscriber.object.classList.contains('selectpicker') &&
+          !!$(subscriber.object).selectpicker
+        ) {
+            $(subscriber.object).selectpicker('val', value);
+        } else {
+            subscriber.object.value = value;
+        }
+        if (!!$) {
+            $(subscriber.object).trigger('change');
+        }
+        subscriber.lastValue = value;
+        subscriber._allowFieldInspection = true;
+        subscriber.dispatchEvent('endereco-blur');
     }
 }
 
@@ -178,15 +188,21 @@ EnderecoIntegrator.resolvers.salutationRead = function (value, subscriber) {
 }
 
 EnderecoIntegrator.resolvers.salutationSetValue = function (subscriber, value) {
-    if (
-        !!$ &&
-        subscriber.object &&
-        subscriber.object.classList.contains('selectpicker') &&
-        !!$(subscriber.object).selectpicker
-    ) {
-        $(subscriber.object).selectpicker('val', value);
-    } else {
-        subscriber.object.value = value;
+    if (subscriber.dispatchEvent('endereco-change')) {
+        subscriber._allowFieldInspection = false;
+        if (
+            !!$ &&
+            subscriber.object &&
+            subscriber.object.classList.contains('selectpicker') &&
+            !!$(subscriber.object).selectpicker
+        ) {
+            $(subscriber.object).selectpicker('val', value);
+        } else {
+            subscriber.object.value = value;
+        }
+        subscriber.lastValue = value;
+        subscriber._allowFieldInspection = true;
+        subscriber.dispatchEvent('endereco-blur');
     }
 }
 
