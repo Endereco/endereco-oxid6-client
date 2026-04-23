@@ -40,8 +40,10 @@
             "@phpcs",
             "@phpmd",
             "@phpstan",
-            "@phpcompat"
+            "@phpcompat",
+            "@lint"
         ],
+        "lint": "npm run lint",
         "phpcbf": "phpcbf --standard=PSR12 --ignore=vendor/*,shops/*,node_modules/* ./**/*.php",
         "phpcs": "phpcs --standard=PSR12 --ignore=vendor/*,shops/*,node_modules/* ./**/*.php",
         "phpstan": [

@@ -7,7 +7,7 @@ import 'polyfill-array-includes';
 if ('NodeList' in window && !NodeList.prototype.forEach) {
     NodeList.prototype.forEach = function (callback, thisArg) {
         thisArg = thisArg || window;
-        for (var i = 0; i < this.length; i++) {
+        for (let i = 0; i < this.length; i++) {
             callback.call(thisArg, this[i], i, this);
         }
     };
@@ -43,18 +43,18 @@ EnderecoIntegrator.postfix = {
 };
 
 EnderecoIntegrator.css = css[0][1];
-EnderecoIntegrator.resolvers.countryCodeWrite = function (value, subscriber) {
-    return new Promise(function (resolve, reject) {
+EnderecoIntegrator.resolvers.countryCodeWrite = function (value, _subscriber) {
+    return new Promise(function (resolve, _reject) {
         resolve(window.EnderecoIntegrator.countryMapping[value.toUpperCase()]);
     });
-}
-EnderecoIntegrator.resolvers.countryCodeRead = function (value, subscriber) {
-    return new Promise(function (resolve, reject) {
+};
+EnderecoIntegrator.resolvers.countryCodeRead = function (value, _subscriber) {
+    return new Promise(function (resolve, _reject) {
         resolve(window.EnderecoIntegrator.countryMappingReverse[value]);
     });
-}
+};
 
-EnderecoIntegrator.resolvers.subdivisionCodeWrite = function (value, subscriber) {
+EnderecoIntegrator.resolvers.subdivisionCodeWrite = function (value, _subscriber) {
     return new Promise(resolve => {
         if (!value) {
             resolve('');
@@ -65,7 +65,7 @@ EnderecoIntegrator.resolvers.subdivisionCodeWrite = function (value, subscriber)
         const key = mapping[value];
         resolve(key !== undefined ? key : '');
     });
-}
+};
 
 // Transforms the internal OXID state ID (from the states select element) into an
 // ISO 3166-2 subdivision code that the JS-SDK and Endereco WebAPI expect.
@@ -77,7 +77,7 @@ EnderecoIntegrator.resolvers.subdivisionCodeWrite = function (value, subscriber)
 EnderecoIntegrator.resolvers.subdivisionCodeRead = async function (value, subscriber) {
     // Resolve country code. The SDK may not have it yet during init,
     // so fall back to the helper element's country ID.
-    var countryCode = subscriber._subject.countryCode?.toUpperCase() || '';
+    let countryCode = subscriber._subject.countryCode?.toUpperCase() || '';
     if (!countryCode && subscriber._subject.fullName) {
         const helper = document.querySelector(
             '[data-endereco-subdivision-helper="' + subscriber._subject.fullName + '"]'
@@ -96,7 +96,7 @@ EnderecoIntegrator.resolvers.subdivisionCodeRead = async function (value, subscr
 
     // If the select has no value, distinguish "user chose no subdivision" from
     // "select not populated yet". Only fall back to the helper in the latter case.
-    var effectiveValue = value;
+    let effectiveValue = value;
     const itIsSelectElement = subscriber.object && subscriber.object.tagName === 'SELECT';
     if (!effectiveValue && subscriber._subject.fullName && itIsSelectElement) {
         const mapping = window.EnderecoIntegrator?.subdivisionMappingReverse || {};
@@ -122,7 +122,7 @@ EnderecoIntegrator.resolvers.subdivisionCodeRead = async function (value, subscr
     const submapping = mapping[countryCode] || {};
     const key = submapping[effectiveValue];
     return key !== undefined ? key : '';
-}
+};
 
 EnderecoIntegrator.resolvers.countryCodeSetValue = function (subscriber, value) {
     if (subscriber.dispatchEvent('endereco-change')) {
@@ -137,55 +137,55 @@ EnderecoIntegrator.resolvers.countryCodeSetValue = function (subscriber, value) 
         } else {
             subscriber.object.value = value;
         }
-        if (!!$) {
+        if ($) {
             $(subscriber.object).trigger('change');
         }
         subscriber.lastValue = value;
         subscriber._allowFieldInspection = true;
         subscriber.dispatchEvent('endereco-blur');
     }
-}
+};
 
 EnderecoIntegrator.resolvers.subdivisionCodeSetValue = function (subscriber, value) {
     if (subscriber.dispatchEvent('endereco-change')) {
         subscriber._allowFieldInspection = false;
         if (
-          !!$ &&
-          subscriber.object &&
-          subscriber.object.classList.contains('selectpicker') &&
-          !!$(subscriber.object).selectpicker
+            !!$ &&
+            subscriber.object &&
+            subscriber.object.classList.contains('selectpicker') &&
+            !!$(subscriber.object).selectpicker
         ) {
             $(subscriber.object).selectpicker('val', value);
         } else {
             subscriber.object.value = value;
         }
-        if (!!$) {
+        if ($) {
             $(subscriber.object).trigger('change');
         }
         subscriber.lastValue = value;
         subscriber._allowFieldInspection = true;
         subscriber.dispatchEvent('endereco-blur');
     }
-}
+};
 
-EnderecoIntegrator.resolvers.salutationWrite = function (value, subscriber) {
-    var mapping = {
+EnderecoIntegrator.resolvers.salutationWrite = function (value, _subscriber) {
+    const mapping = {
         'f': 'MRS',
         'm': 'MR'
     };
-    return new Promise(function (resolve, reject) {
+    return new Promise(function (resolve, _reject) {
         resolve(mapping[value]);
     });
-}
-EnderecoIntegrator.resolvers.salutationRead = function (value, subscriber) {
-    var mapping = {
+};
+EnderecoIntegrator.resolvers.salutationRead = function (value, _subscriber) {
+    const mapping = {
         'MRS': 'f',
         'MR': 'm'
     };
-    return new Promise(function (resolve, reject) {
+    return new Promise(function (resolve, _reject) {
         resolve(mapping[value]);
     });
-}
+};
 
 EnderecoIntegrator.resolvers.salutationSetValue = function (subscriber, value) {
     if (subscriber.dispatchEvent('endereco-change')) {
@@ -204,16 +204,16 @@ EnderecoIntegrator.resolvers.salutationSetValue = function (subscriber, value) {
         subscriber._allowFieldInspection = true;
         subscriber.dispatchEvent('endereco-blur');
     }
-}
+};
 
 EnderecoIntegrator.afterAMSActivation.push( function(EAO) {
-    if (!!document.querySelector('[type="checkbox"][name="blshowshipaddress"]')) {
+    if (document.querySelector('[type="checkbox"][name="blshowshipaddress"]')) {
         if (document.querySelector('[type="checkbox"][name="blshowshipaddress"]').checked) {
             if ('shipping_address' === EAO.addressType) {
                 EAO.active = false;
             }
         }
-        document.querySelector('[type="checkbox"][name="blshowshipaddress"]').addEventListener('change', function(e) {
+        document.querySelector('[type="checkbox"][name="blshowshipaddress"]').addEventListener('change', function(_e) {
             if ('shipping_address' === EAO.addressType) {
                 EAO.active = !document.querySelector('[type="checkbox"][name="blshowshipaddress"]').checked;
             }
@@ -317,7 +317,7 @@ const checkSelectValuesAgainstMapping = (domElementOfSelect, mappingObject) => {
     }
 
     return result;
-}
+};
 
 /**
  * This function is needed to simulate blur, change and other events for better compatibility with frontend validation
@@ -344,13 +344,13 @@ window.EnderecoIntegrator.prepareDOMElement = (DOMElement, addressObject) => {
         e.target.dispatchEvent(new CustomEvent('focus', { bubbles: true, cancelable: true }));
         e.target.dispatchEvent(new CustomEvent('blur', { bubbles: true, cancelable: true }));
         prevActiveElement.dispatchEvent(new CustomEvent('focus', { bubbles: true, cancelable: true }));
-    }
+    };
 
     DOMElement.addEventListener('endereco-blur', enderecoBlurListener);
 
     // Mark the element as prepared
     DOMElement._enderecoBlurListenerAttached = true;
-}
+};
 
 if (window.EnderecoIntegrator) {
     window.EnderecoIntegrator = merge(EnderecoIntegrator, window.EnderecoIntegrator);
@@ -392,7 +392,7 @@ window.EnderecoIntegrator.isAddressFormStillValid = (EAO) => {
     }
 
     return true;
-}
+};
 
 const waitForConfig = setInterval(function () {
     if (typeof enderecoLoadAMSConfig === 'function') {
