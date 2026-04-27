@@ -10,6 +10,8 @@ use OxidEsales\Eshop\Core\Registry;
 
 class OrderController extends OrderController_parent
 {
+    private $shouldGatherBillingAddressFeedback = false;
+    private $shouldGatherShippingAddressFeedback = false;
     /**
      * Renders the order page and checks the addresses if necessary.
      * This method performs address validation for billing and delivery addresses
@@ -114,6 +116,8 @@ class OrderController extends OrderController_parent
                         );
                         $oUser->save();
                     }
+
+                    $this->shouldGatherBillingAddressFeedback = true;
                 }
 
                 // Check invoice address.
@@ -171,6 +175,8 @@ class OrderController extends OrderController_parent
                         );
                         $oDeliveryAddress->save();
                     }
+
+                    $this->shouldGatherShippingAddressFeedback = true;
                 }
             }
         }
@@ -297,5 +303,33 @@ class OrderController extends OrderController_parent
         $isCheckNeeded = $isEmpty || $hasDefaultValue;
 
         return $isCheckNeeded;
+    }
+
+    /**
+     * Returns whether billing address feedback should be gathered from the user.
+     *
+     * This flag is set during address validation in the order process and
+     * controls whether the frontend should prompt the user to confirm or
+     * correct the billing address
+     *
+     * @return bool True if billing address feedback should be gathered, false otherwise.
+     */
+    public function getShouldGatherBillingAddressFeedback(): bool
+    {
+        return $this->shouldGatherBillingAddressFeedback;
+    }
+
+    /**
+     * Returns whether shipping address feedback should be gathered from the user.
+     *
+     * This flag is used analogously to the billing address flag to indicate that
+     * the frontend should request confirmation or correction of the delivery
+     * address when address validation detects issues or ambiguity.
+     *
+     * @return bool True if shipping address feedback should be gathered, false otherwise.
+     */
+    public function getShouldGatherShippingAddressFeedback(): bool
+    {
+        return $this->shouldGatherShippingAddressFeedback;
     }
 }

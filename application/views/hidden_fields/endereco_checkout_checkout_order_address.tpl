@@ -6,6 +6,8 @@
     data-selected-state-id="[{$oxcmp_user->oxuser__oxstateid->value}]"
 >
 <div style="display: none!important">
+    [{assign var="oBilAdressNeedsFeedback" value=$oView->getShouldGatherBillingAddressFeedback()}]
+    [{if $oBilAdressNeedsFeedback}]
     <div>
         <form>
         <input
@@ -147,9 +149,11 @@
             })();
         </script>
     </div>
+    [{/if}]
     <div>
         [{assign var="oDelAdress" value=$oView->getDelAddress()}]
-        [{if $oDelAdress}]
+        [{assign var="oDelAdressNeedsFeedback" value=$oView->getShouldGatherShippingAddressFeedback()}]
+        [{if $oDelAdress || $oDelAdressNeedsFeedback}]
         <input type="hidden"
             data-endereco-subdivision-helper="shipping_ams"
             data-country-id="[{$oDelAdress->oxaddress__oxcountryid->value}]"
