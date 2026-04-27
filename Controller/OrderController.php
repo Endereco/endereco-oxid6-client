@@ -10,6 +10,8 @@ use OxidEsales\Eshop\Core\Registry;
 
 class OrderController extends OrderController_parent
 {
+    private $shouldGatherBillingAddressFeedback = false;
+    private $shouldGatherShippingAddressFeedback = false;
     /**
      * Renders the order page and checks the addresses if necessary.
      * This method performs address validation for billing and delivery addresses
@@ -116,6 +118,12 @@ class OrderController extends OrderController_parent
                     }
                 }
 
+                if ($oUser) {
+                    $this->shouldGatherBillingAddressFeedback = $this->isFeedbackNeeded(
+                        (string) $oUser->oxuser__mojoamsstatus->rawValue
+                    );
+                }
+
                 // Check invoice address.
                 if (
                     $oDeliveryAddress
@@ -171,6 +179,12 @@ class OrderController extends OrderController_parent
                         );
                         $oDeliveryAddress->save();
                     }
+                }
+
+                if ($oDeliveryAddress) {
+                    $this->shouldGatherShippingAddressFeedback = $this->isFeedbackNeeded(
+                        (string) $oDeliveryAddress->oxaddress__mojoamsstatus->rawValue
+                    );
                 }
             }
         }
@@ -297,5 +311,62 @@ class OrderController extends OrderController_parent
         $isCheckNeeded = $isEmpty || $hasDefaultValue;
 
         return $isCheckNeeded;
+    }
+
+    /**
+     * Determines whether the saved AMS status indicates the user still needs
+     * to confirm or correct the address.
+     *
+     * An address counts as resolved once its status contains either
+     * 'address_selected_by_customer' or 'address_selected_automatically'.
+     * An empty or 'not-checked' status means no validation has run yet, so
+     * there is nothing to show in the popup and feedback is not gathered.
+     *
+     * Mirrors the JS SDK's isAddressCheckFinished predicate:
+     * https://github.com/Endereco/js-sdk/blob/master/modules/extensions/fields/AddressExtension.js
+     *
+     * @param string $currentStatus Comma-separated AMS status codes.
+     * @return bool True if the user still needs to act on the address.
+     */
+    private function isFeedbackNeeded(string $currentStatus): bool
+    {
+        if ($currentStatus === '' || $currentStatus === 'not-checked') {
+            return false;
+        }
+
+        $codes = array_map('trim', explode(',', $currentStatus));
+
+        return !in_array('address_selected_by_customer', $codes, true)
+            && !in_array('address_selected_automatically', $codes, true);
+    }
+
+    /**
+     * Returns whether billing address feedback should be gathered from the user.
+     *
+     * The flag reflects the saved AMS status of the billing address: feedback
+     * is needed when the status is non-empty and does not yet contain a
+     * "done" marker ('address_selected_by_customer' or
+     * 'address_selected_automatically').
+     *
+     * @return bool True if billing address feedback should be gathered, false otherwise.
+     */
+    public function getShouldGatherBillingAddressFeedback(): bool
+    {
+        return $this->shouldGatherBillingAddressFeedback;
+    }
+
+    /**
+     * Returns whether shipping address feedback should be gathered from the user.
+     *
+     * The flag reflects the saved AMS status of the delivery address: feedback
+     * is needed when the status is non-empty and does not yet contain a
+     * "done" marker ('address_selected_by_customer' or
+     * 'address_selected_automatically').
+     *
+     * @return bool True if shipping address feedback should be gathered, false otherwise.
+     */
+    public function getShouldGatherShippingAddressFeedback(): bool
+    {
+        return $this->shouldGatherShippingAddressFeedback;
     }
 }
