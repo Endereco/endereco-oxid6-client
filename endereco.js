@@ -231,6 +231,7 @@ EnderecoIntegrator.hasActiveSubscriber = (fieldName, domElement, dataObject) => 
                 domElement,
                 mapping[dataObject.countryCode] || {}
             );
+
             if (selectState.hasValidOptions && selectState.allValuesInMapping) {
                 return true;
             }
@@ -243,7 +244,17 @@ EnderecoIntegrator.hasActiveSubscriber = (fieldName, domElement, dataObject) => 
         if (helper) {
             const countryId = helper.dataset.countryId || '';
             const countryCode = window.EnderecoIntegrator?.countryMappingReverse?.[countryId] || '';
-            return !!countryCode && !!mapping[countryCode] && Object.keys(mapping[countryCode]).length > 0;
+
+            // Rephrase the logic
+            const countryCodeIsKnown = !!countryCode;
+            const countryHasSubdivisions = countryCodeIsKnown &&
+                !!mapping[countryCode] &&
+                Object.keys(mapping[countryCode]).length > 0;
+
+            // Its "irrelevant" if the country has been changed by the user in frontend
+            const helperIsRelevant = countryCodeIsKnown && (countryCode === dataObject.countryCode);
+
+            return helperIsRelevant && countryHasSubdivisions;
         }
 
         return false;
