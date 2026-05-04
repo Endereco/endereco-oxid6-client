@@ -67,7 +67,7 @@
             window.EnderecoIntegrator.config.trigger.onblur = [{if $enderecoclient.sAMSBLURTRIGGER }]true[{else}]false[{/if}];
             window.EnderecoIntegrator.config.trigger.onsubmit = [{if $enderecoclient.sAMSSubmitTrigger }]true[{else}]false[{/if}];
             window.EnderecoIntegrator.config.ux.resumeSubmit = [{if $enderecoclient.sAMSResumeSubmit }]true[{else}]false[{/if}];
-            window.EnderecoIntegrator.config.ux.smartFill = [{if $enderecoclient.sSMARTFILL }]true[{else}]false[{/if}];
+            window.EnderecoIntegrator.config.ux.smartFill = false;
             window.EnderecoIntegrator.config.ux.checkExisting = [{if $enderecoclient.sCHECKALL }]true[{else}]false[{/if}];
             window.EnderecoIntegrator.config.ux.changeFieldsOrder = [{if $enderecoclient.bChangeFieldsOrder }]true[{else}]false[{/if}];;
             window.EnderecoIntegrator.config.ux.showEmailStatus = [{if $enderecoclient.bShowEmailserviceErrors }]true[{else}]false[{/if}];

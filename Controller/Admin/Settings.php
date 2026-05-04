@@ -92,7 +92,6 @@ class Settings extends \OxidEsales\Eshop\Application\Controller\Admin\AdminContr
             'sCHECKALL',
             'sCHECKPAYPAL',
             'sAMSBLURTRIGGER',
-            'sSMARTFILL',
             'bUseEmailservice',
             'bUsePersonalService',
             'bAllowControllerFilter',

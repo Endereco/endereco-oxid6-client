@@ -382,16 +382,6 @@
 
             <tr>
                 <td>
-                    [{oxmultilang ident="SHOP_MODULE_sSMARTFILL"}]
-                </td>
-                <td>
-                    <input type="checkbox" class="editinput" name="cstrs[sSMARTFILL]" value="true" [{if $cstrs.sSMARTFILL == true}]checked="checked"[{/if}]>
-                    &nbsp;[{ oxinputhelp ident="HELP_SHOP_MODULE_sSMARTFILL" }]
-                </td>
-            </tr>
-
-            <tr>
-                <td>
                     [{oxmultilang ident="SHOP_MODULE_bChangeFieldsOrder"}]
                 </td>
                 <td>
