@@ -83,7 +83,7 @@
                         EAO._awaits++;
                         EAO.util.axios({
                             method: 'post',
-                            url: '[{$sitepath}]?cl=enderecosaveaddress',
+                            url: '[{$sitepath}]?cl=enderecosaveaddress&stoken=[{$oViewConf->getSessionChallengeToken()}]',
                             data: {
                                 method: 'editBillingAddress',
                                 params: {
@@ -234,7 +234,7 @@
                             EAO._awaits++;
                             EAO.util.axios({
                                 method: 'post',
-                                url: '[{$sitepath}]?cl=enderecosaveaddress',
+                                url: '[{$sitepath}]?cl=enderecosaveaddress&stoken=[{$oViewConf->getSessionChallengeToken()}]',
                                 data: {
                                     method: 'editShippingAddress',
                                     params: {
