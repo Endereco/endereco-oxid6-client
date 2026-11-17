@@ -45,18 +45,32 @@ $aModule = [
             'block' => 'head_meta_robots',
             'file' => '/application/views/globalfilters.tpl',
         ],
+        [
+            'template' => 'user_main.tpl',
+            'block' => 'admin_user_main_assign_groups',
+            'file' => '/application/views/admin/blocks/user_main.tpl',
+        ],
+        [
+            'template' => 'user_address.tpl',
+            'block' => 'admin_user_address_form',
+            'file' => '/application/views/admin/blocks/user_address.tpl',
+        ]
     ],
     'controllers'  => [
         'enderecoconfig' => \Endereco\Oxid6Client\Widget\IncludeConfigWidget::class,
         'enderecocolor' => \Endereco\Oxid6Client\Widget\IncludeColorWidget::class,
         'enderecosettings' => \Endereco\Oxid6Client\Controller\Admin\Settings::class,
         'enderecosaveaddress' => \Endereco\Oxid6Client\Controller\AddressController::class,
+        'addresscheck' => \Endereco\Oxid6Client\Controller\Admin\Addresscheck::class,
     ],
     'extend' => [
         \OxidEsales\Eshop\Application\Model\User\UserUpdatableFields::class => \Endereco\Oxid6Client\Model\User\UserUpdatableFields::class,
         \OxidEsales\Eshop\Application\Model\User\UserShippingAddressUpdatableFields::class => \Endereco\Oxid6Client\Model\User\UserShippingAddressUpdatableFields::class,
         \OxidEsales\Eshop\Application\Component\UserComponent::class => \Endereco\Oxid6Client\Controller\UserComponent::class,
         \OxidEsales\Eshop\Application\Controller\OrderController::class => \Endereco\Oxid6Client\Controller\OrderController::class,
+        \OxidEsales\Eshop\Application\Model\Order::class => \Endereco\Oxid6Client\Model\Order::class,
+        \OxidEsales\Eshop\Application\Controller\Admin\UserMain::class => \Endereco\Oxid6Client\Controller\Admin\UserMain::class,
+        \OxidEsales\Eshop\Application\Controller\Admin\UserAddress::class => \Endereco\Oxid6Client\Controller\Admin\UserAddress::class,
     ],
     'templates' => [
         'enderecocolor.tpl' => 'endereco/endereco-oxid6-client/application/views/enderecocolor.tpl',
@@ -65,6 +79,7 @@ $aModule = [
         'enderecoconfig_wave.tpl' => 'endereco/endereco-oxid6-client/application/configs/enderecoconfig_wave.tpl',
         'enderecoconfig_azure.tpl' => 'endereco/endereco-oxid6-client/application/configs/enderecoconfig_azure.tpl',
         'endereco_settings.tpl' => 'endereco/endereco-oxid6-client/application/views/admin/tpl/endereco_settings.tpl',
+        'addresscheck.tpl' => 'endereco/endereco-oxid6-client/application/views/admin/tpl/addresscheck.tpl',
     ],
     'events'       => [
         'onActivate'   => '\Endereco\Oxid6Client\Installer\Installer::onActivate',
