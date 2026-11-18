@@ -170,6 +170,11 @@ class IncludeConfigWidget extends \OxidEsales\Eshop\Application\Component\Widget
         $this->_aViewData['enderecoclient']['oSubdivisionMapping'] = json_encode($aStatesMapping);
         $this->_aViewData['enderecoclient']['oSubdivisionMappingReverse'] = json_encode($aStatesMappingReverse);
 
+        // RPC requests go through the ProxyController, so the API key never reaches the frontend.
+        $this->_aViewData['enderecoclient']['sProxyUrl'] = $oConfig->getCurrentShopUrl(false)
+            . 'index.php?cl=enderecoproxy&stoken=' . Registry::getSession()->getSessionChallengeToken();
+        unset($this->_aViewData['enderecoclient']['sAPIKEY']);
+
         return $this->getThisTemplate();
     }
 }

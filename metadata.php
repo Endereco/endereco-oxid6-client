@@ -51,6 +51,7 @@ $aModule = [
         'enderecocolor' => \Endereco\Oxid6Client\Widget\IncludeColorWidget::class,
         'enderecosettings' => \Endereco\Oxid6Client\Controller\Admin\Settings::class,
         'enderecosaveaddress' => \Endereco\Oxid6Client\Controller\AddressController::class,
+        'enderecoproxy' => \Endereco\Oxid6Client\Controller\ProxyController::class,
     ],
     'extend' => [
         \OxidEsales\Eshop\Application\Model\User\UserUpdatableFields::class => \Endereco\Oxid6Client\Model\User\UserUpdatableFields::class,

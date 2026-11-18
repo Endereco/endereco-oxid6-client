@@ -56,9 +56,7 @@
 
     <script>
         function enderecoLoadAMSConfig() {
-            window.EnderecoIntegrator.config.apiUrl = "[{$oViewConf->getModuleUrl('endereco-oxid6-client', 'proxy/io.php')}]";
-            window.EnderecoIntegrator.config.apiKey = '[{$enderecoclient.sAPIKEY}]';
-            window.EnderecoIntegrator.config.remoteApiUrl = '[{$enderecoclient.sSERVICEURL}]';
+            window.EnderecoIntegrator.config.apiUrl = "[{$enderecoclient.sProxyUrl}]";
             window.EnderecoIntegrator.themeName = '[{$enderecoclient.sThemeName}]';
             window.EnderecoIntegrator.defaultCountry = '[{$enderecoclient.sPreselectableCountries}]';
             window.EnderecoIntegrator.defaultCountrySelect = [{if $enderecoclient.bPreselectCountry }]true[{else}]false[{/if}];

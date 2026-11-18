@@ -273,6 +273,11 @@ class EnderecoService
         return $address;
     }
 
+    public static function getTransactionReferer(): string
+    {
+        return $_SERVER['HTTP_REFERER'] ?? Registry::getConfig()->getShopUrl();
+    }
+
     public function generateSessionId()
     {
         return sprintf(
