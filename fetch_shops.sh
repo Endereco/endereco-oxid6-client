@@ -19,7 +19,7 @@ for version in "${versions[@]}"; do
 
   case "$version" in
     6.1|6.2) composer_image="composer:2.1.5" ;;
-    6.3|6.4) composer_image="composer:2.2.23" ;;
+    6.3|6.4) composer_image="composer:2.2.32" ;;
     6.5) composer_image="composer:2.7.7" ;;
     *) echo "Unknown version $version"; exit 1 ;;
   esac
