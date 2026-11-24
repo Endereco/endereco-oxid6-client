@@ -48,8 +48,10 @@ class UserComponent extends UserComponent_parent
             }
 
             // Shipping address hash check.
+            // Amazon Pay Express selects a delivery address that is not stored in oxaddress
+            // and has no mojo* fields. Only check addresses that exist in the database.
             $oSelectedAddress = $oUser->getSelectedAddress();
-            if ($oSelectedAddress) {
+            if ($oSelectedAddress && $oSelectedAddress->exists()) {
                 $hasSubdivisions = $enderecoService->countryHasSubdivisions(
                     $oSelectedAddress->oxaddress__oxcountryid->rawValue
                 );
