@@ -125,8 +125,11 @@ class OrderController extends OrderController_parent
                 }
 
                 // Check invoice address.
+                // Amazon Pay Express returns a delivery address that is not stored in oxaddress
+                // and has no mojo* fields. Only check addresses that exist in the database.
                 if (
                     $oDeliveryAddress
+                    && $oDeliveryAddress->exists()
                     && ($this->isDeliveryHashMismatch($oDeliveryAddress)
                         || $this->isValidationNeeded($oDeliveryAddress->oxaddress__mojoamsstatus->rawValue))
                 ) {
@@ -181,7 +184,7 @@ class OrderController extends OrderController_parent
                     }
                 }
 
-                if ($oDeliveryAddress) {
+                if ($oDeliveryAddress && $oDeliveryAddress->exists()) {
                     $this->shouldGatherShippingAddressFeedback = $this->isFeedbackNeeded(
                         (string) $oDeliveryAddress->oxaddress__mojoamsstatus->rawValue
                     );
